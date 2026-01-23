@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="ISIBA Social - Relatório Anual de Atendimento">
+    <title>Relatório Anual | ISIBA Social</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="assets/img/favicon.png">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <!-- Flatpickr Date Picker -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/themes/airbnb.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/pt.js"></script>
+    
+    <!-- Choices.js - Select Customizado -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="assets/css/relatorio.css">
+</head>
+<body>
+    
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header__content">
+                <a href="index.html" class="header__logo">
+                    <img src="assets/img/logomarca superior.png" alt="ISIBA Social">
+                </a>
+                <h1 class="header__titulo">
+                    <i class="fa-solid fa-chart-line"></i>
+                    Relatório Anual de Atendimento
+                </h1>
+                <nav class="header__nav">
+                    <a href="index.html" class="header__link">
+                        <i class="fa-solid fa-house"></i>
+                        Voltar ao Início
+                    </a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- Filtros -->
+    <section class="filtro">
+        <div class="container">
+            <h2 class="filtro__titulo">
+                <i class="fa-solid fa-filter"></i>
+                Filtros de Busca
+            </h2>
+            <form class="filtro__form" id="filtroForm">
+                <div class="filtro__grupo">
+                    <label class="filtro__label" for="unidade">Unidade</label>
+                    <select class="filtro__select" id="unidade" name="unidade">
+                        <option value="gleba-a">UPA Gleba A</option>
+                        <option value="lucas-evangelista">UPA Lucas Evangelista</option>
+                    </select>
+                </div>
+                
+                <div class="filtro__grupo">
+                    <label class="filtro__label" for="dataInicio">Data Início</label>
+                    <div class="filtro__input-wrapper">
+                        <input type="text" class="filtro__input" id="dataInicio" name="dataInicio" placeholder="Selecione a data">
+                        <i class="fa-solid fa-calendar-days filtro__input-icon"></i>
+                    </div>
+                </div>
+                
+                <div class="filtro__grupo">
+                    <label class="filtro__label" for="dataFim">Data Fim</label>
+                    <div class="filtro__input-wrapper">
+                        <input type="text" class="filtro__input" id="dataFim" name="dataFim" placeholder="Selecione a data">
+                        <i class="fa-solid fa-calendar-days filtro__input-icon"></i>
+                    </div>
+                </div>
+                
+                <button type="submit" class="btn btn--primary">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    Buscar
+                </button>
+            </form>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <main class="main">
+        <div class="container">
+            
+            <!-- Resumo Cards -->
+            <section class="resumo">
+                <h2 class="resumo__titulo">
+                    <i class="fa-solid fa-clipboard-list"></i>
+                    Resumo Geral
+                </h2>
+                <div class="resumo__grid">
+                    <!-- Card 1 - Total de Atendimentos -->
+                    <div class="resumo__card resumo__card--atendimentos">
+                        <div class="resumo__card-header">
+                            <span class="resumo__card-titulo">Total de Atendimentos</span>
+                            <div class="resumo__card-icone">
+                                <i class="fa-solid fa-hospital-user"></i>
+                            </div>
+                        </div>
+                        <div class="resumo__card-valor" id="totalAtendimentos">0</div>
+                        <p class="resumo__card-descricao">Atendimentos no período</p>
+                        <span class="resumo__card-variacao resumo__card-variacao--positiva">
+                            <i class="fa-solid fa-arrow-up"></i> +12.5%
+                        </span>
+                    </div>
+                    
+                    <!-- Card 2 - Satisfação Média -->
+                    <div class="resumo__card resumo__card--satisfacao">
+                        <div class="resumo__card-header">
+                            <span class="resumo__card-titulo">Satisfação Média</span>
+                            <div class="resumo__card-icone">
+                                <i class="fa-solid fa-face-smile"></i>
+                            </div>
+                        </div>
+                        <div class="resumo__card-valor" id="satisfacaoMedia">0%</div>
+                        <p class="resumo__card-descricao">Índice de satisfação</p>
+                        <span class="resumo__card-variacao resumo__card-variacao--positiva">
+                            <i class="fa-solid fa-arrow-up"></i> +3.2%
+                        </span>
+                    </div>
+                    
+                    <!-- Card 3 - Maior Volume -->
+                    <div class="resumo__card resumo__card--volume">
+                        <div class="resumo__card-header">
+                            <span class="resumo__card-titulo">Maior Volume</span>
+                            <div class="resumo__card-icone">
+                                <i class="fa-solid fa-chart-simple"></i>
+                            </div>
+                        </div>
+                        <div class="resumo__card-valor" id="maiorVolume">-</div>
+                        <p class="resumo__card-descricao">Mês com mais atendimentos</p>
+                        <span class="resumo__card-variacao resumo__card-variacao--positiva">
+                            <i class="fa-solid fa-arrow-up"></i> Pico
+                        </span>
+                    </div>
+                    
+                    <!-- Card 4 - Maior Satisfação -->
+                    <div class="resumo__card resumo__card--melhor">
+                        <div class="resumo__card-header">
+                            <span class="resumo__card-titulo">Maior Satisfação</span>
+                            <div class="resumo__card-icone">
+                                <i class="fa-solid fa-trophy"></i>
+                            </div>
+                        </div>
+                        <div class="resumo__card-valor" id="maiorSatisfacao">-</div>
+                        <p class="resumo__card-descricao">Mês com melhor avaliação</p>
+                        <span class="resumo__card-variacao resumo__card-variacao--positiva">
+                            <i class="fa-solid fa-star"></i> Destaque
+                        </span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Gráficos -->
+            <section class="graficos">
+                <h2 class="graficos__titulo">
+                    <i class="fa-solid fa-chart-pie"></i>
+                    Análise Detalhada
+                </h2>
+                
+                <div class="graficos__grid">
+                    <!-- Gráfico 1 - Atendimento e Satisfação Mensal -->
+                    <div class="grafico__card grafico__card--full">
+                        <div class="grafico__header">
+                            <h3 class="grafico__titulo">
+                                <i class="fa-solid fa-chart-bar"></i>
+                                Atendimento e Satisfação Mensal
+                            </h3>
+                        </div>
+                        <div class="grafico__container">
+                            <canvas id="graficoMensal"></canvas>
+                        </div>
+                    </div>
+                    
+                    <!-- Gráfico 2 - Distribuição por Faixa Etária -->
+                    <div class="grafico__card">
+                        <div class="grafico__header">
+                            <h3 class="grafico__titulo">
+                                <i class="fa-solid fa-users"></i>
+                                Distribuição por Faixa Etária
+                            </h3>
+                        </div>
+                        <div class="grafico__container">
+                            <canvas id="graficoIdade"></canvas>
+                        </div>
+                    </div>
+                    
+                    <!-- Gráfico 3 - Tempo Médio de Atendimento -->
+                    <div class="grafico__card">
+                        <div class="grafico__header">
+                            <h3 class="grafico__titulo">
+                                <i class="fa-solid fa-clock"></i>
+                                Tempo Médio de Atendimento (min)
+                            </h3>
+                        </div>
+                        <div class="grafico__container">
+                            <canvas id="graficoTempo"></canvas>
+                        </div>
+                        <div class="grafico__footer">
+                            <div class="grafico__legenda">
+                                <div class="grafico__legenda-item">
+                                    <span class="grafico__legenda-cor grafico__legenda-cor--amarelo"></span>
+                                    <span>Pouco Urgente</span>
+                                </div>
+                                <div class="grafico__legenda-item">
+                                    <span class="grafico__legenda-cor grafico__legenda-cor--verde"></span>
+                                    <span>Não Urgente</span>
+                                </div>
+                                <div class="grafico__legenda-item">
+                                    <span class="grafico__legenda-cor grafico__legenda-cor--azul"></span>
+                                    <span>Eletivo</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer__content">
+                <p class="footer__texto">
+                    © 2026 ISIBA - Todos os direitos reservados
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Supabase JS Library -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
+    <!-- Supabase Configuration -->
+    <script src="assets/js/supabase-config.js"></script>
+    
+    <!-- Relatório Database Functions -->
+    <script src="assets/js/relatorio-database.js"></script>
+
+    <!-- JavaScript -->
+    <script src="assets/js/relatorio.js"></script>
+</body>
+</html>

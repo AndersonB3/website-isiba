@@ -1,0 +1,37 @@
+# Dependências
+node_modules/
+vendor/
+
+# Arquivos de ambiente (contém chaves sensíveis)
+.env
+.env.local
+.env.*.local
+
+# Logs
+*.log
+npm-debug.log*
+
+# Sistema operacional
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# IDEs e editores
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Arquivos temporários
+*.tmp
+*.temp
+*.swp
+*~
+
+# Cache
+.cache/
+*.cache
+
+# Build
+dist/
+build/
