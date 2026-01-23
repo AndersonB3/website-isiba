@@ -306,18 +306,17 @@
                 <i class="fa-solid fa-xmark"></i>
             </button>
             <div class="modal__video">
-                <!-- Vídeo Local HTML5 -->
-                <video 
+                <!-- Vídeo do YouTube -->
+                <iframe 
                     id="video-player"
+                    src=""
+                    data-src="https://www.youtube.com/embed/UdqhX53bbDA?autoplay=1&rel=0"
                     width="100%" 
                     height="100%" 
-                    controls
-                    controlsList="nodownload"
-                    preload="metadata">
-                    <source src="assets/video/institucional.mp4" type="video/mp4">
-                    <source src="assets/video/institucional.webm" type="video/webm">
-                    Seu navegador não suporta a reprodução de vídeos.
-                </video>
+                    frameborder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    allowfullscreen>
+                </iframe>
             </div>
         </div>
     </div>
