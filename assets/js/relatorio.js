@@ -19,7 +19,7 @@ const dadosUPAs = {
         },
         tempoMedio: {
             labels: ['Pouco Urgente', 'Não Urgente', 'Eletivo'],
-            valores: [45, 28, 15]
+            valores: [15, 28, 45]
         }
     },
     'lucas-evangelista': {
@@ -36,7 +36,7 @@ const dadosUPAs = {
         },
         tempoMedio: {
             labels: ['Pouco Urgente', 'Não Urgente', 'Eletivo'],
-            valores: [52, 32, 18]
+            valores: [18, 32, 52]
         }
     }
 };
@@ -63,14 +63,17 @@ const coresRisco = {
     azul: '#3B82F6'     // Eletivo
 };
 
+// Flag para indicar se os dados já foram buscados pelo usuário
+let dadosJaCarregados = false;
+
 // ==================== INICIALIZAÇÃO ====================
 document.addEventListener('DOMContentLoaded', async function() {
     // Verificar conexão com banco de dados
     usandoBancoDeDados = await verificarConexaoBanco();
     
     if (usandoBancoDeDados) {
-        console.log('📊 Usando dados do Supabase');
-        // Carregar unidades do banco para o select
+        console.log('📊 Conectado ao Supabase - aguardando busca do usuário');
+        // Carregar unidades do banco para o select (sem carregar dados do relatório)
         await carregarUnidadesDoSelect();
     } else {
         console.log('📊 Usando dados fictícios (banco não disponível)');
@@ -127,20 +130,24 @@ document.addEventListener('DOMContentLoaded', async function() {
         }
     });
     
-    // Carregar dados iniciais (UPA Gleba A)
-    atualizarDados('gleba-a');
+    // Estado vazio já foi exibido no início da inicialização
     
-    // Event listener para o formulário de filtro
+    // Event listener para o formulário de filtro (botão Buscar)
     document.getElementById('filtroForm').addEventListener('submit', function(e) {
         e.preventDefault();
         const unidade = document.getElementById('unidade').value;
+        dadosJaCarregados = true; // Marcar que o usuário solicitou os dados
         atualizarDados(unidade);
     });
     
-    // Event listener para mudança de unidade
-    document.getElementById('unidade').addEventListener('change', function() {
-        atualizarDados(this.value);
-    });
+    // Remover auto-atualização ao mudar unidade - só atualiza ao clicar em Buscar
+    // document.getElementById('unidade').addEventListener('change', function() {
+    //     atualizarDados(this.value);
+    // });
+    
+    // ÚLTIMO PASSO: Exibir estado vazio (gráficos zerados e cards com traço)
+    console.log('📋 Exibindo estado vazio - aguardando usuário clicar em Buscar');
+    exibirEstadoVazio();
 });
 
 // ==================== ATUALIZAR DADOS ====================
@@ -171,6 +178,118 @@ async function atualizarDados(unidadeId) {
     
     // Atualizar gráficos
     criarGraficos(dados);
+}
+
+// ==================== EXIBIR ESTADO VAZIO ====================
+function exibirEstadoVazio() {
+    // Mostrar zeros nos cards de resumo
+    document.getElementById('totalAtendimentos').textContent = '—';
+    document.getElementById('satisfacaoMedia').textContent = '—';
+    document.getElementById('maiorVolume').textContent = '—';
+    document.getElementById('maiorSatisfacao').textContent = '—';
+    
+    // Criar gráficos vazios
+    criarGraficosVazios();
+}
+
+// ==================== CRIAR GRÁFICOS VAZIOS ====================
+function criarGraficosVazios() {
+    // Destruir gráficos existentes
+    if (graficoMensal) graficoMensal.destroy();
+    if (graficoIdade) graficoIdade.destroy();
+    if (graficoTempo) graficoTempo.destroy();
+    
+    // Dados vazios
+    const dadosVaziosMensais = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+    const faixasVazias = [0, 0, 0, 0, 0, 0];
+    const temposVazios = [0, 0, 0];
+    
+    // Gráfico 1: Atendimento Mensal (vazio)
+    const ctxMensal = document.getElementById('graficoMensal').getContext('2d');
+    graficoMensal = new Chart(ctxMensal, {
+        type: 'bar',
+        data: {
+            labels: meses,
+            datasets: [{
+                label: 'Atendimentos',
+                data: dadosVaziosMensais,
+                backgroundColor: 'rgba(6, 182, 212, 0.2)',
+                borderColor: '#06B6D4',
+                borderWidth: 2,
+                borderRadius: 6,
+                yAxisID: 'y'
+            }, {
+                label: 'Satisfação (%)',
+                data: dadosVaziosMensais,
+                type: 'line',
+                borderColor: '#10B981',
+                backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                tension: 0.4,
+                fill: true,
+                yAxisID: 'y1'
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { 
+                    position: 'top',
+                    labels: { font: { family: 'Poppins', size: 12 }, usePointStyle: true }
+                }
+            },
+            scales: {
+                y: { beginAtZero: true, max: 100, title: { display: true, text: 'Atendimentos' } },
+                y1: { beginAtZero: true, max: 100, position: 'right', grid: { drawOnChartArea: false }, title: { display: true, text: 'Satisfação (%)' } }
+            }
+        }
+    });
+    
+    // Gráfico 2: Faixa Etária (vazio)
+    const ctxIdade = document.getElementById('graficoIdade').getContext('2d');
+    graficoIdade = new Chart(ctxIdade, {
+        type: 'doughnut',
+        data: {
+            labels: ['0-12 anos', '13-17 anos', '18-29 anos', '30-44 anos', '45-59 anos', '60+ anos'],
+            datasets: [{
+                data: faixasVazias,
+                backgroundColor: ['#06B6D4', '#0891B2', '#0E7490', '#155E75', '#164E63', '#134E4A'],
+                borderWidth: 0
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { position: 'right', labels: { font: { family: 'Inter', size: 11 }, usePointStyle: true } }
+            }
+        }
+    });
+    
+    // Gráfico 3: Tempo de Atendimento (vazio)
+    const ctxTempo = document.getElementById('graficoTempo').getContext('2d');
+    graficoTempo = new Chart(ctxTempo, {
+        type: 'bar',
+        data: {
+            labels: ['Pouco Urgente', 'Não Urgente', 'Eletivo'],
+            datasets: [{
+                label: 'Tempo (minutos)',
+                data: temposVazios,
+                backgroundColor: [coresRisco.amarelo, coresRisco.verde, coresRisco.azul],
+                borderWidth: 0,
+                borderRadius: 8
+            }]
+        },
+        options: {
+            indexAxis: 'y',
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: {
+                x: { beginAtZero: true, max: 60, title: { display: true, text: 'Minutos' } }
+            }
+        }
+    });
 }
 
 // ==================== ATUALIZAR RESUMO ====================

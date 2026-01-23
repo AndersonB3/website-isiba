@@ -165,17 +165,17 @@ ON CONFLICT (unidade_id, ano, faixa) DO UPDATE SET
 
 -- Inserir Tempo de Atendimento - UPA Gleba A 2026
 INSERT INTO tempo_atendimento (unidade_id, ano, classificacao, tempo_minutos) VALUES
-    ('gleba-a', 2026, 'Pouco Urgente', 45),
+    ('gleba-a', 2026, 'Pouco Urgente', 15),
     ('gleba-a', 2026, 'Não Urgente', 28),
-    ('gleba-a', 2026, 'Eletivo', 15)
+    ('gleba-a', 2026, 'Eletivo', 45)
 ON CONFLICT (unidade_id, ano, classificacao) DO UPDATE SET
     tempo_minutos = EXCLUDED.tempo_minutos;
 
 -- Inserir Tempo de Atendimento - UPA Lucas Evangelista 2026
 INSERT INTO tempo_atendimento (unidade_id, ano, classificacao, tempo_minutos) VALUES
-    ('lucas-evangelista', 2026, 'Pouco Urgente', 52),
+    ('lucas-evangelista', 2026, 'Pouco Urgente', 18),
     ('lucas-evangelista', 2026, 'Não Urgente', 32),
-    ('lucas-evangelista', 2026, 'Eletivo', 18)
+    ('lucas-evangelista', 2026, 'Eletivo', 52)
 ON CONFLICT (unidade_id, ano, classificacao) DO UPDATE SET
     tempo_minutos = EXCLUDED.tempo_minutos;
 
