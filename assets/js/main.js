@@ -146,9 +146,9 @@ if (playVideoBtn) {
     playVideoBtn.addEventListener('click', () => {
         videoModal.classList.add('show-modal');
         document.body.style.overflow = 'hidden';
-        // Carregar o vídeo do YouTube quando abrir o modal
-        if (videoPlayer && videoPlayer.dataset.src) {
-            videoPlayer.src = videoPlayer.dataset.src;
+        // Auto play quando abrir o modal
+        if (videoPlayer) {
+            videoPlayer.play();
         }
     });
 }
@@ -157,9 +157,10 @@ if (playVideoBtn) {
 const closeModal = () => {
     videoModal.classList.remove('show-modal');
     document.body.style.overflow = 'auto';
-    // Parar o vídeo do YouTube quando fechar
+    // Pausar e resetar o vídeo quando fechar
     if (videoPlayer) {
-        videoPlayer.src = '';
+        videoPlayer.pause();
+        videoPlayer.currentTime = 0;
     }
 };
 

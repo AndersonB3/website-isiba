@@ -79,7 +79,7 @@
                 
                 <div class="hero__buttons" data-aos="fade-up" data-aos-delay="200">
                     <button class="btn btn--primary" id="play-video">
-                        <i class="fa-brands fa-youtube"></i> Assistir Vídeo
+                        <i class="fa-solid fa-play"></i> Play Video
                     </button>
                     <a href="#footer" class="btn btn--outline">
                         <i class="fa-solid fa-arrow-down"></i> Saiba Mais
@@ -306,16 +306,18 @@
                 <i class="fa-solid fa-xmark"></i>
             </button>
             <div class="modal__video">
-                <!-- Vídeo do YouTube -->
-                <iframe 
+                <!-- Vídeo Local HTML5 -->
+                <video 
                     id="video-player"
-                    src=""
-                    data-src="https://www.youtube-nocookie.com/embed/UdqhX53bbDA?autoplay=1"
-                    frameborder="0"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowfullscreen
-                    title="ISIBA - Instituto de Gestão em Saúde">
-                </iframe>
+                    width="100%" 
+                    height="100%" 
+                    controls
+                    controlsList="nodownload"
+                    preload="metadata">
+                    <source src="assets/video/institucional.mp4" type="video/mp4">
+                    <source src="assets/video/institucional.webm" type="video/webm">
+                    Seu navegador não suporta a reprodução de vídeos.
+                </video>
             </div>
         </div>
     </div>

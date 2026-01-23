@@ -732,8 +732,7 @@ button {
   background: var(--black-color);
 }
 
-.modal__video video,
-.modal__video iframe {
+.modal__video video {
   position: absolute;
   top: 0;
   left: 0;
