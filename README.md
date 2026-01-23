@@ -7,7 +7,7 @@
 
 ## 📋 Sobre o Projeto
 
-Website institucional moderno e profissional para o **ISIBA Social**, instituição de saúde sem fins lucrativos especializada na gestão de Unidades de Pronto Atendimento (UPAs) e hospitais públicos através de licitações.
+Website institucional moderno e profissional para o **ISIBA**, instituição de saúde sem fins lucrativos especializada na gestão de Unidades de Pronto Atendimento (UPAs) e hospitais públicos através de licitações.
 
 ### 🎯 Objetivos
 
