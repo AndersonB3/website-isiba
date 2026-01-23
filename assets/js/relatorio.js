@@ -136,7 +136,20 @@ document.addEventListener('DOMContentLoaded', async function() {
     document.getElementById('filtroForm').addEventListener('submit', function(e) {
         e.preventDefault();
         const unidade = document.getElementById('unidade').value;
-        dadosJaCarregados = true; // Marcar que o usuário solicitou os dados
+        dadosJaCarregados = true;
+        
+        // Salvar unidade e datas selecionadas no localStorage
+        try {
+            localStorage.setItem('isiba_unidade_selecionada', unidade);
+            const dataInicioStr = pickerInicio?.selectedDates[0]?.toISOString() || '';
+            const dataFimStr = pickerFim?.selectedDates[0]?.toISOString() || '';
+            localStorage.setItem('isiba_data_inicio', dataInicioStr);
+            localStorage.setItem('isiba_data_fim', dataFimStr);
+            console.log('💾 Filtros salvos:', unidade);
+        } catch(err) {
+            console.error('Erro ao salvar:', err);
+        }
+        
         atualizarDados(unidade);
     });
     
@@ -145,9 +158,36 @@ document.addEventListener('DOMContentLoaded', async function() {
     //     atualizarDados(this.value);
     // });
     
-    // ÚLTIMO PASSO: Exibir estado vazio (gráficos zerados e cards com traço)
-    console.log('📋 Exibindo estado vazio - aguardando usuário clicar em Buscar');
-    exibirEstadoVazio();
+    // Restaurar filtros salvos do localStorage
+    const unidadeSalva = localStorage.getItem('isiba_unidade_selecionada');
+    const dataInicioSalva = localStorage.getItem('isiba_data_inicio');
+    const dataFimSalva = localStorage.getItem('isiba_data_fim');
+    
+    if (unidadeSalva) {
+        console.log('📋 Restaurando filtros salvos');
+        
+        // Restaurar unidade no select
+        const selectElement = document.getElementById('unidade');
+        if (selectElement) selectElement.value = unidadeSalva;
+        if (selectUnidade) {
+            try { selectUnidade.setChoiceByValue(unidadeSalva); } catch(e) {}
+        }
+        
+        // Restaurar datas nos pickers
+        if (dataInicioSalva && pickerInicio) {
+            pickerInicio.setDate(new Date(dataInicioSalva), false);
+        }
+        if (dataFimSalva && pickerFim) {
+            pickerFim.setDate(new Date(dataFimSalva), false);
+        }
+        
+        // Buscar dados
+        dadosJaCarregados = true;
+        atualizarDados(unidadeSalva);
+    } else {
+        console.log('📋 Exibindo estado vazio - aguardando usuário clicar em Buscar');
+        exibirEstadoVazio();
+    }
 });
 
 // ==================== ATUALIZAR DADOS ====================
@@ -173,11 +213,68 @@ async function atualizarDados(unidadeId) {
         return;
     }
     
-    // Atualizar cards de resumo
+    // Atualizar cards de resumo (SEMPRE dados anuais completos)
     atualizarResumo(dados);
     
-    // Atualizar gráficos
-    criarGraficos(dados);
+    // Obter período selecionado nos filtros
+    const dataInicio = pickerInicio?.selectedDates[0];
+    const dataFim = pickerFim?.selectedDates[0];
+    
+    // Filtrar dados para os gráficos baseado no período selecionado
+    const dadosFiltrados = filtrarDadosPorPeriodo(dados, dataInicio, dataFim);
+    
+    // Atualizar gráficos (dados filtrados por período)
+    criarGraficos(dadosFiltrados);
+    
+    console.log('✅ Dados carregados. Período:', 
+        dataInicio?.toLocaleDateString('pt-BR'), 'até', 
+        dataFim?.toLocaleDateString('pt-BR'));
+}
+
+// ==================== FILTRAR DADOS POR PERÍODO ====================
+function filtrarDadosPorPeriodo(dados, dataInicio, dataFim) {
+    // Se não houver datas, retorna todos os dados
+    if (!dataInicio || !dataFim) {
+        return dados;
+    }
+    
+    const mesInicio = dataInicio.getMonth(); // 0-11
+    const mesFim = dataFim.getMonth(); // 0-11
+    
+    // Criar cópia dos dados para não modificar o original
+    const dadosFiltrados = JSON.parse(JSON.stringify(dados));
+    
+    // Determinar quais meses incluir
+    let mesesIncluidos = [];
+    
+    if (mesInicio <= mesFim) {
+        // Período normal (ex: janeiro a junho)
+        for (let i = mesInicio; i <= mesFim; i++) {
+            mesesIncluidos.push(i);
+        }
+    } else {
+        // Período que cruza o ano (ex: dezembro a junho)
+        for (let i = mesInicio; i <= 11; i++) {
+            mesesIncluidos.push(i);
+        }
+        for (let i = 0; i <= mesFim; i++) {
+            mesesIncluidos.push(i);
+        }
+    }
+    
+    console.log('📅 Meses filtrados:', mesesIncluidos.map(m => meses[m]).join(', '));
+    
+    // Filtrar atendimentos mensais - zerar meses fora do período
+    dadosFiltrados.atendimentosMensais = dados.atendimentosMensais.map((valor, index) => 
+        mesesIncluidos.includes(index) ? valor : 0
+    );
+    
+    // Filtrar satisfação mensal
+    dadosFiltrados.satisfacaoMensal = dados.satisfacaoMensal.map((valor, index) => 
+        mesesIncluidos.includes(index) ? valor : 0
+    );
+    
+    return dadosFiltrados;
 }
 
 // ==================== EXIBIR ESTADO VAZIO ====================

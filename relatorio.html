@@ -258,6 +258,31 @@
     <script src="assets/js/relatorio-database.js"></script>
 
     <!-- JavaScript -->
-    <script src="assets/js/relatorio.js"></script>
+    <script src="assets/js/relatorio.js?v=2"></script>
+    
+    <!-- Script para persistir filtros -->
+    <script>
+        // Salvar unidade selecionada quando clicar em Buscar
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('filtroForm');
+            if (form) {
+                form.addEventListener('submit', function() {
+                    const unidade = document.getElementById('unidade').value;
+                    try {
+                        localStorage.setItem('isiba_unidade_selecionada', unidade);
+                        console.log('✅ Unidade salva:', unidade);
+                    } catch(e) {
+                        console.error('Erro ao salvar:', e);
+                    }
+                });
+            }
+            
+            // Restaurar e buscar dados se houver unidade salva
+            const unidadeSalva = localStorage.getItem('isiba_unidade_selecionada');
+            if (unidadeSalva) {
+                console.log('📋 Unidade salva encontrada:', unidadeSalva);
+            }
+        });
+    </script>
 </body>
 </html>
