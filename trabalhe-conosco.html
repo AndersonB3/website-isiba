@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="ISIBA Social - Trabalhe Conosco. Faça parte da nossa equipe de gestão humanizada em saúde pública.">
+    <title>Trabalhe Conosco | ISIBA Social</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="assets/img/favicon.png">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <!-- AOS Animation Library -->
+    <link rel="stylesheet" href="https://unpkg.com/aos@2.3.1/dist/aos.css">
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/trabalhe-conosco.css">
+    
+    <!-- EmailJS SDK -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+</head>
+<body>
+    
+    <!-- Main Content -->
+    <main class="main">
+        
+        <!-- Hero Section -->
+        <section class="trabalhe-hero trabalhe-hero--unificado">
+            <div class="container">
+                <div class="trabalhe-hero__content" data-aos="fade-up" style="display: flex; flex-direction: column; align-items: center;">
+                    <img src="assets/img/logomarca superior.png" alt="ISIBA Social Logo" style="width: 180px; height: auto; margin-bottom: 18px; display: block;">
+                    <h1 class="trabalhe-hero__title" style="margin-bottom: 0.5rem; font-size: 2rem; padding-top: 0;">
+                        <i class="fa-solid fa-briefcase"></i>
+                        Trabalhe Conosco
+                    </h1>
+                    <p class="trabalhe-hero__subtitle" style="font-size: 1rem; padding-bottom: 10px;">
+                        Faça parte da nossa equipe e contribua para uma gestão humanizada em saúde pública
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Formulário Section -->
+        <section class="formulario-section">
+            <div class="container">
+                <div class="formulario-wrapper" data-aos="fade-up">
+                    
+                    <!-- Info Card -->
+                    <div class="info-card">
+                        <div class="info-card__header">
+                            <i class="fa-solid fa-heart-pulse"></i>
+                            <h2>Junte-se ao ISIBA</h2>
+                        </div>
+                        <p class="info-card__text">
+                            Estamos sempre em busca de profissionais comprometidos com a excelência no atendimento à saúde pública.
+                        </p>
+                        
+                        <div class="info-card__benefits">
+                            <h3><i class="fa-solid fa-star"></i> Por que trabalhar conosco?</h3>
+                            <ul>
+                                <li><i class="fa-solid fa-check"></i> Ambiente de trabalho humanizado</li>
+                                <li><i class="fa-solid fa-check"></i> Oportunidades de crescimento</li>
+                                <li><i class="fa-solid fa-check"></i> Equipe multidisciplinar</li>
+                                <li><i class="fa-solid fa-check"></i> Impacto social positivo</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="info-card__contact">
+                            <h3><i class="fa-solid fa-envelope"></i> Contato RH</h3>
+                            <p><i class="fa-solid fa-at"></i> rh.isiba@gmail.com</p>
+                            <p><i class="fa-solid fa-phone"></i> (71) 8472-8416</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Formulário -->
+                    <div class="formulario-card">
+                        <div class="formulario-card__header">
+                            <h2><i class="fa-solid fa-file-lines"></i> Envie seu Currículo</h2>
+                            <p>Preencha o formulário abaixo e entraremos em contato</p>
+                        </div>
+                        
+                        <form id="curriculoForm" class="formulario" action="https://formsubmit.co/rh.isiba@gmail.com" method="POST" enctype="multipart/form-data">
+                            <!-- Configurações FormSubmit (campos ocultos) -->
+                            <input type="hidden" name="_subject" value="Novo Currículo - Trabalhe Conosco ISIBA">
+                            <input type="hidden" name="_captcha" value="false">
+                            <input type="hidden" name="_template" value="box">
+                            <input type="text" name="_honey" style="display:none">
+                            
+                            <!-- Nome Completo -->
+                            <div class="formulario__grupo">
+                                <label for="nome" class="formulario__label">
+                                    <i class="fa-solid fa-user"></i> Nome Completo *
+                                </label>
+                                <input 
+                                    type="text" 
+                                    id="nome" 
+                                    name="nome" 
+                                    class="formulario__input" 
+                                    placeholder="Digite seu nome completo"
+                                    required
+                                >
+                            </div>
+                            
+                            <!-- Email -->
+                            <div class="formulario__grupo">
+                                <label for="email" class="formulario__label">
+                                    <i class="fa-solid fa-envelope"></i> E-mail *
+                                </label>
+                                <input 
+                                    type="email" 
+                                    id="email" 
+                                    name="email" 
+                                    class="formulario__input" 
+                                    placeholder="seu.email@exemplo.com"
+                                    required
+                                >
+                            </div>
+                            
+                            <!-- Telefone -->
+                            <div class="formulario__grupo">
+                                <label for="telefone" class="formulario__label">
+                                    <i class="fa-solid fa-phone"></i> Telefone *
+                                </label>
+                                <input 
+                                    type="tel" 
+                                    id="telefone" 
+                                    name="telefone" 
+                                    class="formulario__input" 
+                                    placeholder="(XX) XXXXX-XXXX"
+                                    required
+                                >
+                            </div>
+                            
+                            <!-- Mensagem -->
+                            <div class="formulario__grupo">
+                                <label for="mensagem" class="formulario__label">
+                                    <i class="fa-solid fa-message"></i> Mensagem
+                                </label>
+                                <textarea 
+                                    id="mensagem" 
+                                    name="mensagem" 
+                                    class="formulario__textarea" 
+                                    placeholder="Conte-nos um pouco sobre você e sua experiência..."
+                                    rows="4"
+                                ></textarea>
+                            </div>
+                            
+                            <!-- Upload Currículo -->
+                            <div class="formulario__grupo">
+                                <label for="curriculo" class="formulario__label">
+                                    <i class="fa-solid fa-file-pdf"></i> Currículo (PDF) *
+                                </label>
+                                <div class="formulario__upload">
+                                    <input 
+                                        type="file" 
+                                        id="curriculo" 
+                                        name="attachment" 
+                                        class="formulario__file" 
+                                        accept=".pdf"
+                                        required
+                                    >
+                                    <div class="formulario__upload-placeholder">
+                                        <i class="fa-solid fa-cloud-arrow-up"></i>
+                                        <span id="fileName">Clique ou arraste seu currículo aqui</span>
+                                        <small>Apenas arquivos PDF (máx. 5MB)</small>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Botão Enviar -->
+                            <button type="submit" class="formulario__btn" id="btnEnviar">
+                                <i class="fa-solid fa-paper-plane"></i>
+                                <span>Enviar Currículo</span>
+                            </button>
+                            
+                            <!-- Mensagem de Status -->
+                            <div id="formStatus" class="formulario__status"></div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer" style="padding: 20px 0;">
+        <div class="container">
+            <div class="footer__content" style="flex-direction: column; align-items: center; justify-content: center; text-align: center;">
+                <div class="footer__brand" style="display: none;"></div>
+                <div class="footer__copy">
+                    <p>© 2026 ISIBA Social - Todos os direitos reservados</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- AOS Animation -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    
+    <!-- JavaScript -->
+    <script src="assets/js/trabalhe-conosco-formsubmit.js"></script>
+</body>
+</html>
