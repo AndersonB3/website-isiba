@@ -7,6 +7,10 @@ vendor/
 .env.local
 .env.*.local
 
+# ⚠️ IMPORTANTE: Arquivos com credenciais do Supabase
+**/supabase-config.js
+!**/supabase-config.example.js
+
 # Logs
 *.log
 npm-debug.log*
@@ -35,3 +39,9 @@ Desktop.ini
 # Build
 dist/
 build/
+
+# Backups e arquivos de teste
+*.backup
+*.sql.backup
+**/teste-*.pdf
+**/contracheque-teste.pdf

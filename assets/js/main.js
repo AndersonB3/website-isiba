@@ -222,6 +222,6 @@ window.addEventListener('load', () => {
 });
 
 /*=============== CONSOLE BRANDING ===============*/
-console.log('%c🏥 ISIBA Social', 'font-size: 20px; font-weight: bold; color: #0891b2;');
+console.log('%c🏥 ISIBA', 'font-size: 20px; font-weight: bold; color: #0891b2;');
 console.log('%cGestão Humanizada em Saúde Pública', 'font-size: 14px; color: #059669;');
 console.log('%cWebsite desenvolvido com ❤️', 'font-size: 12px; color: #6b7280;');

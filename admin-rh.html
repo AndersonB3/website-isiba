@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Painel Administrativo RH - ISIBA Social">
+    <title>Painel RH | ISIBA Social</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="assets/img/favicon.png">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="assets/css/admin-rh.css">
+</head>
+<body>
+    <!-- Tela de Login -->
+    <div id="loginScreen" class="login-screen">
+        <div class="login-container">
+            <div class="login-card">
+                <div class="login-header">
+                    <img src="assets/img/logomarca alternativa.png" alt="ISIBA Logo" class="login-logo">
+                    <h1>Painel Administrativo</h1>
+                    <p>Recursos Humanos - ISIBA Social</p>
+                </div>
+
+                <form id="loginForm" class="login-form">
+                    <div class="form-group">
+                        <label for="loginUsuario" class="form-label">
+                            <i class="fa-solid fa-user"></i>
+                            Usuário
+                        </label>
+                        <input 
+                            type="text" 
+                            id="loginUsuario" 
+                            name="usuario" 
+                            class="form-input"
+                            placeholder="Digite seu usuário"
+                            required
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label for="loginSenha" class="form-label">
+                            <i class="fa-solid fa-lock"></i>
+                            Senha
+                        </label>
+                        <div class="password-wrapper">
+                            <input 
+                                type="password" 
+                                id="loginSenha" 
+                                name="senha" 
+                                class="form-input"
+                                placeholder="Digite sua senha"
+                                required
+                            >
+                            <button type="button" class="password-toggle" id="toggleLoginPassword">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div id="loginStatus" class="login-status"></div>
+
+                    <button type="submit" class="btn-submit" id="btnLogin">
+                        <i class="fa-solid fa-sign-in-alt"></i>
+                        Entrar no Painel
+                    </button>
+                </form>
+
+                <div class="login-footer">
+                    <p><i class="fa-solid fa-shield-halved"></i> Acesso restrito ao RH</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dashboard Principal -->
+    <div id="dashboard" class="dashboard" style="display: none;">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <img src="assets/img/logomarca alternativa.png" alt="ISIBA Logo" class="sidebar-logo">
+                <h2>Painel RH</h2>
+            </div>
+
+            <nav class="sidebar-nav">
+                <button class="nav-item active" data-section="overview">
+                    <i class="fa-solid fa-chart-line"></i>
+                    <span>Visão Geral</span>
+                </button>
+                <button class="nav-item" data-section="cadastrar">
+                    <i class="fa-solid fa-user-plus"></i>
+                    <span>Cadastrar Funcionário</span>
+                </button>
+                <button class="nav-item" data-section="listar">
+                    <i class="fa-solid fa-users"></i>
+                    <span>Listar Funcionários</span>
+                </button>
+                <button class="nav-item" data-section="upload">
+                    <i class="fa-solid fa-file-arrow-up"></i>
+                    <span>Enviar Contracheque</span>
+                </button>
+                <button class="nav-item" data-section="historico">
+                    <i class="fa-solid fa-clock-rotate-left"></i>
+                    <span>Histórico de Envios</span>
+                </button>
+            </nav>
+
+            <div class="sidebar-footer">
+                <button class="btn-logout" id="btnLogout">
+                    <i class="fa-solid fa-right-from-bracket"></i>
+                    <span>Sair</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- Conteúdo Principal -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="content-header">
+                <div class="header-info">
+                    <h1 id="pageTitle">Visão Geral</h1>
+                    <p id="pageSubtitle">Painel de controle do sistema</p>
+                </div>
+                <div class="header-user">
+                    <i class="fa-solid fa-user-circle"></i>
+                    <span id="userName">Administrador RH</span>
+                </div>
+            </header>
+
+            <!-- Seção: Visão Geral -->
+            <section id="section-overview" class="content-section active">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background: linear-gradient(135deg, #0066cc 0%, #00a651 100%);">
+                            <i class="fa-solid fa-users"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="totalFuncionarios">0</h3>
+                            <p>Funcionários Ativos</p>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background: linear-gradient(135deg, #00a651 0%, #0066cc 100%);">
+                            <i class="fa-solid fa-file-invoice"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="totalContracheques">0</h3>
+                            <p>Contracheques Enviados</p>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);">
+                            <i class="fa-solid fa-calendar-check"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="enviosMes">0</h3>
+                            <p>Envios Este Mês</p>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background: linear-gradient(135deg, #8e44ad 0%, #3498db 100%);">
+                            <i class="fa-solid fa-clock"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="ultimoEnvio">Nenhum</h3>
+                            <p>Último Envio</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="welcome-card">
+                    <h2><i class="fa-solid fa-hand-wave"></i> Bem-vindo ao Painel Administrativo</h2>
+                    <p>Use o menu lateral para navegar entre as funcionalidades:</p>
+                    <ul>
+                        <li><strong>Cadastrar Funcionário:</strong> Adicione novos colaboradores ao sistema</li>
+                        <li><strong>Listar Funcionários:</strong> Visualize e gerencie todos os cadastros</li>
+                        <li><strong>Enviar Contracheque:</strong> Faça upload de contracheques em PDF</li>
+                        <li><strong>Histórico de Envios:</strong> Consulte todos os envios realizados</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Seção: Cadastrar Funcionário -->
+            <section id="section-cadastrar" class="content-section">
+                <div class="form-card">
+                    <h2><i class="fa-solid fa-user-plus"></i> Cadastrar Novo Funcionário</h2>
+                    <p class="form-description">Preencha os dados do colaborador para criar o acesso ao portal</p>
+
+                    <form id="formCadastrar" class="admin-form">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="cadNome" class="form-label">
+                                    <i class="fa-solid fa-user"></i>
+                                    Nome Completo *
+                                </label>
+                                <input 
+                                    type="text" 
+                                    id="cadNome" 
+                                    name="nome" 
+                                    class="form-input"
+                                    placeholder="Ex: João Silva Santos"
+                                    required
+                                >
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="cadCPF" class="form-label">
+                                    <i class="fa-solid fa-id-card"></i>
+                                    CPF *
+                                </label>
+                                <input 
+                                    type="text" 
+                                    id="cadCPF" 
+                                    name="cpf" 
+                                    class="form-input"
+                                    placeholder="000.000.000-00"
+                                    maxlength="14"
+                                    required
+                                >
+                            </div>
+
+                            <div class="form-group">
+                                <label for="cadEmail" class="form-label">
+                                    <i class="fa-solid fa-envelope"></i>
+                                    E-mail (Opcional)
+                                </label>
+                                <input 
+                                    type="email" 
+                                    id="cadEmail" 
+                                    name="email" 
+                                    class="form-input"
+                                    placeholder="email@exemplo.com"
+                                >
+                                <small class="form-hint">Campo opcional, nem todos os funcionários possuem e-mail</small>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="cadSenha" class="form-label">
+                                    <i class="fa-solid fa-lock"></i>
+                                    Senha de Acesso *
+                                </label>
+                                <div class="password-wrapper">
+                                    <input 
+                                        type="password" 
+                                        id="cadSenha" 
+                                        name="senha" 
+                                        class="form-input"
+                                        placeholder="Mínimo 6 caracteres"
+                                        minlength="6"
+                                        required
+                                    >
+                                    <button type="button" class="password-toggle" id="toggleCadSenha">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                </div>
+                                <small class="form-hint">O funcionário usará esta senha para acessar o portal</small>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="cadStatus" class="form-label">
+                                    <i class="fa-solid fa-toggle-on"></i>
+                                    Status
+                                </label>
+                                <select id="cadStatus" name="status" class="form-input">
+                                    <option value="ativo">Ativo</option>
+                                    <option value="inativo">Inativo</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div id="cadastroStatus" class="form-status"></div>
+
+                        <div class="form-actions">
+                            <button type="button" class="btn-secondary" id="btnLimparCadastro">
+                                <i class="fa-solid fa-eraser"></i>
+                                Limpar Formulário
+                            </button>
+                            <button type="submit" class="btn-primary" id="btnCadastrar">
+                                <i class="fa-solid fa-save"></i>
+                                Cadastrar Funcionário
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </section>
+
+            <!-- Seção: Listar Funcionários -->
+            <section id="section-listar" class="content-section">
+                <div class="form-card">
+                    <div class="card-header">
+                        <h2><i class="fa-solid fa-users"></i> Funcionários Cadastrados</h2>
+                        <div class="search-box">
+                            <i class="fa-solid fa-search"></i>
+                            <input 
+                                type="text" 
+                                id="searchFuncionario" 
+                                placeholder="Buscar por nome ou CPF..."
+                                class="search-input"
+                            >
+                        </div>
+                    </div>
+
+                    <div id="listaFuncionarios" class="table-container">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Nome</th>
+                                    <th>CPF</th>
+                                    <th>E-mail</th>
+                                    <th>Status</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabelaFuncionarios">
+                                <tr>
+                                    <td colspan="5" class="empty-state">
+                                        <i class="fa-solid fa-users-slash"></i>
+                                        <p>Nenhum funcionário cadastrado ainda</p>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Seção: Enviar Contracheque -->
+            <section id="section-upload" class="content-section">
+                <div class="form-card">
+                    <h2><i class="fa-solid fa-file-arrow-up"></i> Enviar Contracheque</h2>
+                    <p class="form-description">Selecione o funcionário e faça upload do contracheque em PDF</p>
+
+                    <form id="formUpload" class="admin-form">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="uploadFuncionario" class="form-label">
+                                    <i class="fa-solid fa-user"></i>
+                                    Selecionar Funcionário *
+                                </label>
+                                <select id="uploadFuncionario" name="funcionario" class="form-input" required>
+                                    <option value="">Escolha um funcionário...</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="uploadMes" class="form-label">
+                                    <i class="fa-solid fa-calendar"></i>
+                                    Mês de Referência *
+                                </label>
+                                <select id="uploadMes" name="mes" class="form-input" required>
+                                    <option value="">Selecione o mês...</option>
+                                    <option value="Janeiro">Janeiro</option>
+                                    <option value="Fevereiro">Fevereiro</option>
+                                    <option value="Março">Março</option>
+                                    <option value="Abril">Abril</option>
+                                    <option value="Maio">Maio</option>
+                                    <option value="Junho">Junho</option>
+                                    <option value="Julho">Julho</option>
+                                    <option value="Agosto">Agosto</option>
+                                    <option value="Setembro">Setembro</option>
+                                    <option value="Outubro">Outubro</option>
+                                    <option value="Novembro">Novembro</option>
+                                    <option value="Dezembro">Dezembro</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="uploadAno" class="form-label">
+                                    <i class="fa-solid fa-calendar-days"></i>
+                                    Ano *
+                                </label>
+                                <select id="uploadAno" name="ano" class="form-input" required>
+                                    <option value="">Selecione o ano...</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">
+                                <i class="fa-solid fa-file-pdf"></i>
+                                Arquivo PDF *
+                            </label>
+                            <div class="upload-area" id="uploadArea">
+                                <input type="file" id="uploadFile" name="arquivo" accept=".pdf" hidden required>
+                                <div class="upload-content">
+                                    <i class="fa-solid fa-cloud-arrow-up"></i>
+                                    <p><strong>Clique para selecionar</strong> ou arraste o arquivo aqui</p>
+                                    <small>Apenas arquivos PDF (máx. 10MB)</small>
+                                </div>
+                                <div class="upload-preview" id="uploadPreview" style="display: none;">
+                                    <i class="fa-solid fa-file-pdf"></i>
+                                    <div class="preview-info">
+                                        <p class="file-name" id="fileName"></p>
+                                        <p class="file-size" id="fileSize"></p>
+                                    </div>
+                                    <button type="button" class="btn-remove" id="btnRemoveFile">
+                                        <i class="fa-solid fa-times"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="uploadStatus" class="form-status"></div>
+
+                        <div class="form-actions">
+                            <button type="button" class="btn-secondary" id="btnLimparUpload">
+                                <i class="fa-solid fa-eraser"></i>
+                                Limpar Formulário
+                            </button>
+                            <button type="submit" class="btn-primary" id="btnEnviar">
+                                <i class="fa-solid fa-paper-plane"></i>
+                                Enviar Contracheque
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </section>
+
+            <!-- Seção: Histórico -->
+            <section id="section-historico" class="content-section">
+                <div class="form-card">
+                    <div class="card-header">
+                        <h2><i class="fa-solid fa-clock-rotate-left"></i> Histórico de Envios</h2>
+                        <div class="filter-box">
+                            <select id="filterMes" class="filter-select">
+                                <option value="">Todos os meses</option>
+                                <option value="Janeiro">Janeiro</option>
+                                <option value="Fevereiro">Fevereiro</option>
+                                <option value="Março">Março</option>
+                                <option value="Abril">Abril</option>
+                                <option value="Maio">Maio</option>
+                                <option value="Junho">Junho</option>
+                                <option value="Julho">Julho</option>
+                                <option value="Agosto">Agosto</option>
+                                <option value="Setembro">Setembro</option>
+                                <option value="Outubro">Outubro</option>
+                                <option value="Novembro">Novembro</option>
+                                <option value="Dezembro">Dezembro</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div id="listaHistorico" class="table-container">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Funcionário</th>
+                                    <th>Mês/Ano</th>
+                                    <th>Data de Envio</th>
+                                    <th>Tamanho</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabelaHistorico">
+                                <tr>
+                                    <td colspan="5" class="empty-state">
+                                        <i class="fa-solid fa-inbox"></i>
+                                        <p>Nenhum contracheque enviado ainda</p>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Modal de Edição de Funcionário -->
+    <div id="modalEditarFuncionario" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><i class="fa-solid fa-user-edit"></i> Editar Funcionário</h2>
+                <button class="modal-close" id="btnCloseModal">
+                    <i class="fa-solid fa-times"></i>
+                </button>
+            </div>
+            
+            <form id="formEditarFuncionario" class="modal-form">
+                <input type="hidden" id="editId">
+                
+                <div class="form-group">
+                    <label for="editNome" class="form-label">
+                        <i class="fa-solid fa-user"></i>
+                        Nome Completo *
+                    </label>
+                    <input 
+                        type="text" 
+                        id="editNome" 
+                        class="form-input"
+                        required
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="editCPF" class="form-label">
+                        <i class="fa-solid fa-id-card"></i>
+                        CPF *
+                    </label>
+                    <input 
+                        type="text" 
+                        id="editCPF" 
+                        class="form-input"
+                        disabled
+                        style="background: #f5f5f5; cursor: not-allowed;"
+                    >
+                    <small class="form-hint">O CPF não pode ser alterado</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="editEmail" class="form-label">
+                        <i class="fa-solid fa-envelope"></i>
+                        E-mail (Opcional)
+                    </label>
+                    <input 
+                        type="email" 
+                        id="editEmail" 
+                        class="form-input"
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="editSenha" class="form-label">
+                        <i class="fa-solid fa-lock"></i>
+                        Nova Senha (deixe em branco para não alterar)
+                    </label>
+                    <div class="password-wrapper">
+                        <input 
+                            type="password" 
+                            id="editSenha" 
+                            class="form-input"
+                            placeholder="Digite apenas se quiser alterar"
+                            minlength="6"
+                        >
+                        <button type="button" class="password-toggle" id="toggleEditSenha">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                    <small class="form-hint">Mínimo 6 caracteres. Deixe vazio para manter a senha atual.</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="editStatus" class="form-label">
+                        <i class="fa-solid fa-toggle-on"></i>
+                        Status
+                    </label>
+                    <select id="editStatus" class="form-input">
+                        <option value="ativo">Ativo</option>
+                        <option value="inativo">Inativo</option>
+                    </select>
+                </div>
+
+                <div id="editarStatus" class="form-status"></div>
+
+                <div class="modal-actions">
+                    <button type="button" class="btn-secondary" id="btnCancelarEdicao">
+                        <i class="fa-solid fa-times"></i>
+                        Cancelar
+                    </button>
+                    <button type="submit" class="btn-primary" id="btnSalvarEdicao">
+                        <i class="fa-solid fa-save"></i>
+                        Salvar Alterações
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Supabase JavaScript Client -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@1"></script>
+    
+    <!-- JavaScript -->
+    <script src="assets/js/supabase-config.js"></script>
+    <script src="assets/js/supabase-admin.js"></script>
+    <script src="assets/js/admin-rh.js"></script>
+</body>
+</html>

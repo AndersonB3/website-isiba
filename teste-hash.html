@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste de Hash - ISIBA</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 600px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+
+        p {
+            color: #666;
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            color: #555;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        button {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .result {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+            display: none;
+        }
+
+        .result.show {
+            display: block;
+        }
+
+        .result h3 {
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .hash-item {
+            margin-bottom: 15px;
+        }
+
+        .hash-label {
+            color: #666;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .hash-value {
+            background: white;
+            padding: 10px;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            word-break: break-all;
+            color: #333;
+            border: 1px solid #e0e0e0;
+        }
+
+        .sql-query {
+            margin-top: 20px;
+            padding: 15px;
+            background: #263238;
+            color: #aed581;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            white-space: pre-wrap;
+            word-break: break-all;
+        }
+
+        .copy-btn {
+            margin-top: 10px;
+            padding: 8px 15px;
+            background: #4caf50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 14px;
+            cursor: pointer;
+            display: inline-block;
+        }
+
+        .copy-btn:hover {
+            background: #45a049;
+        }
+
+        .warning {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin-top: 20px;
+            border-radius: 5px;
+        }
+
+        .warning strong {
+            color: #856404;
+        }
+
+        .warning p {
+            color: #856404;
+            margin: 0;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔐 Teste de Hash SHA-256</h1>
+        <p>Digite suas credenciais para gerar os hashes que devem estar no banco de dados.</p>
+
+        <form id="hashForm">
+            <div class="form-group">
+                <label for="cpf">CPF (sem formatação)</label>
+                <input 
+                    type="text" 
+                    id="cpf" 
+                    placeholder="08676044503"
+                    value="08676044503"
+                    required
+                >
+            </div>
+
+            <div class="form-group">
+                <label for="senha">Senha</label>
+                <input 
+                    type="text" 
+                    id="senha" 
+                    placeholder="isiba2026@"
+                    value="isiba2026@"
+                    required
+                >
+            </div>
+
+            <button type="submit">🔑 Gerar Hashes</button>
+        </form>
+
+        <div id="result" class="result">
+            <h3>✅ Hashes Gerados:</h3>
+            
+            <div class="hash-item">
+                <div class="hash-label">CPF (sem formatação):</div>
+                <div class="hash-value" id="cpfLimpo"></div>
+            </div>
+
+            <div class="hash-item">
+                <div class="hash-label">Hash do CPF (cpf_hash):</div>
+                <div class="hash-value" id="cpfHash"></div>
+            </div>
+
+            <div class="hash-item">
+                <div class="hash-label">Hash da Senha (senha_hash):</div>
+                <div class="hash-value" id="senhaHash"></div>
+            </div>
+
+            <h3 style="margin-top: 25px;">📝 Query SQL para verificar:</h3>
+            <div class="sql-query" id="sqlQuery"></div>
+            <button class="copy-btn" onclick="copiarSQL()">📋 Copiar SQL</button>
+
+            <h3 style="margin-top: 25px;">🔧 Query SQL para atualizar (se necessário):</h3>
+            <div class="sql-query" id="sqlUpdate"></div>
+            <button class="copy-btn" onclick="copiarUpdate()">📋 Copiar UPDATE</button>
+
+            <div class="warning">
+                <strong>⚠️ IMPORTANTE:</strong>
+                <p>Execute o SELECT primeiro para ver o que está no banco. Se os hashes não coincidirem, use o UPDATE.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Função para gerar hash SHA-256
+        async function hashString(str) {
+            const encoder = new TextEncoder();
+            const data = encoder.encode(str);
+            const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+            return hashHex;
+        }
+
+        // Form submit
+        document.getElementById('hashForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const cpf = document.getElementById('cpf').value;
+            const senha = document.getElementById('senha').value;
+
+            // Remover formatação do CPF
+            const cpfLimpo = cpf.replace(/\D/g, '');
+
+            // Gerar hashes
+            const cpfHash = await hashString(cpfLimpo);
+            const senhaHash = await hashString(senha);
+
+            // Exibir resultados
+            document.getElementById('cpfLimpo').textContent = cpfLimpo;
+            document.getElementById('cpfHash').textContent = cpfHash;
+            document.getElementById('senhaHash').textContent = senhaHash;
+
+            // Gerar SQL
+            const sqlQuery = `-- Verificar colaborador no banco
+SELECT 
+    id,
+    nome_completo,
+    cpf,
+    cpf_hash,
+    senha_hash,
+    ativo,
+    CASE 
+        WHEN cpf_hash = '${cpfHash}' THEN '✅ CPF Hash OK' 
+        ELSE '❌ CPF Hash DIFERENTE' 
+    END as status_cpf,
+    CASE 
+        WHEN senha_hash = '${senhaHash}' THEN '✅ Senha Hash OK' 
+        ELSE '❌ Senha Hash DIFERENTE' 
+    END as status_senha
+FROM colaboradores 
+WHERE cpf = '${cpfLimpo}';`;
+
+            const sqlUpdate = `-- Atualizar hashes do colaborador
+UPDATE colaboradores 
+SET 
+    cpf_hash = '${cpfHash}',
+    senha_hash = '${senhaHash}',
+    atualizado_em = NOW()
+WHERE cpf = '${cpfLimpo}';
+
+-- Verificar atualização
+SELECT 
+    nome_completo,
+    cpf,
+    cpf_hash,
+    senha_hash,
+    ativo,
+    atualizado_em
+FROM colaboradores 
+WHERE cpf = '${cpfLimpo}';`;
+
+            document.getElementById('sqlQuery').textContent = sqlQuery;
+            document.getElementById('sqlUpdate').textContent = sqlUpdate;
+
+            // Mostrar resultado
+            document.getElementById('result').classList.add('show');
+        });
+
+        // Copiar SQL
+        function copiarSQL() {
+            const sql = document.getElementById('sqlQuery').textContent;
+            navigator.clipboard.writeText(sql).then(() => {
+                alert('✅ SQL copiado para a área de transferência!');
+            });
+        }
+
+        function copiarUpdate() {
+            const sql = document.getElementById('sqlUpdate').textContent;
+            navigator.clipboard.writeText(sql).then(() => {
+                alert('✅ SQL de UPDATE copiado para a área de transferência!');
+            });
+        }
+
+        // Gerar automaticamente ao carregar
+        window.addEventListener('load', () => {
+            document.getElementById('hashForm').dispatchEvent(new Event('submit'));
+        });
+    </script>
+</body>
+</html>

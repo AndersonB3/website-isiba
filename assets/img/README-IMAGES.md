@@ -1,6 +1,6 @@
 <!-- Este arquivo serve como placeholder para as imagens necessárias -->
 
-# 🖼️ Guia de Imagens - ISIBA Social
+# 🖼️ Guia de Imagens - ISIBA
 
 ## Imagens Necessárias
 
@@ -12,7 +12,7 @@ Este documento lista todas as imagens necessárias para o website funcionar comp
 **Dimensões recomendadas:** 400x100px (ou proporcional)  
 **Formato:** PNG com fundo transparente  
 **Uso:** Logo principal no header (colorida)  
-**Descrição:** Logomarca oficial do ISIBA Social em cores institucionais
+**Descrição:** Logomarca oficial do ISIBA em cores institucionais
 
 ---
 

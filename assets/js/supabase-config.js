@@ -18,6 +18,12 @@ if (SUPABASE_ANON_KEY.includes('COLE_AQUI')) {
     console.log('📍 Acesse: https://supabase.com/dashboard/project/kklhcmrnraroletwbbid/settings/api');
 }
 
+// Configurações adicionais do sistema
+window.CONFIG = {
+    bucket: 'contracheques',
+    adminUser: 'admin.rh'
+};
+
 // Inicializar cliente Supabase (usar window.supabaseClient para evitar conflito)
 window.supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
