@@ -179,6 +179,10 @@ async function baixarContracheque(arquivoUrl, nomeArquivo) {
             throw new Error(result.error || 'Erro ao gerar link de download');
         }
 
+        if (!result.url) {
+            throw new Error('URL de download não retornada');
+        }
+
         // Abrir em nova aba
         window.open(result.url, '_blank');
         
@@ -190,8 +194,8 @@ async function baixarContracheque(arquivoUrl, nomeArquivo) {
         }, 2000);
 
     } catch (error) {
-        console.error('Erro ao baixar:', error);
-        alert('Erro ao baixar o contracheque. Tente novamente.');
+        console.error('❌ Erro ao baixar contracheque:', error);
+        alert('Erro ao baixar o contracheque: ' + error.message);
         btn.disabled = false;
         btn.innerHTML = originalHtml;
     }

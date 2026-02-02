@@ -144,13 +144,24 @@ async function downloadMeuContracheque(arquivoUrl) {
     try {
         const { data, error } = await window.supabaseClient
             .storage
-            .from('contracheques')
+            .from(window.CONFIG.bucket)
             .createSignedUrl(arquivoUrl, 60); // URL válida por 60 segundos
         
         if (error) throw error;
         
-        console.log('✅ URL de download gerada');
-        return { success: true, url: data.signedUrl };
+        if (!data) {
+            throw new Error('Resposta vazia do Supabase Storage');
+        }
+        
+        // Tentar diferentes formatos de retorno
+        const url = data.signedUrl || data.signedURL || data.url;
+        
+        if (!url) {
+            throw new Error('URL não encontrada na resposta. Verifique se o arquivo existe no bucket.');
+        }
+        
+        console.log('✅ URL de download gerada com sucesso');
+        return { success: true, url };
         
     } catch (error) {
         console.error('❌ Erro ao gerar URL de download:', error);
