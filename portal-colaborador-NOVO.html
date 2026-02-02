@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Portal do Colaborador - ISIBA">
+    <title>Portal do Colaborador | ISIBA</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="assets/img/favicon.png">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="assets/css/colaborador-dashboard.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-container">
+            <div class="header-left">
+                <img src="assets/img/logomarca alternativa.png" alt="ISIBA Logo" class="header-logo">
+                <div class="header-info">
+                    <h1>Portal do Colaborador</h1>
+                    <p id="welcomeMessage">Bem-vindo(a)!</p>
+                </div>
+            </div>
+            <div class="header-right">
+                <button class="btn-logout" id="btnLogout">
+                    <i class="fa-solid fa-right-from-bracket"></i>
+                    <span>Sair</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container">
+            <!-- Stats Cards -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon" style="background: linear-gradient(135deg, #0066cc 0%, #00a651 100%);">
+                        <i class="fa-solid fa-file-invoice"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 id="totalContracheques">0</h3>
+                        <p>Contracheques Disponíveis</p>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon" style="background: linear-gradient(135deg, #00a651 0%, #0066cc 100%);">
+                        <i class="fa-solid fa-file-alt"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 id="totalInformes">0</h3>
+                        <p>Informes de IR Disponíveis</p>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon" style="background: linear-gradient(135deg, #0066cc 0%, #00a651 100%);">
+                        <i class="fa-solid fa-calendar-check"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 id="ultimoDocumento">-</h3>
+                        <p>Último Documento</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Documentos List -->
+            <div class="contracheques-section">
+                <div class="section-header">
+                    <h2>
+                        <i class="fa-solid fa-file-lines" id="sectionIcon"></i> 
+                        <span id="sectionTitle">Meus Documentos</span>
+                    </h2>
+                    <div class="filter-group">
+                        <select id="filterTipo" class="filter-select">
+                            <option value="">Todos os Documentos</option>
+                            <option value="contracheque">Meus Contracheques</option>
+                            <option value="informe_ir">Meu IRRF</option>
+                        </select>
+                        <select id="filterAno" class="filter-select">
+                            <option value="">Todos os anos</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div id="contrachequesList" class="contracheques-list">
+                    <!-- Loading state -->
+                    <div class="loading-state">
+                        <i class="fas fa-spinner fa-spin"></i>
+                        <p>Carregando documentos...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2026 ISIBA. Todos os direitos reservados.</p>
+        </div>
+    </footer>
+
+    <!-- Supabase JavaScript Client -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@1"></script>
+    
+    <!-- JavaScript -->
+    <script src="assets/js/supabase-config.js"></script>
+    <script src="assets/js/supabase-colaborador.js"></script>
+    <script src="assets/js/portal-colaborador.js"></script>
+</body>
+</html>

@@ -509,7 +509,7 @@ async function deletarFuncionario(id, nome) {
 }
 
 // ========================================
-// UPLOAD DE CONTRACHEQUE
+// UPLOAD DE DOCUMENTOS
 // ========================================
 function initUpload() {
     const formUpload = document.getElementById('formUpload');
@@ -517,7 +517,28 @@ function initUpload() {
     const uploadFile = document.getElementById('uploadFile');
     const uploadPreview = document.getElementById('uploadPreview');
     const btnRemove = document.getElementById('btnRemoveFile');
+    const uploadTipo = document.getElementById('uploadTipo');
+    const groupMes = document.getElementById('groupMes');
+    const uploadMes = document.getElementById('uploadMes');
+    const btnEnviarTexto = document.getElementById('btnEnviarTexto');
     let selectedFile = null;
+
+    // Controlar exibição do campo Mês baseado no tipo
+    uploadTipo.addEventListener('change', function() {
+        if (this.value === 'informe_ir') {
+            groupMes.style.display = 'none';
+            uploadMes.removeAttribute('required');
+            btnEnviarTexto.textContent = 'Enviar Informe de IR';
+        } else if (this.value === 'contracheque') {
+            groupMes.style.display = 'block';
+            uploadMes.setAttribute('required', 'required');
+            btnEnviarTexto.textContent = 'Enviar Contracheque';
+        } else {
+            groupMes.style.display = 'block';
+            uploadMes.setAttribute('required', 'required');
+            btnEnviarTexto.textContent = 'Enviar Documento';
+        }
+    });
 
     // Click para selecionar arquivo
     uploadArea.addEventListener('click', (e) => {
@@ -565,6 +586,9 @@ function initUpload() {
         uploadFile.value = '';
         document.querySelector('.upload-content').style.display = 'flex';
         uploadPreview.style.display = 'none';
+        groupMes.style.display = 'block';
+        uploadMes.setAttribute('required', 'required');
+        btnEnviarTexto.textContent = 'Enviar Documento';
         hideUploadStatus();
     });
 
@@ -577,40 +601,45 @@ function initUpload() {
         btnEnviar.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enviando...';
 
         const colaboradorId = document.getElementById('uploadFuncionario').value;
-        const mes = document.getElementById('uploadMes').value;
+        const tipoDocumento = document.getElementById('uploadTipo').value;
+        const mes = tipoDocumento === 'informe_ir' ? 'Anual' : document.getElementById('uploadMes').value;
         const ano = document.getElementById('uploadAno').value;
 
         if (!selectedFile) {
             showUploadStatus('error', 'Selecione um arquivo PDF');
             btnEnviar.disabled = false;
-            btnEnviar.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Enviar Contracheque';
+            btnEnviar.innerHTML = '<i class="fa-solid fa-paper-plane"></i> <span id="btnEnviarTexto">Enviar Documento</span>';
             return;
         }
 
         // Upload para o Supabase
-        const result = await uploadContracheque(colaboradorId, mes, ano, selectedFile);
+        const result = await uploadDocumento(colaboradorId, mes, ano, selectedFile, tipoDocumento);
 
         if (result.success) {
+            const tipoTexto = tipoDocumento === 'informe_ir' ? 'Informe de IR' : 'Contracheque';
             const mensagem = result.updated 
-                ? 'Contracheque atualizado com sucesso!' 
-                : 'Contracheque enviado com sucesso!';
+                ? `${tipoTexto} atualizado com sucesso!` 
+                : `${tipoTexto} enviado com sucesso!`;
             showUploadStatus('success', mensagem);
             formUpload.reset();
             selectedFile = null;
             uploadFile.value = '';
             document.querySelector('.upload-content').style.display = 'flex';
             uploadPreview.style.display = 'none';
+            groupMes.style.display = 'block';
+            uploadMes.setAttribute('required', 'required');
+            btnEnviarTexto.textContent = 'Enviar Documento';
             atualizarEstatisticas();
             
             setTimeout(() => {
                 hideUploadStatus();
             }, 3000);
         } else {
-            showUploadStatus('error', result.error || 'Erro ao enviar contracheque');
+            showUploadStatus('error', result.error || 'Erro ao enviar documento');
         }
 
         btnEnviar.disabled = false;
-        btnEnviar.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Enviar Contracheque';
+        btnEnviar.innerHTML = '<i class="fa-solid fa-paper-plane"></i> <span id="btnEnviarTexto">Enviar Documento</span>';
     });
 
     function handleFileSelect(file) {

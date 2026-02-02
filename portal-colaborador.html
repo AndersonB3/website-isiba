@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Portal do Colaborador - ISIBA">
+    <title>Portal do Colaborador | ISIBA</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="assets/img/favicon.png">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="assets/css/colaborador-dashboard.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-background"></div>
+        <div class="header-container">
+            <div class="header-left">
+                <div class="logo-container">
+                    <img src="assets/img/logomarca alternativa.png" alt="ISIBA Logo" class="header-logo">
+                    <div class="logo-badge">
+                        <i class="fas fa-shield-halved"></i>
+                        <span>Área Segura</span>
+                    </div>
+                </div>
+                <div class="header-divider"></div>
+                <div class="header-info">
+                    <h1>Portal do Colaborador</h1>
+                    <p id="welcomeMessage">
+                        <i class="fas fa-circle-user"></i>
+                        <span>Bem-vindo(a)!</span>
+                    </p>
+                </div>
+            </div>
+            <div class="header-right">
+                <div class="header-actions">
+                    <button class="btn-icon" id="btnNotifications" title="Notificações">
+                        <i class="fas fa-bell"></i>
+                    </button>
+                    <button class="btn-icon" title="Ajuda">
+                        <i class="fas fa-circle-question"></i>
+                    </button>
+                </div>
+                <button class="btn-logout" id="btnLogout">
+                    <i class="fa-solid fa-right-from-bracket"></i>
+                    <span>Sair</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container">
+            <!-- Stats Cards -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon" style="background: linear-gradient(135deg, #0066cc 0%, #00a651 100%);">
+                        <i class="fa-solid fa-file-invoice"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 id="totalContracheques">0</h3>
+                        <p>Contracheques Disponíveis</p>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon" style="background: linear-gradient(135deg, #00a651 0%, #0066cc 100%);">
+                        <i class="fa-solid fa-file-alt"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 id="totalInformes">0</h3>
+                        <p>Informes de IR Disponíveis</p>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon" style="background: linear-gradient(135deg, #0066cc 0%, #00a651 100%);">
+                        <i class="fa-solid fa-calendar-check"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 id="ultimoDocumento">-</h3>
+                        <p>Último Documento</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Documentos List -->
+            <div class="contracheques-section">
+                <div class="section-header">
+                    <h2>
+                        <i class="fa-solid fa-file-lines" id="sectionIcon"></i> 
+                        <span id="sectionTitle">Meus Documentos</span>
+                    </h2>
+                    <div class="filter-group">
+                        <!-- Dropdown Customizado Tipo -->
+                        <div class="custom-select-wrapper">
+                            <div class="custom-select" id="customSelectTipo" data-value="">
+                                <span class="custom-select-trigger">Todos</span>
+                                <i class="fas fa-chevron-down custom-select-arrow"></i>
+                                <div class="custom-options">
+                                    <div class="custom-option active" data-value="">
+                                        <i class="fas fa-folder"></i>
+                                        <span>Todos</span>
+                                    </div>
+                                    <div class="custom-option" data-value="contracheque">
+                                        <i class="fas fa-file-invoice"></i>
+                                        <span>Meus Contracheques</span>
+                                    </div>
+                                    <div class="custom-option" data-value="informe_ir">
+                                        <i class="fas fa-file-contract"></i>
+                                        <span>Meu IRRF</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <input type="hidden" id="filterTipo" value="">
+                        </div>
+
+                        <!-- Dropdown Customizado Ano -->
+                        <div class="custom-select-wrapper">
+                            <div class="custom-select" id="customSelectAno" data-value="">
+                                <span class="custom-select-trigger">Todos os anos</span>
+                                <i class="fas fa-chevron-down custom-select-arrow"></i>
+                                <div class="custom-options" id="optionsAno">
+                                    <div class="custom-option active" data-value="">
+                                        <i class="fas fa-calendar"></i>
+                                        <span>Todos os anos</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <input type="hidden" id="filterAno" value="">
+                        </div>
+                    </div>
+                </div>
+
+                <div id="contrachequesList" class="contracheques-list">
+                    <!-- Loading state -->
+                    <div class="loading-state">
+                        <i class="fas fa-spinner fa-spin"></i>
+                        <p>Carregando documentos...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-background"></div>
+        <div class="container">
+            <div class="footer-content-simple">
+                <div class="footer-left">
+                    <img src="assets/img/logomarca alternativa.png" alt="ISIBA Logo" class="footer-logo-simple">
+                </div>
+                <div class="footer-center">
+                    <p>&copy; 2026 ISIBA. Todos os direitos reservados.</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Modal de Notificações -->
+    <div class="modal-overlay" id="modalNotifications">
+        <div class="modal-container">
+            <div class="modal-header">
+                <h3>
+                    <i class="fas fa-bell"></i>
+                    Notificações
+                </h3>
+                <button class="modal-close" onclick="closeModal('modalNotifications')">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="notification-item unread">
+                    <div class="notification-icon" style="background: linear-gradient(135deg, #0066cc 0%, #00a651 100%);">
+                        <i class="fas fa-file-invoice"></i>
+                    </div>
+                    <div class="notification-content">
+                        <h4>Novo contracheque disponível</h4>
+                        <p>Seu contracheque de Janeiro/2026 já está disponível para download.</p>
+                        <span class="notification-time">
+                            <i class="fas fa-clock"></i>
+                            Há 2 horas
+                        </span>
+                    </div>
+                </div>
+
+                <div class="notification-item unread">
+                    <div class="notification-icon" style="background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);">
+                        <i class="fas fa-file-contract"></i>
+                    </div>
+                    <div class="notification-content">
+                        <h4>Informe de IR 2025 disponível</h4>
+                        <p>O informe de rendimentos para declaração de IR 2025 está pronto.</p>
+                        <span class="notification-time">
+                            <i class="fas fa-clock"></i>
+                            Ontem
+                        </span>
+                    </div>
+                </div>
+
+                <div class="notification-item">
+                    <div class="notification-icon" style="background: linear-gradient(135deg, #a29bfe 0%, #6c5ce7 100%);">
+                        <i class="fas fa-shield-halved"></i>
+                    </div>
+                    <div class="notification-content">
+                        <h4>Atualização de política de privacidade</h4>
+                        <p>Atualizamos nossa política de privacidade conforme a LGPD.</p>
+                        <span class="notification-time">
+                            <i class="fas fa-clock"></i>
+                            3 dias atrás
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-modal-secondary" onclick="closeModal('modalNotifications')">
+                    Fechar
+                </button>
+                <button class="btn-modal-primary" onclick="markAllAsRead()">
+                    <i class="fas fa-check-double"></i>
+                    Marcar todas como lidas
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Ajuda -->
+    <div class="modal-overlay" id="modalHelp">
+        <div class="modal-container">
+            <div class="modal-header">
+                <h3>
+                    <i class="fas fa-circle-question"></i>
+                    Central de Ajuda
+                </h3>
+                <button class="modal-close" onclick="closeModal('modalHelp')">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="help-section">
+                    <h4>
+                        <i class="fas fa-envelope"></i>
+                        Email
+                    </h4>
+                    <p>rh.isiba@gmail.com</p>
+                </div>
+
+                <div class="help-section">
+                    <h4>
+                        <i class="fas fa-phone"></i>
+                        Telefone
+                    </h4>
+                    <p>(71) 8472-8416</p>
+                </div>
+
+                <div class="help-section">
+                    <h4>
+                        <i class="fas fa-clock"></i>
+                        Horário de Atendimento
+                    </h4>
+                    <p>Segunda a Quinta: 7h às 17h</p>
+                    <p>Sexta-feira: 7h às 16h</p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-modal-primary" onclick="closeModal('modalHelp')">
+                    <i class="fas fa-check"></i>
+                    Entendi
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Supabase JavaScript Client -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
+    <!-- JavaScript -->
+    <script src="assets/js/supabase-config.js"></script>
+    <script src="assets/js/supabase-colaborador.js"></script>
+    <script src="assets/js/portal-colaborador.js"></script>
+</body>
+</html>

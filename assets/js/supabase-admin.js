@@ -384,6 +384,110 @@ async function uploadContracheque(colaboradorId, mes, ano, arquivo) {
 }
 
 /**
+ * Upload de documento (Contracheque ou Informe de IR)
+ * @param {string} colaboradorId - ID do colaborador
+ * @param {string} mes - Mês de referência ('Anual' para informe de IR)
+ * @param {string} ano - Ano de referência
+ * @param {File} arquivo - Arquivo PDF
+ * @param {string} tipoDocumento - 'contracheque' ou 'informe_ir'
+ */
+async function uploadDocumento(colaboradorId, mes, ano, arquivo, tipoDocumento) {
+    try {
+        // Buscar dados do colaborador
+        const { data: colaborador, error: errorColab } = await window.supabaseClient
+            .from('colaboradores')
+            .select('cpf, nome_completo')
+            .eq('id', colaboradorId)
+            .single();
+        
+        if (errorColab) throw errorColab;
+        
+        // Gerar nome do arquivo baseado no tipo
+        let fileName;
+        if (tipoDocumento === 'informe_ir') {
+            fileName = `${colaborador.cpf}/${ano}-INFORME-IR.pdf`;
+        } else {
+            const mesNumero = obterNumeroMes(mes);
+            fileName = `${colaborador.cpf}/${ano}-${mesNumero}.pdf`;
+        }
+        
+        console.log(`📤 Uploading ${tipoDocumento}: ${fileName}`);
+        
+        // Upload do arquivo para o Storage
+        const { data: uploadData, error: uploadError } = await window.supabaseClient
+            .storage
+            .from(window.CONFIG.bucket)
+            .upload(fileName, arquivo, {
+                cacheControl: '3600',
+                upsert: true // Sobrescrever se já existir
+            });
+        
+        if (uploadError) throw uploadError;
+        
+        // Verificar se já existe um documento para este período e tipo
+        const { data: existente } = await window.supabaseClient
+            .from('contracheques')
+            .select('id')
+            .eq('colaborador_id', colaboradorId)
+            .eq('mes_referencia', mes)
+            .eq('ano', parseInt(ano))
+            .eq('tipo_documento', tipoDocumento)
+            .single();
+        
+        let dbData;
+        
+        if (existente) {
+            // Atualizar documento existente
+            const { data, error: dbError } = await window.supabaseClient
+                .from('contracheques')
+                .update({
+                    arquivo_url: fileName,
+                    nome_arquivo: arquivo.name,
+                    tamanho_arquivo: arquivo.size,
+                    tipo_documento: tipoDocumento,
+                    enviado_por: window.CONFIG.adminUser,
+                    enviado_em: new Date().toISOString()
+                })
+                .eq('id', existente.id)
+                .select();
+            
+            if (dbError) throw dbError;
+            dbData = data[0];
+            console.log(`✅ ${tipoDocumento} atualizado:`, dbData);
+        } else {
+            // Inserir novo documento
+            const { data, error: dbError } = await window.supabaseClient
+                .from('contracheques')
+                .insert([{
+                    colaborador_id: colaboradorId,
+                    mes_referencia: mes,
+                    ano: parseInt(ano),
+                    arquivo_url: fileName,
+                    nome_arquivo: arquivo.name,
+                    tamanho_arquivo: arquivo.size,
+                    tipo_documento: tipoDocumento,
+                    enviado_por: window.CONFIG.adminUser
+                }])
+                .select();
+            
+            if (dbError) throw dbError;
+            dbData = data[0];
+            console.log(`✅ ${tipoDocumento} enviado:`, dbData);
+        }
+        
+        return { 
+            success: true, 
+            data: dbData, 
+            updated: !!existente // Indica se foi atualização
+        };
+        
+    } catch (error) {
+        console.error(`❌ Erro ao enviar ${tipoDocumento}:`, error);
+        return { success: false, error: error.message };
+    }
+}
+
+/**
  * Listar histórico de contracheques
  */
 async function listarHistorico(filtroMes = '') {

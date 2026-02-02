@@ -106,7 +106,7 @@
                 </button>
                 <button class="nav-item" data-section="upload">
                     <i class="fa-solid fa-file-arrow-up"></i>
-                    <span>Enviar Contracheque</span>
+                    <span>Enviar Documentos</span>
                 </button>
                 <button class="nav-item" data-section="historico">
                     <i class="fa-solid fa-clock-rotate-left"></i>
@@ -186,7 +186,7 @@
                     <ul>
                         <li><strong>Cadastrar Funcionário:</strong> Adicione novos colaboradores ao sistema</li>
                         <li><strong>Listar Funcionários:</strong> Visualize e gerencie todos os cadastros</li>
-                        <li><strong>Enviar Contracheque:</strong> Faça upload de contracheques em PDF</li>
+                        <li><strong>Enviar Documentos:</strong> Faça upload de contracheques e informes de IR em PDF</li>
                         <li><strong>Histórico de Envios:</strong> Consulte todos os envios realizados</li>
                     </ul>
                 </div>
@@ -340,11 +340,11 @@
                 </div>
             </section>
 
-            <!-- Seção: Enviar Contracheque -->
+            <!-- Seção: Enviar Documentos -->
             <section id="section-upload" class="content-section">
                 <div class="form-card">
-                    <h2><i class="fa-solid fa-file-arrow-up"></i> Enviar Contracheque</h2>
-                    <p class="form-description">Selecione o funcionário e faça upload do contracheque em PDF</p>
+                    <h2><i class="fa-solid fa-file-arrow-up"></i> Enviar Documentos</h2>
+                    <p class="form-description">Envie contracheques mensais ou informes de imposto de renda para os colaboradores</p>
 
                     <form id="formUpload" class="admin-form">
                         <div class="form-row">
@@ -361,6 +361,20 @@
 
                         <div class="form-row">
                             <div class="form-group">
+                                <label for="uploadTipo" class="form-label">
+                                    <i class="fa-solid fa-file-lines"></i>
+                                    Tipo de Documento *
+                                </label>
+                                <select id="uploadTipo" name="tipo" class="form-input" required>
+                                    <option value="">Selecione o tipo...</option>
+                                    <option value="contracheque">Contracheque Mensal</option>
+                                    <option value="informe_ir">Informe de Imposto de Renda</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-row" id="rowMesAno">
+                            <div class="form-group" id="groupMes">
                                 <label for="uploadMes" class="form-label">
                                     <i class="fa-solid fa-calendar"></i>
                                     Mês de Referência *
@@ -427,7 +441,7 @@
                             </button>
                             <button type="submit" class="btn-primary" id="btnEnviar">
                                 <i class="fa-solid fa-paper-plane"></i>
-                                Enviar Contracheque
+                                <span id="btnEnviarTexto">Enviar Documento</span>
                             </button>
                         </div>
                     </form>

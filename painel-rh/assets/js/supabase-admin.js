@@ -292,12 +292,12 @@ async function deletarColaborador(id) {
     }
 }
 
-// ==================== CONTRACHEQUES ====================
+// ==================== DOCUMENTOS (CONTRACHEQUES E INFORMES DE IR) ====================
 
 /**
- * Upload de contracheque (PDF)
+ * Upload de documento (Contracheque ou Informe de IR)
  */
-async function uploadContracheque(colaboradorId, mes, ano, arquivo) {
+async function uploadDocumento(colaboradorId, mes, ano, arquivo, tipoDocumento = 'contracheque') {
     try {
         // Buscar dados do colaborador
         const { data: colaborador, error: errorColab } = await window.supabaseClient
@@ -308,9 +308,14 @@ async function uploadContracheque(colaboradorId, mes, ano, arquivo) {
         
         if (errorColab) throw errorColab;
         
-        // Gerar nome do arquivo: CPF/AAAA-MM.pdf
-        const mesNumero = obterNumeroMes(mes);
-        const fileName = `${colaborador.cpf}/${ano}-${mesNumero}.pdf`;
+        // Gerar nome do arquivo baseado no tipo
+        let fileName;
+        if (tipoDocumento === 'informe_ir') {
+            fileName = `${colaborador.cpf}/${ano}-INFORME-IR.pdf`;
+        } else {
+            const mesNumero = obterNumeroMes(mes);
+            fileName = `${colaborador.cpf}/${ano}-${mesNumero}.pdf`;
+        }
         
         // Upload do arquivo para o Storage
         const { data: uploadData, error: uploadError } = await window.supabaseClient
@@ -323,19 +328,20 @@ async function uploadContracheque(colaboradorId, mes, ano, arquivo) {
         
         if (uploadError) throw uploadError;
         
-        // Verificar se já existe um contracheque para este período
+        // Verificar se já existe um documento para este período
         const { data: existente } = await window.supabaseClient
             .from('contracheques')
             .select('id')
             .eq('colaborador_id', colaboradorId)
             .eq('mes_referencia', mes)
             .eq('ano', parseInt(ano))
+            .eq('tipo_documento', tipoDocumento)
             .single();
         
         let dbData;
         
         if (existente) {
-            // Atualizar contracheque existente
+            // Atualizar documento existente
             const { data, error: dbError } = await window.supabaseClient
                 .from('contracheques')
                 .update({
@@ -343,16 +349,18 @@ async function uploadContracheque(colaboradorId, mes, ano, arquivo) {
                     nome_arquivo: arquivo.name,
                     tamanho_arquivo: arquivo.size,
                     enviado_por: window.CONFIG.adminUser,
-                    enviado_em: new Date().toISOString()
+                    enviado_em: new Date().toISOString(),
+                    tipo_documento: tipoDocumento
                 })
                 .eq('id', existente.id)
                 .select();
             
             if (dbError) throw dbError;
             dbData = data[0];
-            console.log('✅ Contracheque atualizado:', dbData);
+            const tipoTexto = tipoDocumento === 'informe_ir' ? 'Informe de IR' : 'Contracheque';
+            console.log(`✅ ${tipoTexto} atualizado:`, dbData);
         } else {
-            // Inserir novo contracheque
+            // Inserir novo documento
             const { data, error: dbError } = await window.supabaseClient
                 .from('contracheques')
                 .insert([{
@@ -362,13 +370,15 @@ async function uploadContracheque(colaboradorId, mes, ano, arquivo) {
                     arquivo_url: fileName,
                     nome_arquivo: arquivo.name,
                     tamanho_arquivo: arquivo.size,
-                    enviado_por: window.CONFIG.adminUser
+                    enviado_por: window.CONFIG.adminUser,
+                    tipo_documento: tipoDocumento
                 }])
                 .select();
             
             if (dbError) throw dbError;
             dbData = data[0];
-            console.log('✅ Contracheque enviado:', dbData);
+            const tipoTexto = tipoDocumento === 'informe_ir' ? 'Informe de IR' : 'Contracheque';
+            console.log(`✅ ${tipoTexto} enviado:`, dbData);
         }
         
         return { 
@@ -378,13 +388,20 @@ async function uploadContracheque(colaboradorId, mes, ano, arquivo) {
         };
         
     } catch (error) {
-        console.error('❌ Erro ao enviar contracheque:', error);
+        console.error('❌ Erro ao enviar documento:', error);
         return { success: false, error: error.message };
     }
 }
 
 /**
- * Listar histórico de contracheques
+ * Manter função antiga para compatibilidade
+ */
+async function uploadContracheque(colaboradorId, mes, ano, arquivo) {
+    return await uploadDocumento(colaboradorId, mes, ano, arquivo, 'contracheque');
+}
+
+/**
+ * Listar histórico de documentos
  */
 async function listarHistorico(filtroMes = '') {
     try {

@@ -15,7 +15,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Verificar se já está logado
     const colaboradorData = sessionStorage.getItem('colaborador_data');
     if (colaboradorData) {
-        window.location.href = 'meus-contracheques.html';
+        window.location.href = 'portal-colaborador.html';
         return;
     }
 
@@ -134,12 +134,29 @@ function initFormSubmit() {
                 localStorage.removeItem('colaborador_cpf');
             }
 
-            showStatus('success', 'Login realizado com sucesso! Redirecionando...');
-            
-            // Redirecionar para o dashboard
-            setTimeout(() => {
-                window.location.href = 'meus-contracheques.html';
-            }, 1000);
+            // ===== DEBUG DETALHADO =====
+            console.log('🔍 [COLABORADOR.JS] Dados completos retornados:', result.data);
+            console.log('🔍 [COLABORADOR.JS] primeiro_acesso:', result.data.primeiro_acesso);
+            console.log('🔍 [COLABORADOR.JS] Tipo de primeiro_acesso:', typeof result.data.primeiro_acesso);
+            console.log('🔍 [COLABORADOR.JS] É true?', result.data.primeiro_acesso === true);
+            console.log('🔍 [COLABORADOR.JS] É "true"?', result.data.primeiro_acesso === 'true');
+            console.log('🔍 [COLABORADOR.JS] É truthy?', !!result.data.primeiro_acesso);
+            // ===========================
+
+            // Verificar se é primeiro acesso
+            if (result.data.primeiro_acesso === true) {
+                console.log('✅ [COLABORADOR.JS] Detectado primeiro acesso! Redirecionando...');
+                showStatus('success', 'Login realizado! Você precisa trocar sua senha...');
+                setTimeout(() => {
+                    window.location.href = 'primeiro-acesso.html';
+                }, 1500);
+            } else {
+                console.log('ℹ️ [COLABORADOR.JS] NÃO é primeiro acesso. Indo para portal...');
+                showStatus('success', 'Login realizado com sucesso! Redirecionando...');
+                setTimeout(() => {
+                    window.location.href = 'portal-colaborador.html';
+                }, 1000);
+            }
 
         } catch (error) {
             console.error('Erro no login:', error);
@@ -367,7 +384,7 @@ function initFormSubmit() {
             
             // Redirecionar para dashboard
             setTimeout(() => {
-                window.location.href = 'meus-contracheques.html';
+                window.location.href = 'portal-colaborador.html';
             }, 1000);
             
         } catch (error) {

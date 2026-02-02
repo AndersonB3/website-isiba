@@ -498,6 +498,113 @@ button {
   line-height: 1.7;
 }
 
+/*=============== APRESENTAÇÃO INSTITUCIONAL ===============*/
+.apresentacao {
+  background: var(--body-color);
+}
+
+.apresentacao__wrapper {
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.apresentacao__container {
+  position: relative;
+  width: 100%;
+  padding-bottom: 56.25%; /* Aspect ratio 16:9 */
+  height: 0;
+  overflow: hidden;
+  border-radius: 20px;
+  box-shadow: 0 20px 60px rgba(0, 102, 204, 0.15);
+  background: var(--white-color);
+  margin-bottom: 2rem;
+  transition: all 0.3s ease;
+}
+
+.apresentacao__container:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 25px 70px rgba(0, 102, 204, 0.25);
+}
+
+.apresentacao__iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+  border-radius: 20px;
+}
+
+.apresentacao__actions {
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.btn--outline {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 1rem 2rem;
+  background: transparent;
+  color: var(--primary-color);
+  border: 2px solid var(--primary-color);
+  border-radius: 50px;
+  font-weight: var(--font-semi-bold);
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.btn--outline:hover {
+  background: var(--primary-color);
+  color: var(--white-color);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(0, 102, 204, 0.3);
+}
+
+.btn--outline i {
+  font-size: 0.9rem;
+}
+
+/* Responsivo */
+@media screen and (max-width: 768px) {
+  .apresentacao__container {
+    border-radius: 15px;
+    padding-bottom: 75%; /* Aspect ratio mais quadrado para mobile */
+  }
+  
+  .apresentacao__iframe {
+    border-radius: 15px;
+  }
+  
+  .btn--outline {
+    padding: 0.875rem 1.5rem;
+    font-size: var(--small-font-size);
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .apresentacao__container {
+    border-radius: 12px;
+    padding-bottom: 85%;
+  }
+  
+  .apresentacao__iframe {
+    border-radius: 12px;
+  }
+  
+  .apresentacao__actions {
+    gap: 1rem;
+  }
+  
+  .btn--outline {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
 /*=============== RELATÓRIO ===============*/
 .stats__grid {
   display: grid;

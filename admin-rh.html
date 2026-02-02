@@ -340,11 +340,11 @@
                 </div>
             </section>
 
-            <!-- Seção: Enviar Contracheque -->
+            <!-- Seção: Enviar Documentos -->
             <section id="section-upload" class="content-section">
                 <div class="form-card">
-                    <h2><i class="fa-solid fa-file-arrow-up"></i> Enviar Contracheque</h2>
-                    <p class="form-description">Selecione o funcionário e faça upload do contracheque em PDF</p>
+                    <h2><i class="fa-solid fa-file-arrow-up"></i> Enviar Documentos</h2>
+                    <p class="form-description">Envie contracheques mensais ou informes de imposto de renda para os colaboradores</p>
 
                     <form id="formUpload" class="admin-form">
                         <div class="form-row">
@@ -357,15 +357,27 @@
                                     <option value="">Escolha um funcionário...</option>
                                 </select>
                             </div>
+
+                            <div class="form-group">
+                                <label for="tipoDocumento" class="form-label">
+                                    <i class="fa-solid fa-file-lines"></i>
+                                    Tipo de Documento *
+                                </label>
+                                <select id="tipoDocumento" name="tipo" class="form-input" required>
+                                    <option value="">Selecione o tipo...</option>
+                                    <option value="contracheque">Contracheque Mensal</option>
+                                    <option value="informe_ir">Informe de Imposto de Renda</option>
+                                </select>
+                            </div>
                         </div>
 
                         <div class="form-row">
-                            <div class="form-group">
+                            <div class="form-group" id="mesGroup">
                                 <label for="uploadMes" class="form-label">
                                     <i class="fa-solid fa-calendar"></i>
                                     Mês de Referência *
                                 </label>
-                                <select id="uploadMes" name="mes" class="form-input" required>
+                                <select id="uploadMes" name="mes" class="form-input">
                                     <option value="">Selecione o mês...</option>
                                     <option value="Janeiro">Janeiro</option>
                                     <option value="Fevereiro">Fevereiro</option>
@@ -427,7 +439,7 @@
                             </button>
                             <button type="submit" class="btn-primary" id="btnEnviar">
                                 <i class="fa-solid fa-paper-plane"></i>
-                                Enviar Contracheque
+                                <span id="btnEnviarText">Enviar Documento</span>
                             </button>
                         </div>
                     </form>
@@ -585,7 +597,7 @@
     </div>
 
     <!-- Supabase JavaScript Client -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@1"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     
     <!-- JavaScript -->
     <script src="assets/js/supabase-config.js"></script>

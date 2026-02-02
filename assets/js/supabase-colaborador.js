@@ -93,13 +93,15 @@ async function autenticarColaborador(cpf, senha) {
         }
         
         console.log('✅ Colaborador autenticado:', data.nome_completo);
+        console.log('🔍 [DEBUG] primeiro_acesso:', data.primeiro_acesso);
         return { 
             success: true, 
             data: {
                 id: data.id,
                 nome: data.nome_completo,
                 cpf: data.cpf,
-                email: data.email
+                email: data.email,
+                primeiro_acesso: data.primeiro_acesso || false
             }
         };
         
@@ -211,6 +213,86 @@ async function obterMinhasEstatisticas(colaboradorId) {
                 ultimoMes: null,
                 ultimoAno: null,
                 ultimaData: null
+            }
+        };
+    }
+}
+
+/**
+ * Buscar todos os documentos do colaborador (contracheques + informes)
+ */
+async function buscarMeusDocumentos(colaboradorId) {
+    try {
+        const { data, error } = await window.supabaseClient
+            .from('contracheques')
+            .select('*')
+            .eq('colaborador_id', colaboradorId)
+            .order('ano', { ascending: false })
+            .order('tipo_documento', { ascending: true })
+            .order('mes_referencia', { ascending: false });
+        
+        if (error) throw error;
+        
+        console.log(`✅ ${data.length} documentos encontrados`);
+        return { success: true, data };
+        
+    } catch (error) {
+        console.error('❌ Erro ao buscar documentos:', error);
+        return { success: false, error: error.message };
+    }
+}
+
+/**
+ * Obter estatísticas completas do colaborador (contracheques + informes)
+ */
+async function obterMinhasEstatisticasCompletas(colaboradorId) {
+    try {
+        // Total de contracheques
+        const { count: totalContracheques, error: errorContracheques } = await window.supabaseClient
+            .from('contracheques')
+            .select('*', { count: 'exact', head: true })
+            .eq('colaborador_id', colaboradorId)
+            .eq('tipo_documento', 'contracheque');
+        
+        if (errorContracheques) throw errorContracheques;
+        
+        // Total de informes
+        const { count: totalInformes, error: errorInformes } = await window.supabaseClient
+            .from('contracheques')
+            .select('*', { count: 'exact', head: true })
+            .eq('colaborador_id', colaboradorId)
+            .eq('tipo_documento', 'informe_ir');
+        
+        if (errorInformes) throw errorInformes;
+        
+        // Último documento
+        const { data: ultimoDoc, error: errorUltimo } = await window.supabaseClient
+            .from('contracheques')
+            .select('*')
+            .eq('colaborador_id', colaboradorId)
+            .order('enviado_em', { ascending: false })
+            .limit(1)
+            .single();
+        
+        return {
+            success: true,
+            data: {
+                totalContracheques: totalContracheques || 0,
+                totalInformes: totalInformes || 0,
+                total: (totalContracheques || 0) + (totalInformes || 0),
+                ultimoDocumento: ultimoDoc || null
+            }
+        };
+        
+    } catch (error) {
+        console.error('❌ Erro ao obter estatísticas completas:', error);
+        return { 
+            success: false, 
+            data: {
+                totalContracheques: 0,
+                totalInformes: 0,
+                total: 0,
+                ultimoDocumento: null
             }
         };
     }
