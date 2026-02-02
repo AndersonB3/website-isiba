@@ -178,25 +178,38 @@
                     </p>
                 </div>
                 
-                <div class="apresentacao__wrapper" data-aos="fade-up" data-aos-delay="200">
-                    <div class="apresentacao__container">
-                        <iframe 
-                            src="https://docs.google.com/presentation/d/e/2PACX-1vS0veJvW1owHuxF2AuhOW-T084ajrd33n1Q1nIU-mza3P6tXjxM1qkB8i9FCOUo5tvAoGybg066D8Ue/embed?start=false&loop=false&delayms=3000" 
-                            frameborder="0" 
-                            allowfullscreen="true" 
-                            mozallowfullscreen="true" 
-                            webkitallowfullscreen="true"
-                            class="apresentacao__iframe"
-                            loading="lazy">
-                        </iframe>
+                <div class="apresentacao__carousel" data-aos="fade-up" data-aos-delay="200">
+                    <div class="carousel__container">
+                        <button class="carousel__btn carousel__btn--prev" id="prevSlide">
+                            <i class="fas fa-chevron-left"></i>
+                        </button>
+                        
+                        <div class="carousel__wrapper">
+                            <div class="carousel__slides" id="carouselSlides">
+                                <!-- Slides serão carregados dinamicamente -->
+                                <div class="carousel__slide active">
+                                    <img src="https://via.placeholder.com/1200x675/0066cc/ffffff?text=Carregando..." alt="Slide 1">
+                                </div>
+                            </div>
+                            
+                            <div class="carousel__indicators" id="carouselIndicators">
+                                <!-- Indicadores serão adicionados dinamicamente -->
+                            </div>
+                        </div>
+                        
+                        <button class="carousel__btn carousel__btn--next" id="nextSlide">
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
                     </div>
-                    <div class="apresentacao__actions">
+                    
+                    <div class="carousel__info">
+                        <span class="carousel__counter" id="slideCounter">1 / 1</span>
                         <a href="https://docs.google.com/presentation/d/e/2PACX-1vS0veJvW1owHuxF2AuhOW-T084ajrd33n1Q1nIU-mza3P6tXjxM1qkB8i9FCOUo5tvAoGybg066D8Ue/pub?start=false&loop=false&delayms=3000" 
                            target="_blank" 
                            rel="noopener noreferrer"
-                           class="btn btn--outline">
-                            <i class="fa-solid fa-external-link-alt"></i>
-                            Abrir em tela cheia
+                           class="carousel__link">
+                            <i class="fas fa-external-link-alt"></i>
+                            Ver apresentação completa
                         </a>
                     </div>
                 </div>
@@ -384,6 +397,9 @@
     
     <!-- Database Functions -->
     <script src="assets/js/database.js"></script>
+    
+    <!-- Carousel Apresentação -->
+    <script src="assets/js/carousel-apresentacao.js"></script>
     
     <!-- Main JS -->
     <script src="assets/js/main.js"></script>
