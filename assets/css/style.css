@@ -512,6 +512,19 @@ button {
 
 .carousel__slide.active {
   display: block;
+  animation: fadeInSlide 0.6s ease-in-out;
+}
+
+/* Animação suave para slides */
+@keyframes fadeInSlide {
+  from {
+    opacity: 0;
+    transform: scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
 .carousel__slide img {
@@ -522,6 +535,10 @@ button {
   border-radius: 20px;
   object-fit: contain;
   transform-origin: center;
+  will-change: transform, opacity;
+  /* Forçar hardware acceleration */
+  transform: translateZ(0);
+  backface-visibility: hidden;
 }
 
 .carousel__btn {
