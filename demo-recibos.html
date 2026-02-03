@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Demo - Sistema de Recibos ISIBA</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="assets/css/recibo-modal.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 40px 20px;
+            min-height: 100vh;
+        }
+
+        .demo-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .demo-header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+        }
+
+        .demo-header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .demo-header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .demo-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+            margin-bottom: 40px;
+        }
+
+        .demo-card {
+            background: white;
+            border-radius: 16px;
+            padding: 32px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            text-align: center;
+        }
+
+        .demo-card h2 {
+            color: #333;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .demo-card p {
+            color: #666;
+            margin-bottom: 24px;
+            line-height: 1.6;
+        }
+
+        .btn-demo {
+            background: linear-gradient(135deg, #00C3FF, #0066CC);
+            color: white;
+            border: none;
+            padding: 14px 32px;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-demo:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 102, 204, 0.3);
+        }
+
+        .feature-list {
+            background: white;
+            border-radius: 16px;
+            padding: 32px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .feature-list h2 {
+            color: #333;
+            margin-bottom: 24px;
+            text-align: center;
+        }
+
+        .feature-list ul {
+            list-style: none;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 16px;
+        }
+
+        .feature-list li {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            background: #F8F9FA;
+            border-radius: 8px;
+            color: #333;
+        }
+
+        .feature-list li i {
+            color: #00C3FF;
+            font-size: 1.2rem;
+        }
+
+        .code-example {
+            background: white;
+            border-radius: 16px;
+            padding: 32px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            margin-top: 24px;
+        }
+
+        .code-example h2 {
+            color: #333;
+            margin-bottom: 16px;
+        }
+
+        .code-example pre {
+            background: #282c34;
+            color: #abb2bf;
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+
+        .code-example pre .keyword {
+            color: #c678dd;
+        }
+
+        .code-example pre .function {
+            color: #61afef;
+        }
+
+        .code-example pre .string {
+            color: #98c379;
+        }
+
+        .code-example pre .comment {
+            color: #5c6370;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <div class="demo-container">
+        <!-- Header -->
+        <div class="demo-header">
+            <h1><i class="fa-solid fa-file-signature"></i> Sistema de Recibos Digitais</h1>
+            <p>Demonstração Interativa - ISIBA Social</p>
+        </div>
+
+        <!-- Cards de Demonstração -->
+        <div class="demo-grid">
+            <div class="demo-card">
+                <h2><i class="fa-solid fa-user"></i> Portal do Colaborador</h2>
+                <p>Ao visualizar um documento pela primeira vez, o modal de recibo é exibido automaticamente.</p>
+                <button class="btn-demo" onclick="abrirDemoColaborador()">
+                    <i class="fa-solid fa-play"></i>
+                    Ver Demonstração
+                </button>
+            </div>
+
+            <div class="demo-card">
+                <h2><i class="fa-solid fa-user-tie"></i> Painel RH</h2>
+                <p>O RH visualiza todos os recibos gerados, com filtros e estatísticas completas.</p>
+                <button class="btn-demo" onclick="abrirDemoPainelRH()">
+                    <i class="fa-solid fa-play"></i>
+                    Ver Demonstração
+                </button>
+            </div>
+
+            <div class="demo-card">
+                <h2><i class="fa-solid fa-database"></i> Banco de Dados</h2>
+                <p>Estrutura completa com tabelas, views e queries otimizadas.</p>
+                <button class="btn-demo" onclick="mostrarEstruturaBanco()">
+                    <i class="fa-solid fa-code"></i>
+                    Ver Estrutura
+                </button>
+            </div>
+        </div>
+
+        <!-- Recursos -->
+        <div class="feature-list">
+            <h2><i class="fa-solid fa-star"></i> Recursos Implementados</h2>
+            <ul>
+                <li>
+                    <i class="fa-solid fa-check-circle"></i>
+                    <span>Modal automático no primeiro acesso</span>
+                </li>
+                <li>
+                    <i class="fa-solid fa-check-circle"></i>
+                    <span>Assinatura digital obrigatória</span>
+                </li>
+                <li>
+                    <i class="fa-solid fa-check-circle"></i>
+                    <span>Registro de IP e User Agent</span>
+                </li>
+                <li>
+                    <i class="fa-solid fa-check-circle"></i>
+                    <span>Declaração de aceite</span>
+                </li>
+                <li>
+                    <i class="fa-solid fa-check-circle"></i>
+                    <span>Download após confirmação</span>
+                </li>
+                <li>
+                    <i class="fa-solid fa-check-circle"></i>
+                    <span>Painel de visualização RH</span>
+                </li>
+                <li>
+                    <i class="fa-solid fa-check-circle"></i>
+                    <span>Estatísticas em tempo real</span>
+                </li>
+                <li>
+                    <i class="fa-solid fa-check-circle"></i>
+                    <span>Filtros avançados</span>
+                </li>
+                <li>
+                    <i class="fa-solid fa-check-circle"></i>
+                    <span>Auditoria completa</span>
+                </li>
+                <li>
+                    <i class="fa-solid fa-check-circle"></i>
+                    <span>Responsivo mobile</span>
+                </li>
+                <li>
+                    <i class="fa-solid fa-check-circle"></i>
+                    <span>View otimizada SQL</span>
+                </li>
+                <li>
+                    <i class="fa-solid fa-check-circle"></i>
+                    <span>Políticas RLS Supabase</span>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Exemplo de Código -->
+        <div class="code-example">
+            <h2><i class="fa-solid fa-code"></i> Exemplo de Integração</h2>
+            <pre><span class="comment">// Integração no Portal do Colaborador</span>
+<span class="keyword">async</span> <span class="keyword">function</span> <span class="function">baixarContracheque</span>(arquivoUrl, nomeArquivo) {
+    <span class="comment">// Buscar dados do documento</span>
+    <span class="keyword">const</span> documento = contracheques.<span class="function">find</span>(c => c.arquivo_url === arquivoUrl);
+    
+    <span class="comment">// Verificar se precisa de recibo</span>
+    <span class="keyword">await</span> <span class="function">verificarEAbrirRecibo</span>(documento, () => {
+        <span class="comment">// Callback: download após confirmação</span>
+        <span class="function">realizarDownloadPDF</span>(arquivoUrl, nomeArquivo);
+    });
+}</pre>
+        </div>
+    </div>
+
+    <!-- Modal de Recibo (será criado pelo JS) -->
+    <script>
+        // Simular dados de um documento
+        const documentoExemplo = {
+            id: 'doc-123',
+            tipo_documento: 'contracheque',
+            mes_referencia: 'Janeiro',
+            ano: 2026,
+            nome_arquivo: 'Contracheque_Janeiro_2026.pdf',
+            enviado_em: new Date().toISOString(),
+            enviado_por: 'admin.rh',
+            arquivo_url: 'caminho/do/arquivo.pdf'
+        };
+
+        // Simular dados do colaborador
+        const colaboradorExemplo = {
+            id: 'colab-123',
+            nome_completo: 'João da Silva',
+            cpf: '12345678900',
+            email: 'joao.silva@example.com'
+        };
+
+        function abrirDemoColaborador() {
+            alert('🎬 DEMO: Portal do Colaborador\n\n' +
+                  '1. Colaborador faz login no portal\n' +
+                  '2. Clica para baixar um contracheque\n' +
+                  '3. Modal de recibo abre automaticamente\n' +
+                  '4. Preenche nome e confirma aceite\n' +
+                  '5. Recibo é registrado no banco\n' +
+                  '6. Download do PDF inicia automaticamente\n\n' +
+                  'Clique em OK para ver o modal em ação!');
+            
+            // Simular abertura do modal
+            if (typeof abrirModalRecibo === 'function') {
+                // Definir colaborador atual
+                window.colaboradorAtual = colaboradorExemplo;
+                abrirModalRecibo(documentoExemplo, () => {
+                    alert('✅ Download iniciado após confirmação do recibo!');
+                });
+            } else {
+                alert('⚠️ Para ver o modal funcional, inclua os scripts:\n' +
+                      '- supabase-config.js\n' +
+                      '- recibo-modal.js');
+            }
+        }
+
+        function abrirDemoPainelRH() {
+            alert('🎬 DEMO: Painel RH\n\n' +
+                  '📊 Estatísticas:\n' +
+                  '- Total de recibos: 156\n' +
+                  '- Contracheques: 120\n' +
+                  '- Informes de IR: 36\n' +
+                  '- Documentos sem recibo: 8\n\n' +
+                  '🔍 Recursos:\n' +
+                  '- Lista completa de recibos\n' +
+                  '- Filtros por tipo e período\n' +
+                  '- Detalhes completos de cada recibo\n' +
+                  '- Exportação de relatórios\n' +
+                  '- Documentos pendentes de recibo');
+        }
+
+        function mostrarEstruturaBanco() {
+            alert('🗄️ ESTRUTURA DO BANCO DE DADOS\n\n' +
+                  '📋 Tabela: recibos_documentos\n' +
+                  '- id, documento_id, colaborador_id\n' +
+                  '- tipo_documento, mes_referencia, ano\n' +
+                  '- assinatura_texto, declaracao_aceite\n' +
+                  '- ip_address, user_agent\n' +
+                  '- data_visualizacao, data_recebimento\n\n' +
+                  '📊 View: view_recibos_completos\n' +
+                  'JOIN com colaboradores e contracheques\n\n' +
+                  '🔒 RLS e Políticas configuradas\n' +
+                  '⚡ Índices para performance otimizada');
+        }
+    </script>
+</body>
+</html>

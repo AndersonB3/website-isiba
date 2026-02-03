@@ -18,7 +18,9 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     
     <!-- CSS -->
-    <link rel="stylesheet" href="assets/css/admin-rh.css">
+    <link rel="stylesheet" href="assets/css/admin-rh.css?v=3.6">
+    <link rel="stylesheet" href="assets/css/recibo-modal.css">
+    <link rel="stylesheet" href="assets/css/recibo-admin.css">
 </head>
 <body>
     <!-- Tela de Login -->
@@ -111,6 +113,10 @@
                 <button class="nav-item" data-section="historico">
                     <i class="fa-solid fa-clock-rotate-left"></i>
                     <span>Histórico de Envios</span>
+                </button>
+                <button class="nav-item" data-section="recibos">
+                    <i class="fa-solid fa-file-signature"></i>
+                    <span>Recibos de Documentos</span>
                 </button>
             </nav>
 
@@ -495,6 +501,116 @@
                     </div>
                 </div>
             </section>
+
+            <!-- Seção: Recibos de Documentos -->
+            <section id="section-recibos" class="content-section">
+                <div class="form-card">
+                    <div class="card-header">
+                        <h2><i class="fa-solid fa-file-signature"></i> Recibos de Documentos</h2>
+                        <p class="form-description">Visualize todos os recibos digitais gerados pelos colaboradores</p>
+                    </div>
+
+                    <!-- Estatísticas de Recibos -->
+                    <div id="statsRecibos" class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-icon" style="background: linear-gradient(135deg, #0066cc 0%, #00a651 100%);">
+                                <i class="fa-solid fa-file-signature"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h3 id="totalRecibos">-</h3>
+                                <p>Total de Recibos</p>
+                            </div>
+                        </div>
+
+                        <div class="stat-card">
+                            <div class="stat-icon" style="background: linear-gradient(135deg, #00a651 0%, #0066cc 100%);">
+                                <i class="fa-solid fa-file-pdf"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h3 id="totalContrachequeRecibo">-</h3>
+                                <p>Contracheques</p>
+                            </div>
+                        </div>
+
+                        <div class="stat-card">
+                            <div class="stat-icon" style="background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);">
+                                <i class="fa-solid fa-file-invoice"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h3 id="totalInformesRecibo">-</h3>
+                                <p>Informes de IR</p>
+                            </div>
+                        </div>
+
+                        <div class="stat-card">
+                            <div class="stat-icon" style="background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);">
+                                <i class="fa-solid fa-exclamation-triangle"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h3 id="totalSemRecibo">-</h3>
+                                <p>Sem Recibo</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Filtros -->
+                    <div class="filter-bar" style="margin-top: 24px;">
+                        <select id="filtroTipoRecibo" class="filter-select">
+                            <option value="">Todos os tipos</option>
+                            <option value="contracheque">Contracheques</option>
+                            <option value="informe_ir">Informes de IR</option>
+                        </select>
+
+                        <select id="filtroAnoRecibo" class="filter-select">
+                            <option value="">Todos os anos</option>
+                            <option value="2026">2026</option>
+                            <option value="2025">2025</option>
+                            <option value="2024">2024</option>
+                        </select>
+
+                        <button class="btn-primary" onclick="carregarRecibos()" style="margin-left: 12px;">
+                            <i class="fa-solid fa-filter"></i>
+                            Filtrar
+                        </button>
+                    </div>
+
+                    <!-- Tabela de Recibos -->
+                    <div id="tabelaRecibosContainer" class="table-container" style="margin-top: 24px;">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Colaborador</th>
+                                    <th>CPF</th>
+                                    <th>Documento</th>
+                                    <th>Período</th>
+                                    <th>Data Recebimento</th>
+                                    <th>IP</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabelaRecibos">
+                                <tr>
+                                    <td colspan="7" class="empty-state">
+                                        <i class="fa-solid fa-spinner fa-spin"></i>
+                                        <p>Carregando recibos...</p>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Documentos Sem Recibo -->
+                    <div class="alert-card" style="margin-top: 24px; background: #fff3cd; border-left: 4px solid #ffc107;">
+                        <h3 style="margin: 0 0 12px 0; color: #856404;">
+                            <i class="fa-solid fa-exclamation-triangle"></i> 
+                            Documentos Sem Recibo
+                        </h3>
+                        <div id="docsSemRecibo">
+                            <p style="margin: 0; color: #856404;">Carregando...</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
         </main>
     </div>
 
@@ -604,6 +720,7 @@
     <!-- JavaScript -->
     <script src="assets/js/supabase-config.js"></script>
     <script src="assets/js/supabase-admin.js"></script>
-    <script src="assets/js/admin-rh.js"></script>
+    <script src="assets/js/recibo-admin.js?v=3.5"></script>
+    <script src="assets/js/admin-rh.js?v=3.3"></script>
 </body>
 </html>
