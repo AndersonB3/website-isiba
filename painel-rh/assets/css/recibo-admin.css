@@ -1,0 +1,281 @@
+/* ════════════════════════════════════════════════════════════════
+   ESTILOS PARA ASSINATURA DIGITAL - PAINEL RH
+   ════════════════════════════════════════════════════════════════ */
+
+/* Container da Assinatura Digital */
+.assinatura-digital-container {
+    margin-top: 20px;
+    padding: 16px;
+    background: #F8F9FA;
+    border-radius: 12px;
+    border: 2px solid #E9ECEF;
+}
+
+.assinatura-digital-container label {
+    display: block;
+    margin-bottom: 12px;
+    color: #212529;
+    font-size: 0.95rem;
+}
+
+.assinatura-digital-container label i {
+    color: #0066cc;
+    margin-right: 6px;
+}
+
+/* Box da Assinatura */
+.assinatura-digital-box {
+    background: white;
+    border: 2px solid #DEE2E6;
+    border-radius: 8px;
+    padding: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 120px;
+    margin-bottom: 12px;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+/* Imagem da Assinatura */
+.assinatura-digital-img {
+    max-width: 100%;
+    max-height: 200px;
+    height: auto;
+    display: block;
+    border: 1px solid #DEE2E6;
+    border-radius: 4px;
+    background: white;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Texto de verificação */
+.assinatura-digital-container small {
+    display: block;
+    text-align: center;
+    margin-top: 8px;
+}
+
+.assinatura-digital-container small i {
+    color: #00a651;
+    margin-right: 4px;
+}
+
+/* Modal Styles (caso não existam) */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.modal-content-large {
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    max-width: 900px;
+    width: 90%;
+    max-height: 90vh;
+    overflow-y: auto;
+    animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(20px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.modal-header {
+    padding: 24px;
+    border-bottom: 2px solid #F1F3F5;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.modal-header h2 {
+    margin: 0;
+    font-size: 1.5rem;
+    color: #212529;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.modal-header h2 i {
+    color: #0066cc;
+}
+
+.btn-close {
+    background: #F8F9FA;
+    border: none;
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    color: #6C757D;
+}
+
+.btn-close:hover {
+    background: #E9ECEF;
+    color: #212529;
+    transform: rotate(90deg);
+}
+
+.modal-body {
+    padding: 24px;
+}
+
+.detail-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 24px;
+}
+
+.detail-section {
+    background: #F8F9FA;
+    padding: 20px;
+    border-radius: 12px;
+    border: 1px solid #E9ECEF;
+}
+
+.detail-section h3 {
+    margin: 0 0 16px 0;
+    font-size: 1.1rem;
+    color: #212529;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding-bottom: 12px;
+    border-bottom: 2px solid #DEE2E6;
+}
+
+.detail-section h3 i {
+    color: #0066cc;
+}
+
+.detail-section p {
+    margin: 12px 0;
+    font-size: 0.95rem;
+    color: #495057;
+    line-height: 1.6;
+}
+
+.detail-section p strong {
+    color: #212529;
+    display: inline-block;
+    min-width: 140px;
+}
+
+.modal-footer {
+    padding: 20px 24px;
+    border-top: 2px solid #F1F3F5;
+    display: flex;
+    gap: 12px;
+    justify-content: flex-end;
+}
+
+.btn {
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.2s ease;
+}
+
+.btn-primary {
+    background: #0066cc;
+    color: white;
+}
+
+.btn-primary:hover {
+    background: #0052a3;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 102, 204, 0.3);
+}
+
+.btn-secondary {
+    background: #6C757D;
+    color: white;
+}
+
+.btn-secondary:hover {
+    background: #5A6268;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(108, 117, 125, 0.3);
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    .modal-content-large {
+        width: 95%;
+        max-height: 95vh;
+    }
+    
+    .detail-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .modal-header h2 {
+        font-size: 1.2rem;
+    }
+    
+    .modal-footer {
+        flex-direction: column;
+    }
+    
+    .btn {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .assinatura-digital-img {
+        max-height: 150px;
+    }
+}
+
+/* Scrollbar personalizado */
+.modal-content-large::-webkit-scrollbar {
+    width: 8px;
+}
+
+.modal-content-large::-webkit-scrollbar-track {
+    background: #F8F9FA;
+}
+
+.modal-content-large::-webkit-scrollbar-thumb {
+    background: #DEE2E6;
+    border-radius: 4px;
+}
+
+.modal-content-large::-webkit-scrollbar-thumb:hover {
+    background: #CED4DA;
+}

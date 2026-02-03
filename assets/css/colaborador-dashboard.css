@@ -1180,3 +1180,155 @@ body {
         font-size: 1.1rem;
     }
 }
+
+/* ========================================
+   SISTEMA DE BLOQUEIO DE DOCUMENTOS
+   ======================================== */
+
+/* Card bloqueado */
+.contracheque-card.bloqueado {
+    position: relative;
+    opacity: 0.7;
+    border: 2px solid #ff6b6b;
+    background: linear-gradient(135deg, rgba(255, 107, 107, 0.05) 0%, rgba(238, 90, 111, 0.05) 100%);
+}
+
+/* Overlay de bloqueio */
+.overlay-bloqueio {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 107, 107, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 4rem;
+    color: #ff6b6b;
+    pointer-events: none;
+    z-index: 1;
+    opacity: 0.3;
+    border-radius: var(--radius-md);
+}
+
+/* Ícone bloqueado */
+.contracheque-icon.icon-bloqueado {
+    background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
+}
+
+/* Badges de status */
+.badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    margin-top: 8px;
+}
+
+.badge-bloqueado {
+    background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
+    color: white;
+    box-shadow: 0 2px 8px rgba(255, 107, 107, 0.3);
+}
+
+.badge-liberado {
+    background: linear-gradient(135deg, #00a651 0%, #00c853 100%);
+    color: white;
+    box-shadow: 0 2px 8px rgba(0, 166, 81, 0.3);
+}
+
+/* Botão bloqueado */
+.btn-download-blocked {
+    width: 100%;
+    padding: 14px 24px;
+    background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
+    color: white;
+    border: none;
+    border-radius: var(--radius-sm);
+    font-size: 0.95rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    cursor: pointer;
+    transition: var(--transition);
+    box-shadow: 0 4px 12px rgba(255, 107, 107, 0.3);
+}
+
+.btn-download-blocked:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(255, 107, 107, 0.4);
+    background: linear-gradient(135deg, #ff5252 0%, #dc4e5e 100%);
+}
+
+.btn-download-blocked:active {
+    transform: translateY(0);
+}
+
+.btn-download-blocked i {
+    font-size: 1.1rem;
+}
+
+/* Notificação de sucesso */
+.success-notification {
+    position: fixed;
+    top: 80px;
+    right: 20px;
+    background: linear-gradient(135deg, #00a651 0%, #00c853 100%);
+    color: white;
+    padding: 16px 24px;
+    border-radius: var(--radius-sm);
+    box-shadow: 0 8px 24px rgba(0, 166, 81, 0.4);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-weight: 500;
+    z-index: 9999;
+    animation: slideInRight 0.3s ease-out;
+    transition: opacity 0.3s ease;
+}
+
+.success-notification i {
+    font-size: 1.5rem;
+}
+
+@keyframes slideInRight {
+    from {
+        transform: translateX(400px);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+/* Responsivo */
+@media (max-width: 768px) {
+    .overlay-bloqueio {
+        font-size: 2.5rem;
+    }
+    
+    .btn-download-blocked {
+        font-size: 0.85rem;
+        padding: 12px 16px;
+    }
+    
+    .badge {
+        font-size: 0.7rem;
+        padding: 4px 10px;
+    }
+    
+    .success-notification {
+        top: 60px;
+        right: 10px;
+        left: 10px;
+        font-size: 0.9rem;
+    }
+}
+

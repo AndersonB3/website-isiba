@@ -129,7 +129,8 @@ function initDashboard() {
                 'cadastrar': ['Cadastrar Funcionário', 'Adicione novos colaboradores ao sistema'],
                 'listar': ['Listar Funcionários', 'Visualize e gerencie todos os cadastros'],
                 'upload': ['Enviar Contracheque', 'Faça upload de contracheques em PDF'],
-                'historico': ['Histórico de Envios', 'Consulte todos os envios realizados']
+                'historico': ['Histórico de Envios', 'Consulte todos os envios realizados'],
+                'recibos': ['Recibos de Documentos', 'Visualize todos os recibos digitais gerados']
             };
 
             document.getElementById('pageTitle').textContent = titles[sectionId][0];
@@ -144,6 +145,8 @@ function initDashboard() {
                 renderHistorico();
             } else if (sectionId === 'overview') {
                 atualizarEstatisticas();
+            } else if (sectionId === 'recibos') {
+                carregarRecibos();
             }
         });
     });
@@ -773,3 +776,174 @@ function populateYearSelect() {
 }
 
 console.log('✅ Admin RH (com Supabase) carregado!');
+
+// ========================================
+// RECIBOS DE DOCUMENTOS
+// ========================================
+
+/**
+ * Carregar dados da seção de recibos
+ */
+async function carregarRecibos() {
+    console.log('📝 Carregando seção de recibos...');
+    
+    try {
+        // Buscar estatísticas
+        const stats = await buscarEstatisticasRecibos();
+        if (stats.success) {
+            // Atualizar cards de estatísticas
+            document.getElementById('totalRecibos').textContent = stats.data.total || 0;
+            document.getElementById('totalContrachequeRecibo').textContent = stats.data.porTipo.contracheque || 0;
+            document.getElementById('totalInformesRecibo').textContent = stats.data.porTipo.informe_ir || 0;
+            document.getElementById('totalSemRecibo').textContent = stats.data.semRecibo || 0;
+        }
+
+        // Buscar recibos com filtros
+        const filtros = {
+            tipoDocumento: document.getElementById('filtroTipoRecibo').value,
+            ano: document.getElementById('filtroAnoRecibo').value
+        };
+
+        const recibos = await buscarTodosRecibos(filtros);
+        if (recibos.success) {
+            renderizarTabelaRecibosLocal(recibos.data);
+        }
+
+        // Buscar documentos sem recibo
+        const semRecibo = await buscarDocumentosSemRecibo();
+        if (semRecibo.success) {
+            renderizarDocsSemRecibo(semRecibo.data);
+        }
+
+    } catch (error) {
+        console.error('❌ Erro ao carregar recibos:', error);
+    }
+}
+
+/**
+ * Renderizar tabela de recibos (versão local adaptada)
+ */
+function renderizarTabelaRecibosLocal(recibos) {
+    const tbody = document.getElementById('tabelaRecibos');
+    
+    if (!recibos || recibos.length === 0) {
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="7" class="empty-state">
+                    <i class="fa-solid fa-inbox"></i>
+                    <p>Nenhum recibo registrado ainda</p>
+                </td>
+            </tr>
+        `;
+        return;
+    }
+
+    tbody.innerHTML = recibos.map(recibo => `
+        <tr>
+            <td>
+                <strong>${recibo.nome_completo}</strong>
+                ${recibo.email ? `<br><small style="color: #666;">${recibo.email}</small>` : ''}
+            </td>
+            <td>${formatarCPF(recibo.cpf)}</td>
+            <td>
+                <span class="badge" style="background: ${recibo.tipo_documento === 'informe_ir' ? '#ff6b35' : '#0066cc'}; color: white; padding: 4px 12px; border-radius: 12px; font-size: 0.85rem;">
+                    ${recibo.tipo_documento === 'informe_ir' ? 'Informe IR' : 'Contracheque'}
+                </span>
+            </td>
+            <td>
+                ${recibo.tipo_documento === 'informe_ir' 
+                    ? `Ano ${recibo.ano}` 
+                    : `${recibo.mes_referencia}/${recibo.ano}`
+                }
+            </td>
+            <td>${formatarDataHora(recibo.data_recebimento)}</td>
+            <td><small>${recibo.ip_address || '-'}</small></td>
+            <td>
+                <button 
+                    class="btn-icon" 
+                    onclick="visualizarDetalheReciboLocal('${recibo.recibo_id}')"
+                    title="Ver detalhes"
+                    style="background: #0066cc; color: white; border: none; padding: 8px 12px; border-radius: 6px; cursor: pointer;"
+                >
+                    <i class="fa-solid fa-eye"></i>
+                </button>
+            </td>
+        </tr>
+    `).join('');
+}
+
+/**
+ * Renderizar documentos sem recibo
+ */
+function renderizarDocsSemRecibo(docs) {
+    const container = document.getElementById('docsSemRecibo');
+    
+    if (!docs || docs.length === 0) {
+        container.innerHTML = '<p style="margin: 0; color: #28a745;"><i class="fa-solid fa-check-circle"></i> Todos os documentos possuem recibo!</p>';
+        return;
+    }
+
+    container.innerHTML = `
+        <p style="margin: 0 0 12px 0; color: #856404;">
+            <strong>${docs.length}</strong> documento(s) aguardando recibo:
+        </p>
+        <ul style="margin: 0; padding-left: 20px; color: #856404;">
+            ${docs.map(doc => `
+                <li style="margin-bottom: 8px;">
+                    <strong>${doc.colaboradores.nome_completo}</strong> - 
+                    ${doc.tipo_documento === 'informe_ir' ? 'Informe IR' : 'Contracheque'} 
+                    ${doc.mes_referencia ? doc.mes_referencia + '/' : ''}${doc.ano}
+                    <small style="color: #999;">(Enviado em ${formatarDataHora(doc.enviado_em)})</small>
+                </li>
+            `).join('')}
+        </ul>
+    `;
+}
+
+/**
+ * Visualizar detalhes do recibo (modal)
+ */
+async function visualizarDetalheReciboLocal(reciboId) {
+    try {
+        console.log('🔍 Buscando detalhes do recibo:', reciboId);
+
+        const { data, error } = await window.supabaseClient
+            .from('view_recibos_completos')
+            .select('*')
+            .eq('recibo_id', reciboId)
+            .single();
+
+        if (error) throw error;
+
+        // 🐛 DEBUG: Verificar campos da assinatura
+        console.log('📋 DADOS COMPLETOS DO RECIBO:', data);
+        console.log('🔍 assinatura_canvas:', data.assinatura_canvas ? 'EXISTE ✅' : 'NÃO EXISTE ❌');
+        console.log('🔍 assinatura_digital:', data.assinatura_digital ? 'EXISTE ✅' : 'NÃO EXISTE ❌');
+        console.log('🔍 assinatura_texto:', data.assinatura_texto);
+        
+        if (data.assinatura_canvas) {
+            console.log('✅ Preview da assinatura:', data.assinatura_canvas.substring(0, 50) + '...');
+        }
+
+        // Chamar função do recibo-admin.js se existir
+        if (typeof mostrarModalDetalheRecibo === 'function') {
+            mostrarModalDetalheRecibo(data);
+        } else {
+            // Fallback: mostrar alert com informações
+            alert(`📄 DETALHES DO RECIBO\n\n` +
+                  `Colaborador: ${data.nome_completo}\n` +
+                  `CPF: ${formatarCPF(data.cpf)}\n` +
+                  `Documento: ${data.tipo_documento === 'informe_ir' ? 'Informe IR' : 'Contracheque'}\n` +
+                  `Período: ${data.tipo_documento === 'informe_ir' ? 'Ano ' + data.ano : data.mes_referencia + '/' + data.ano}\n` +
+                  `Assinatura: ${data.assinatura_texto}\n` +
+                  `Data Recebimento: ${formatarDataHora(data.data_recebimento)}\n` +
+                  `IP: ${data.ip_address || '-'}`);
+        }
+
+    } catch (error) {
+        console.error('❌ Erro ao buscar detalhes do recibo:', error);
+        alert('Erro ao carregar detalhes do recibo');
+    }
+}
+
+console.log('✅ Funções de Recibos carregadas!');

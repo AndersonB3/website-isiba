@@ -1,6 +1,10 @@
 /* ========================================
    PORTAL DO COLABORADOR - DASHBOARD
+   VERSÃO: 2.0 - SISTEMA DE BLOQUEIO COM CADEADO
+   ATUALIZADO: 03/02/2026 - 14:30
    ======================================== */
+
+console.log('🔥 VERSÃO NOVA CARREGADA - 2.0 - BLOQUEIO ATIVO');
 
 document.addEventListener('DOMContentLoaded', () => {
     // Verificar se Supabase foi inicializado
@@ -102,6 +106,18 @@ async function carregarContracheques(colaboradorId) {
     }
 
     let contracheques = result.data;
+    
+    // DEBUG COMPLETO: Ver TODOS os dados do primeiro documento
+    if (contracheques.length > 0) {
+        console.log('🔍 DEBUG COMPLETO - Primeiro documento:');
+        console.log(JSON.stringify(contracheques[0], null, 2));
+        console.log('🔍 Valor de recibo_gerado:', contracheques[0].recibo_gerado);
+        console.log('🔍 Tipo:', typeof contracheques[0].recibo_gerado);
+        console.log('🔍 É NULL?', contracheques[0].recibo_gerado === null);
+        console.log('🔍 É undefined?', contracheques[0].recibo_gerado === undefined);
+        console.log('🔍 É false?', contracheques[0].recibo_gerado === false);
+        console.log('🔍 É true?', contracheques[0].recibo_gerado === true);
+    }
 
     // Aplicar filtro de ano
     if (filterAno) {
@@ -120,15 +136,43 @@ async function carregarContracheques(colaboradorId) {
     }
 
     // Renderizar contracheques
-    container.innerHTML = contracheques.map(contracheque => `
-        <div class="contracheque-card">
+    container.innerHTML = contracheques.map(contracheque => {
+        // DEBUG: Verificar valor de recibo_gerado
+        console.log('📋 Documento:', {
+            id: contracheque.id,
+            mes: contracheque.mes_referencia,
+            ano: contracheque.ano,
+            recibo_gerado: contracheque.recibo_gerado,
+            tipo: typeof contracheque.recibo_gerado
+        });
+        
+        // Se recibo_gerado for NULL ou undefined, considerar como false (bloqueado)
+        const bloqueado = contracheque.recibo_gerado !== true;
+        const badgeClass = bloqueado ? 'badge-bloqueado' : 'badge-liberado';
+        const badgeIcon = bloqueado ? 'fa-lock' : 'fa-check-circle';
+        const badgeText = bloqueado ? 'Bloqueado' : 'Liberado';
+        const btnDisabled = bloqueado ? 'disabled' : '';
+        const btnClass = bloqueado ? 'btn-download-blocked' : 'btn-download';
+        const btnIcon = bloqueado ? 'fa-lock' : 'fa-download';
+        const btnText = bloqueado ? 'Assinar Recibo para Desbloquear' : 'Baixar PDF';
+        const cardClass = bloqueado ? 'contracheque-card bloqueado' : 'contracheque-card';
+        
+        console.log('🔍 Status:', { bloqueado, badgeText, btnClass });
+        
+        return `
+        <div class="${cardClass}" data-documento-id="${contracheque.id}">
+            ${bloqueado ? '<div class="overlay-bloqueio"><i class="fas fa-lock"></i></div>' : ''}
             <div class="contracheque-header">
-                <div class="contracheque-icon">
-                    <i class="fa-solid fa-file-pdf"></i>
+                <div class="contracheque-icon ${bloqueado ? 'icon-bloqueado' : ''}">
+                    <i class="fa-solid ${bloqueado ? 'fa-lock' : 'fa-file-pdf'}"></i>
                 </div>
                 <div class="contracheque-title">
                     <h3>${contracheque.mes_referencia} ${contracheque.ano}</h3>
-                    <p>Contracheque</p>
+                    <p>${contracheque.tipo_documento === 'contracheque' ? 'Contracheque' : 'Informe IR'}</p>
+                    <span class="badge ${badgeClass}">
+                        <i class="fas ${badgeIcon}"></i>
+                        ${badgeText}
+                    </span>
                 </div>
             </div>
             
@@ -149,15 +193,17 @@ async function carregarContracheques(colaboradorId) {
             
             <div class="contracheque-actions">
                 <button 
-                    class="btn-download" 
-                    onclick="baixarContracheque('${contracheque.arquivo_url}', '${contracheque.nome_arquivo}')"
+                    class="${btnClass}" 
+                    onclick="${bloqueado ? `abrirModalRecibo('${contracheque.id}', '${contracheque.tipo_documento}', '${contracheque.mes_referencia}', ${contracheque.ano}, '${contracheque.nome_arquivo}', '${contracheque.arquivo_url}')` : `baixarContracheque('${contracheque.arquivo_url}', '${contracheque.nome_arquivo}')`}"
+                    ${btnDisabled}
                 >
-                    <i class="fa-solid fa-download"></i>
-                    Baixar PDF
+                    <i class="fa-solid ${btnIcon}"></i>
+                    ${btnText}
                 </button>
             </div>
         </div>
-    `).join('');
+    `;
+    }).join('');
 }
 
 // ========================================
@@ -199,6 +245,58 @@ async function baixarContracheque(arquivoUrl, nomeArquivo) {
         btn.disabled = false;
         btn.innerHTML = originalHtml;
     }
+}
+
+// ========================================
+// ABRIR MODAL DE RECIBO
+// ========================================
+async function abrirModalRecibo(documentoId, tipoDocumento, mesReferencia, ano, nomeArquivo, arquivoUrl) {
+    const colaboradorData = JSON.parse(sessionStorage.getItem('colaborador_data'));
+    
+    // Verificar se o modal já foi criado, se não, criar
+    if (typeof verificarEAbrirRecibo === 'function') {
+        await verificarEAbrirRecibo(documentoId, colaboradorData.id, tipoDocumento, mesReferencia, ano, nomeArquivo, arquivoUrl);
+    } else {
+        console.error('❌ Função verificarEAbrirRecibo não foi carregada!');
+        alert('Erro ao abrir modal de recibo. Recarregue a página.');
+    }
+}
+
+// ========================================
+// CALLBACK APÓS ASSINAR RECIBO
+// ========================================
+window.onReciboConfirmado = async function(documentoId, arquivoUrl, nomeArquivo) {
+    console.log('✅ Recibo confirmado! Desbloqueando documento...');
+    
+    // Atualizar a visualização - recarregar os documentos
+    const colaboradorData = JSON.parse(sessionStorage.getItem('colaborador_data'));
+    await carregarContracheques(colaboradorData.id);
+    
+    // Baixar automaticamente o documento
+    await baixarContracheque(arquivoUrl, nomeArquivo);
+    
+    // Mostrar mensagem de sucesso
+    showSuccessMessage('Recibo assinado com sucesso! O documento foi desbloqueado e está sendo baixado.');
+};
+
+// ========================================
+// MENSAGEM DE SUCESSO
+// ========================================
+function showSuccessMessage(message) {
+    // Criar elemento de notificação
+    const notification = document.createElement('div');
+    notification.className = 'success-notification';
+    notification.innerHTML = `
+        <i class="fas fa-check-circle"></i>
+        <span>${message}</span>
+    `;
+    document.body.appendChild(notification);
+    
+    // Remover após 4 segundos
+    setTimeout(() => {
+        notification.style.opacity = '0';
+        setTimeout(() => notification.remove(), 300);
+    }, 4000);
 }
 
 // ========================================

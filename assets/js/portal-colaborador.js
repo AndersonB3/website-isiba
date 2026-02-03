@@ -1,7 +1,9 @@
 /* ========================================
-   PORTAL DO COLABORADOR - DASHBOARD ATUALIZADO
+   PORTAL DO COLABORADOR - VERSÃO 3.6 FIX
    Suporta Contracheques e Informes de IR
    ======================================== */
+
+console.log('🔥 Portal do Colaborador VERSÃO 3.6 - FIX UPDATE + DEBUG RLS carregado!');
 
 document.addEventListener('DOMContentLoaded', () => {
     // Aguardar um pouco para garantir que o Supabase foi inicializado
@@ -501,6 +503,18 @@ async function carregarDocumentos(colaboradorId) {
     }
 
     let documentos = result.data;
+    
+    // DEBUG COMPLETO: Ver TODOS os dados do primeiro documento
+    if (documentos.length > 0) {
+        console.log('🔍 DEBUG COMPLETO - Primeiro documento:');
+        console.log(JSON.stringify(documentos[0], null, 2));
+        console.log('🔍 Valor de recibo_gerado:', documentos[0].recibo_gerado);
+        console.log('🔍 Tipo:', typeof documentos[0].recibo_gerado);
+        console.log('🔍 É NULL?', documentos[0].recibo_gerado === null);
+        console.log('🔍 É undefined?', documentos[0].recibo_gerado === undefined);
+        console.log('🔍 É false?', documentos[0].recibo_gerado === false);
+        console.log('🔍 É true?', documentos[0].recibo_gerado === true);
+    }
 
     // Aplicar filtro de tipo
     if (filterTipo) {
@@ -527,21 +541,38 @@ async function carregarDocumentos(colaboradorId) {
 
     // Renderizar documentos
     container.innerHTML = documentos.map(doc => {
+        // Sistema de bloqueio
+        const bloqueado = doc.recibo_gerado !== true;
+        console.log('📋 Documento:', { id: doc.id, mes: doc.mes_referencia, bloqueado, recibo_gerado: doc.recibo_gerado });
+        
+        const badgeClass = bloqueado ? 'badge-bloqueado' : 'badge-liberado';
+        const badgeIcon = bloqueado ? 'fa-lock' : 'fa-check-circle';
+        const badgeText = bloqueado ? 'Bloqueado' : 'Liberado';
+        const btnClass = bloqueado ? 'btn-download-blocked' : 'btn-download';
+        const btnIcon = bloqueado ? 'fa-lock' : 'fa-download';
+        const btnText = bloqueado ? 'Assinar Recibo para Desbloquear' : 'Baixar PDF';
+        const cardClass = bloqueado ? 'contracheque-card bloqueado' : 'contracheque-card';
+        
         const isInforme = doc.tipo_documento === 'informe_ir';
-        const icon = isInforme ? 'fa-file-invoice' : 'fa-file-pdf';
-        const iconColor = isInforme ? '#00a651' : '#0066cc';
+        const icon = bloqueado ? 'fa-lock' : (isInforme ? 'fa-file-invoice' : 'fa-file-pdf');
+        const iconColor = bloqueado ? '#ff6b6b' : (isInforme ? '#00a651' : '#0066cc');
         const titulo = isInforme ? `Informe de IR ${doc.ano}` : `${doc.mes_referencia} ${doc.ano}`;
         const subtitulo = isInforme ? 'Informe de Rendimentos' : 'Contracheque';
         
         return `
-        <div class="contracheque-card">
+        <div class="${cardClass}" data-documento-id="${doc.id}">
+            ${bloqueado ? '<div class="overlay-bloqueio"><i class="fas fa-lock"></i></div>' : ''}
             <div class="contracheque-header">
-                <div class="contracheque-icon" style="background-color: ${iconColor}20;">
+                <div class="contracheque-icon ${bloqueado ? 'icon-bloqueado' : ''}" style="background-color: ${iconColor}20;">
                     <i class="fa-solid ${icon}" style="color: ${iconColor};"></i>
                 </div>
                 <div class="contracheque-title">
                     <h3>${titulo}</h3>
                     <p>${subtitulo}</p>
+                    <span class="badge ${badgeClass}">
+                        <i class="fas ${badgeIcon}"></i>
+                        ${badgeText}
+                    </span>
                 </div>
             </div>
             
@@ -562,29 +593,73 @@ async function carregarDocumentos(colaboradorId) {
             
             <div class="contracheque-actions">
                 <button 
-                    class="btn-download" 
-                    onclick="baixarDocumento('${doc.arquivo_url}', '${doc.nome_arquivo}')"
+                    class="${btnClass}" 
+                    data-doc-id="${doc.id}"
+                    data-bloqueado="${bloqueado}"
+                    data-tipo="${doc.tipo_documento}"
+                    data-mes="${doc.mes_referencia || ''}"
+                    data-ano="${doc.ano}"
+                    data-arquivo="${doc.nome_arquivo}"
+                    data-url="${doc.arquivo_url}"
                 >
-                    <i class="fa-solid fa-download"></i>
-                    Baixar PDF
+                    <i class="fa-solid ${btnIcon}"></i>
+                    ${btnText}
                 </button>
             </div>
         </div>
     `}).join('');
+    
+    // Adicionar event listeners aos botões
+    const botoes = container.querySelectorAll('.btn-download, .btn-download-blocked');
+    botoes.forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            const bloqueado = this.dataset.bloqueado === 'true';
+            
+            console.log('🖱️ BOTÃO CLICADO:', {
+                bloqueado: bloqueado,
+                id: this.dataset.docId,
+                tipo: this.dataset.tipo,
+                mes: this.dataset.mes,
+                ano: this.dataset.ano
+            });
+            
+            if (bloqueado) {
+                console.log('🔒 Abrindo modal de recibo...');
+                abrirModalRecibo(
+                    this.dataset.docId,
+                    this.dataset.tipo,
+                    this.dataset.mes,
+                    this.dataset.ano,
+                    this.dataset.arquivo,
+                    this.dataset.url
+                );
+            } else {
+                console.log('📥 Baixando documento...');
+                baixarDocumento(this.dataset.url, this.dataset.arquivo);
+            }
+        });
+    });
 }
 
 // ========================================
 // DOWNLOAD DE DOCUMENTO
 // ========================================
 async function baixarDocumento(arquivoUrl, nomeArquivo) {
-    const btn = event.target.closest('.btn-download');
-    const originalHtml = btn.innerHTML;
+    // Verificar se foi chamado por um evento de clique ou programaticamente
+    const btn = event?.target?.closest('.btn-download');
+    let originalHtml;
     
-    // Loading state
-    btn.disabled = true;
-    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Baixando...';
+    // Se foi clicado em um botão, mostrar loading
+    if (btn) {
+        originalHtml = btn.innerHTML;
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Baixando...';
+    }
 
     try {
+        console.log('📥 Iniciando download:', { arquivoUrl, nomeArquivo });
+        
         // Gerar URL assinada
         const result = await downloadMeuContracheque(arquivoUrl);
 
@@ -596,21 +671,29 @@ async function baixarDocumento(arquivoUrl, nomeArquivo) {
             throw new Error('URL de download não retornada');
         }
 
+        console.log('✅ URL gerada, abrindo download...');
+        
         // Abrir em nova aba
         window.open(result.url, '_blank');
         
-        // Feedback de sucesso
-        btn.innerHTML = '<i class="fa-solid fa-check"></i> Baixado!';
-        setTimeout(() => {
-            btn.disabled = false;
-            btn.innerHTML = originalHtml;
-        }, 2000);
+        // Feedback de sucesso (apenas se houver botão)
+        if (btn) {
+            btn.innerHTML = '<i class="fa-solid fa-check"></i> Baixado!';
+            setTimeout(() => {
+                btn.disabled = false;
+                btn.innerHTML = originalHtml;
+            }, 2000);
+        }
 
     } catch (error) {
         console.error('❌ Erro ao baixar documento:', error);
         alert('Erro ao baixar o documento: ' + error.message);
-        btn.disabled = false;
-        btn.innerHTML = originalHtml;
+        
+        // Restaurar botão apenas se existir
+        if (btn) {
+            btn.disabled = false;
+            btn.innerHTML = originalHtml;
+        }
     }
 }
 
@@ -668,4 +751,82 @@ function popularFiltroAnos() {
     });
 }
 
-console.log('✅ Portal do Colaborador carregado!');
+// ========================================
+// ABRIR MODAL DE RECIBO
+// ========================================
+async function abrirModalRecibo(documentoId, tipoDocumento, mesReferencia, ano, nomeArquivo, arquivoUrl) {
+    console.log('🔍 abrirModalRecibo chamada com parâmetros:', {
+        documentoId,
+        tipoDocumento,
+        mesReferencia,
+        ano,
+        nomeArquivo,
+        arquivoUrl
+    });
+    
+    const colaboradorData = JSON.parse(sessionStorage.getItem('colaborador_data'));
+    
+    // Montar objeto documento com todos os dados necessários
+    const documento = {
+        id: documentoId,
+        tipo_documento: tipoDocumento,
+        mes_referencia: mesReferencia,
+        ano: ano,
+        nome_arquivo: nomeArquivo,
+        arquivo_url: arquivoUrl,
+        colaborador_id: colaboradorData.id
+    };
+    
+    console.log('📦 Objeto documento montado:', documento);
+    
+    // Verificar se o modal já foi criado, se não, criar
+    if (typeof verificarEAbrirRecibo === 'function') {
+        await verificarEAbrirRecibo(documento, async () => {
+            // Callback de sucesso - baixar documento após assinar recibo
+            await baixarDocumento(arquivoUrl, nomeArquivo);
+        });
+    } else {
+        console.error('❌ Função verificarEAbrirRecibo não foi carregada!');
+        alert('Erro ao abrir modal de recibo. Recarregue a página.');
+    }
+}
+
+// ========================================
+// CALLBACK APÓS ASSINAR RECIBO
+// ========================================
+window.onReciboConfirmado = async function(documentoId, arquivoUrl, nomeArquivo) {
+    console.log('✅ Recibo confirmado! Desbloqueando documento...');
+    
+    // Atualizar a visualização - recarregar os documentos
+    const colaboradorData = JSON.parse(sessionStorage.getItem('colaborador_data'));
+    await carregarDocumentos(colaboradorData.id);
+    
+    // Baixar automaticamente o documento
+    await baixarDocumento(arquivoUrl, nomeArquivo);
+    
+    // Mostrar mensagem de sucesso
+    showSuccessMessage('Recibo assinado com sucesso! O documento foi desbloqueado e está sendo baixado.');
+};
+
+// ========================================
+// MENSAGEM DE SUCESSO
+// ========================================
+function showSuccessMessage(message) {
+    // Criar elemento de notificação
+    const notification = document.createElement('div');
+    notification.className = 'success-notification';
+    notification.innerHTML = `
+        <i class="fas fa-check-circle"></i>
+        <span>${message}</span>
+    `;
+    document.body.appendChild(notification);
+    
+    // Remover após 4 segundos
+    setTimeout(() => {
+        notification.style.opacity = '0';
+        setTimeout(() => notification.remove(), 300);
+    }, 4000);
+}
+
+console.log('🔥 Portal do Colaborador VERSÃO 2.5 - FIX DOWNLOAD AUTOMÁTICO carregado!');
+
