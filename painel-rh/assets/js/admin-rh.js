@@ -10,12 +10,26 @@
 
 // Função auxiliar para aguardar o Supabase estar pronto
 function aguardarSupabase(callback, tentativas = 0) {
+    if (tentativas === 0) {
+        console.log('🔍 Aguardando Supabase inicializar...');
+    }
+    
     if (window.supabaseClient) {
+        console.log('✅ Supabase detectado, inicializando painel...');
         callback();
-    } else if (tentativas < 20) {
+    } else if (tentativas < 50) {
+        // Aumentado de 20 para 50 tentativas (5 segundos)
+        if (tentativas % 10 === 0) {
+            console.log(`⏳ Tentativa ${tentativas}/50...`);
+        }
         setTimeout(() => aguardarSupabase(callback, tentativas + 1), 100);
     } else {
-        console.error('❌ Erro: Supabase não foi inicializado após 2 segundos!');
+        console.error('❌ Erro: Supabase não foi inicializado após 5 segundos!');
+        console.log('Debug:', {
+            supabase: !!window.supabase,
+            supabaseClient: !!window.supabaseClient,
+            CONFIG: !!window.CONFIG
+        });
         alert('Erro ao conectar com o banco de dados. Verifique a configuração.');
     }
 }
@@ -23,7 +37,6 @@ function aguardarSupabase(callback, tentativas = 0) {
 document.addEventListener('DOMContentLoaded', () => {
     // Aguardar Supabase estar pronto antes de inicializar
     aguardarSupabase(() => {
-        console.log('✅ Supabase detectado, inicializando painel...');
         initLogin();
         initDashboard();
         initCadastro();
