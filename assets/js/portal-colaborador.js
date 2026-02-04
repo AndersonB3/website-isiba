@@ -1,9 +1,10 @@
 /* ========================================
-   PORTAL DO COLABORADOR - VERSÃO 3.6 FIX
+   PORTAL DO COLABORADOR - VERSÃO 3.7 iOS FIX
    Suporta Contracheques e Informes de IR
+   Downloads otimizados para iOS/Android
    ======================================== */
 
-console.log('🔥 Portal do Colaborador VERSÃO 3.6 - FIX UPDATE + DEBUG RLS carregado!');
+console.log('🔥 Portal do Colaborador VERSÃO 3.7 - iOS DOWNLOAD FIX carregado!');
 
 document.addEventListener('DOMContentLoaded', () => {
     // Aguardar um pouco para garantir que o Supabase foi inicializado
@@ -645,6 +646,13 @@ async function carregarDocumentos(colaboradorId) {
 // ========================================
 // DOWNLOAD DE DOCUMENTO
 // ========================================
+
+// Detectar se é iOS (iPhone/iPad)
+function isIOS() {
+    return /iPad|iPhone|iPod/.test(navigator.userAgent) || 
+           (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+}
+
 async function baixarDocumento(arquivoUrl, nomeArquivo) {
     // Verificar se foi chamado por um evento de clique ou programaticamente
     const btn = event?.target?.closest('.btn-download');
@@ -671,23 +679,90 @@ async function baixarDocumento(arquivoUrl, nomeArquivo) {
             throw new Error('URL de download não retornada');
         }
 
-        console.log('✅ URL gerada, abrindo download...');
+        console.log('✅ URL gerada, iniciando download...');
         
-        // Abrir em nova aba
-        window.open(result.url, '_blank');
+        const iOS = isIOS();
         
-        // Feedback de sucesso (apenas se houver botão)
-        if (btn) {
-            btn.innerHTML = '<i class="fa-solid fa-check"></i> Baixado!';
-            setTimeout(() => {
-                btn.disabled = false;
-                btn.innerHTML = originalHtml;
-            }, 2000);
+        if (iOS) {
+            // iOS: Mostrar mensagem e abrir em nova aba
+            // No iOS, o usuário precisa fazer ações manuais
+            console.log('📱 Dispositivo iOS detectado');
+            
+            // Tentar abrir diretamente
+            const linkElement = document.createElement('a');
+            linkElement.href = result.url;
+            linkElement.target = '_blank';
+            linkElement.rel = 'noopener noreferrer';
+            document.body.appendChild(linkElement);
+            linkElement.click();
+            document.body.removeChild(linkElement);
+            
+            // Feedback com instruções para iOS
+            if (btn) {
+                btn.innerHTML = '<i class="fa-solid fa-check"></i> Aberto!';
+                setTimeout(() => {
+                    btn.disabled = false;
+                    btn.innerHTML = originalHtml;
+                }, 2000);
+            }
+            
+            // Toast com instruções
+            mostrarToast(
+                'PDF aberto em nova aba! Para salvar: toque no botão compartilhar (⬆️) e escolha "Salvar em Arquivos"',
+                'info',
+                5000
+            );
+            
+        } else {
+            // Android/Desktop: Forçar download
+            console.log('💻 Dispositivo Desktop/Android detectado');
+            
+            try {
+                // Tentar fetch e forçar download
+                const response = await fetch(result.url);
+                const blob = await response.blob();
+                
+                // Criar link de download
+                const blobUrl = window.URL.createObjectURL(blob);
+                const linkElement = document.createElement('a');
+                linkElement.href = blobUrl;
+                linkElement.download = nomeArquivo || 'documento.pdf';
+                document.body.appendChild(linkElement);
+                linkElement.click();
+                document.body.removeChild(linkElement);
+                
+                // Limpar objeto URL
+                setTimeout(() => window.URL.revokeObjectURL(blobUrl), 100);
+                
+                // Feedback de sucesso
+                if (btn) {
+                    btn.innerHTML = '<i class="fa-solid fa-check"></i> Baixado!';
+                    setTimeout(() => {
+                        btn.disabled = false;
+                        btn.innerHTML = originalHtml;
+                    }, 2000);
+                }
+                
+                mostrarToast('Download iniciado! Verifique sua pasta de downloads.', 'success');
+                
+            } catch (fetchError) {
+                // Fallback: abrir em nova aba
+                console.warn('⚠️ Fetch falhou, abrindo em nova aba:', fetchError);
+                window.open(result.url, '_blank');
+                
+                if (btn) {
+                    btn.innerHTML = '<i class="fa-solid fa-check"></i> Aberto!';
+                    setTimeout(() => {
+                        btn.disabled = false;
+                        btn.innerHTML = originalHtml;
+                    }, 2000);
+                }
+            }
         }
 
     } catch (error) {
         console.error('❌ Erro ao baixar documento:', error);
-        alert('Erro ao baixar o documento: ' + error.message);
+        mostrarToast('Erro ao baixar o documento: ' + error.message, 'error');
         
         // Restaurar botão apenas se existir
         if (btn) {
