@@ -876,7 +876,7 @@ async function baixarDocumento(arquivoUrl, nomeArquivo) {
 
     } catch (error) {
         console.error('❌ Erro ao baixar documento:', error);
-        mostrarToast('Erro ao baixar o documento: ' + error.message, 'error');
+        alert('Erro ao baixar o documento: ' + error.message);
         
         // Restaurar botão apenas se existir
         if (btn) {

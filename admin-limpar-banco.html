@@ -1,0 +1,1030 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel de Limpeza - Banco de Dados</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 0;
+            overflow-x: hidden;
+        }
+
+        /* ============ TELA DE LOGIN ============ */
+        .login-screen {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .login-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            padding: 40px;
+            max-width: 450px;
+            width: 100%;
+        }
+
+        .login-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .login-logo {
+            width: 120px;
+            margin-bottom: 20px;
+        }
+
+        .login-header h1 {
+            color: #667eea;
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .login-header p {
+            color: #666;
+            font-size: 1rem;
+        }
+
+        .login-form {
+            margin-top: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            color: #333;
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 0.95rem;
+        }
+
+        .form-label i {
+            color: #667eea;
+            margin-right: 8px;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .password-wrapper {
+            position: relative;
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: #666;
+            cursor: pointer;
+            padding: 5px;
+            font-size: 1.1rem;
+        }
+
+        .password-toggle:hover {
+            color: #667eea;
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-submit:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .login-status {
+            margin: 15px 0;
+            padding: 12px;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: 500;
+            display: none;
+        }
+
+        .login-status.error {
+            background: #fee;
+            color: #c33;
+            display: block;
+        }
+
+        .login-status.success {
+            background: #efe;
+            color: #3c3;
+            display: block;
+        }
+
+        .login-footer {
+            margin-top: 25px;
+            text-align: center;
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .login-footer i {
+            color: #667eea;
+        }
+
+        /* ============ DASHBOARD ============ */
+        .dashboard {
+            display: none;
+            padding: 20px;
+        }
+
+        .dashboard-header {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .dashboard-header-left h1 {
+            color: #667eea;
+            font-size: 2rem;
+            margin-bottom: 5px;
+        }
+
+        .dashboard-header-left p {
+            color: #666;
+            font-size: 1rem;
+        }
+
+        .dashboard-header-right {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .user-info {
+            text-align: right;
+            margin-right: 15px;
+        }
+
+        .user-info strong {
+            display: block;
+            color: #333;
+            font-size: 1.1rem;
+        }
+
+        .user-info span {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .btn-logout {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-logout:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(245, 87, 108, 0.4);
+        }
+
+        .btn-logout i {
+            margin-right: 8px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .warning-box {
+            background: #ff6b6b;
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .warning-box h2 {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+        }
+
+        .card h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .card p {
+            color: #666;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(245, 87, 108, 0.4);
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+            color: white;
+        }
+
+        .btn-warning:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(254, 225, 64, 0.4);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .status-box {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            margin-top: 30px;
+        }
+
+        .status-box h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+
+        .log-container {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 15px;
+            max-height: 400px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+        }
+
+        .log-item {
+            padding: 8px;
+            margin-bottom: 5px;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .log-success {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .log-error {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .log-info {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+
+        .log-warning {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 3px solid rgba(255,255,255,.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .icon {
+            font-size: 1.5rem;
+        }
+
+        .back-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: white;
+            color: #667eea;
+            padding: 10px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+
+        .back-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.2);
+        }
+
+        /* Responsividade */
+        @media (max-width: 768px) {
+            .dashboard-header {
+                flex-direction: column;
+                gap: 20px;
+                text-align: center;
+            }
+
+            .dashboard-header-right {
+                flex-direction: column;
+                width: 100%;
+            }
+
+            .user-info {
+                text-align: center;
+                margin-right: 0;
+            }
+
+            .cards-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- TELA DE LOGIN -->
+    <div id="loginScreen" class="login-screen">
+        <div class="login-container">
+            <div class="login-header">
+                <img src="assets/img/logomarca alternativa.png" alt="ISIBA Logo" class="login-logo">
+                <h1>🗑️ Painel de Limpeza</h1>
+                <p>Gerenciamento do Banco de Dados</p>
+            </div>
+
+            <form id="loginForm" class="login-form">
+                <div class="form-group">
+                    <label for="loginUsuario" class="form-label">
+                        <i class="fa-solid fa-user"></i>
+                        Usuário
+                    </label>
+                    <input 
+                        type="text" 
+                        id="loginUsuario" 
+                        class="form-input"
+                        placeholder="Digite seu usuário"
+                        required
+                        autocomplete="username"
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="loginSenha" class="form-label">
+                        <i class="fa-solid fa-lock"></i>
+                        Senha
+                    </label>
+                    <div class="password-wrapper">
+                        <input 
+                            type="password" 
+                            id="loginSenha" 
+                            class="form-input"
+                            placeholder="Digite sua senha"
+                            required
+                            autocomplete="current-password"
+                        >
+                        <button type="button" class="password-toggle" id="togglePassword">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div id="loginStatus" class="login-status"></div>
+
+                <button type="submit" class="btn-submit" id="btnLogin">
+                    <i class="fa-solid fa-sign-in-alt"></i>
+                    Acessar Painel
+                </button>
+            </form>
+
+            <div class="login-footer">
+                <p><i class="fa-solid fa-shield-halved"></i> Acesso restrito - Apenas administradores</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- DASHBOARD -->
+    <div id="dashboard" class="dashboard">
+        <div class="dashboard-header">
+            <div class="dashboard-header-left">
+                <h1>🗑️ Painel de Limpeza do Banco de Dados</h1>
+                <p>Gerencie a limpeza das tabelas do banco de dados Supabase</p>
+            </div>
+            <div class="dashboard-header-right">
+                <div class="user-info">
+                    <strong id="userName">Admin RH</strong>
+                    <span>Administrador</span>
+                </div>
+                <button class="btn-logout" id="btnLogout">
+                    <i class="fa-solid fa-right-from-bracket"></i>
+                    Sair
+                </button>
+            </div>
+        </div>
+        </div>
+
+        <div class="container">
+        <div class="header">
+            <h1>🗑️ Painel de Limpeza do Banco de Dados</h1>
+            <p>Gerencie a limpeza das tabelas do banco de dados Supabase</p>
+        </div>
+
+        <div class="warning-box">
+            <h2>
+                <span class="icon">⚠️</span>
+                ATENÇÃO: Operação Irreversível!
+            </h2>
+            <p>As operações de limpeza abaixo são <strong>PERMANENTES</strong> e não podem ser desfeitas. Todos os dados serão removidos definitivamente do banco de dados. Use com extrema cautela!</p>
+        </div>
+
+        <div class="cards-grid">
+            <div class="card">
+                <h3>
+                    <span class="icon">📄</span>
+                    Limpar Contracheques
+                </h3>
+                <p>Remove todos os registros de contracheques e informes IR da tabela <code>contracheques</code>.</p>
+                <button class="btn btn-danger" onclick="limparTabela('contracheques')">
+                    Limpar Contracheques
+                </button>
+            </div>
+
+            <div class="card">
+                <h3>
+                    <span class="icon">👥</span>
+                    Limpar Colaboradores (Teste)
+                </h3>
+                <p>Remove apenas colaboradores de teste (CPF começando com '000'). <strong>Não remove colaboradores reais.</strong></p>
+                <button class="btn btn-warning" onclick="limparColaboradoresTeste()">
+                    Limpar Testes
+                </button>
+            </div>
+
+            <div class="card">
+                <h3>
+                    <span class="icon">📝</span>
+                    Resetar Status de Recibos
+                </h3>
+                <p>Marca todos os contracheques como "recibo não gerado" (recibo_gerado = false), permitindo nova geração de recibos.</p>
+                <button class="btn btn-warning" onclick="resetarRecibos()">
+                    Resetar Recibos
+                </button>
+            </div>
+
+            <div class="card">
+                <h3>
+                    <span class="icon">✍️</span>
+                    Limpar Registros de Recibos
+                </h3>
+                <p>Remove todos os registros de recibos e assinaturas digitais da tabela <code>recibos_documentos</code> do painel de RH.</p>
+                <button class="btn btn-danger" onclick="limparRecibosDocumentos()">
+                    Limpar Registros
+                </button>
+            </div>
+
+            <div class="card">
+                <h3>
+                    <span class="icon">📁</span>
+                    Limpar Storage
+                </h3>
+                <p>Remove todos os arquivos PDF do bucket <code>contracheques</code> no Supabase Storage.</p>
+                <button class="btn btn-danger" onclick="limparStorage()">
+                    Limpar Storage
+                </button>
+            </div>
+
+            <div class="card">
+                <h3>
+                    <span class="icon">🧹</span>
+                    Limpeza Completa (Teste)
+                </h3>
+                <p>Remove todos os dados de teste: contracheques, recibos, assinaturas, colaboradores teste (CPF 000...) e arquivos do storage.</p>
+                <button class="btn btn-danger" onclick="limpezaCompletaTeste()">
+                    Limpeza Completa
+                </button>
+            </div>
+
+            <div class="card">
+                <h3>
+                    <span class="icon">💀</span>
+                    Reset Total
+                </h3>
+                <p><strong>EXTREMO CUIDADO!</strong> Remove TODOS os dados de todas as tabelas e storage. Use apenas em emergência.</p>
+                <button class="btn btn-danger" onclick="resetTotal()">
+                    Reset Total
+                </button>
+            </div>
+        </div>
+
+        <div class="status-box">
+            <h3>📋 Log de Operações</h3>
+            <div class="log-container" id="logContainer">
+                <div class="log-item log-info">
+                    <span>ℹ️</span>
+                    <span>Sistema pronto. Aguardando comandos...</span>
+                </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+        
+        // ============ SISTEMA DE LOGIN ============
+        const LOGIN_CREDENTIALS = {
+            usuario: 'admin',
+            senha: 'admin123'  // ALTERE ESTA SENHA!
+        };
+
+        // Toggle password visibility
+        document.getElementById('togglePassword').addEventListener('click', function() {
+            const passwordInput = document.getElementById('loginSenha');
+            const icon = this.querySelector('i');
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                passwordInput.type = 'password';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+        });
+
+        // Login form submit
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const usuario = document.getElementById('loginUsuario').value;
+            const senha = document.getElementById('loginSenha').value;
+            const statusDiv = document.getElementById('loginStatus');
+            const btnLogin = document.getElementById('btnLogin');
+
+            btnLogin.disabled = true;
+            btnLogin.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Verificando...';
+
+            setTimeout(() => {
+                if (usuario === LOGIN_CREDENTIALS.usuario && senha === LOGIN_CREDENTIALS.senha) {
+                    statusDiv.className = 'login-status success';
+                    statusDiv.textContent = '✅ Login realizado com sucesso!';
+                    
+                    // Salvar no sessionStorage
+                    sessionStorage.setItem('limpezaAuth', 'true');
+                    sessionStorage.setItem('limpezaUser', usuario);
+                    
+                    setTimeout(() => {
+                        mostrarDashboard();
+                    }, 500);
+                } else {
+                    statusDiv.className = 'login-status error';
+                    statusDiv.textContent = '❌ Usuário ou senha incorretos!';
+                    btnLogin.disabled = false;
+                    btnLogin.innerHTML = '<i class="fa-solid fa-sign-in-alt"></i> Acessar Painel';
+                }
+            }, 1000);
+        });
+
+        // Logout
+        document.getElementById('btnLogout').addEventListener('click', function() {
+            if (confirm('Deseja realmente sair do painel?')) {
+                sessionStorage.removeItem('limpezaAuth');
+                sessionStorage.removeItem('limpezaUser');
+                location.reload();
+            }
+        });
+
+        // Verificar se já está logado
+        function verificarAuth() {
+            if (sessionStorage.getItem('limpezaAuth') === 'true') {
+                mostrarDashboard();
+            }
+        }
+
+        function mostrarDashboard() {
+            document.getElementById('loginScreen').style.display = 'none';
+            document.getElementById('dashboard').style.display = 'block';
+            
+            const userName = sessionStorage.getItem('limpezaUser');
+            if (userName) {
+                document.getElementById('userName').textContent = userName.toUpperCase();
+            }
+        }
+
+        // Verificar auth ao carregar
+        verificarAuth();
+
+        // ============ CONEXÃO SUPABASE ============
+        let supabase;
+        
+        // Importar Supabase e configurar
+        try {
+            const { createClient } = await import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm');
+            
+            const SUPABASE_URL = 'https://kklhcmrnraroletwbbid.supabase.co';
+            const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtrbGhjbXJucmFyb2xldHdiYmlkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjkxMjM2NDEsImV4cCI6MjA4NDY5OTY0MX0.dk1aXu6WiNN_Yn-PU-ST2nHOTca0PjDDZgYKauiUP0Y';
+            
+            supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+            
+            addLog('success', '✅ Conectado ao Supabase com sucesso!');
+        } catch (error) {
+            addLog('error', '❌ Erro ao conectar com Supabase: ' + error.message);
+            console.error(error);
+        }
+
+        function addLog(type, message) {
+            const logContainer = document.getElementById('logContainer');
+            const logItem = document.createElement('div');
+            logItem.className = `log-item log-${type}`;
+            
+            const icon = type === 'success' ? '✅' : 
+                        type === 'error' ? '❌' : 
+                        type === 'warning' ? '⚠️' : 'ℹ️';
+            
+            const timestamp = new Date().toLocaleTimeString('pt-BR');
+            logItem.innerHTML = `
+                <span>${icon}</span>
+                <span>[${timestamp}] ${message}</span>
+            `;
+            
+            logContainer.appendChild(logItem);
+            logContainer.scrollTop = logContainer.scrollHeight;
+        }
+
+        async function limparTabela(tabela) {
+            const confirmacao = confirm(
+                `⚠️ ATENÇÃO!\n\n` +
+                `Você está prestes a DELETAR TODOS os registros da tabela "${tabela}".\n\n` +
+                `Esta ação é IRREVERSÍVEL!\n\n` +
+                `Deseja continuar?`
+            );
+
+            if (!confirmacao) {
+                addLog('info', `Operação cancelada pelo usuário: ${tabela}`);
+                return;
+            }
+
+            try {
+                addLog('info', `🔄 Iniciando limpeza da tabela "${tabela}"...`);
+                
+                const { data, error, count } = await supabase
+                    .from(tabela)
+                    .delete()
+                    .neq('id', '00000000-0000-0000-0000-000000000000'); // Deleta todos exceto ID impossível
+
+                if (error) throw error;
+
+                const numRegistros = data ? data.length : 'todos os';
+                addLog('success', `✅ Tabela "${tabela}" limpa com sucesso! (${numRegistros} registros removidos)`);
+                console.log('✅ Dados deletados:', data);
+            } catch (error) {
+                addLog('error', `❌ Erro ao limpar tabela "${tabela}": ${error.message}`);
+                console.error(error);
+            }
+        }
+
+        async function limparColaboradoresTeste() {
+            const confirmacao = confirm(
+                `⚠️ Remover colaboradores de teste?\n\n` +
+                `Serão removidos apenas colaboradores com CPF começando com "000".\n\n` +
+                `Continuar?`
+            );
+
+            if (!confirmacao) {
+                addLog('info', 'Operação cancelada pelo usuário');
+                return;
+            }
+
+            try {
+                addLog('info', '🔄 Buscando colaboradores de teste...');
+                
+                const { data, error } = await supabase
+                    .from('colaboradores')
+                    .delete()
+                    .like('cpf', '000%');
+
+                if (error) throw error;
+
+                const numRegistros = data ? data.length : 0;
+                addLog('success', `✅ ${numRegistros} colaboradores de teste removidos com sucesso!`);
+            } catch (error) {
+                addLog('error', `❌ Erro ao remover colaboradores de teste: ${error.message}`);
+                console.error(error);
+            }
+        }
+
+        async function resetarRecibos() {
+            const confirmacao = confirm(
+                `⚠️ Resetar status de recibos?\n\n` +
+                `Todos os contracheques serão marcados como "recibo não gerado".\n` +
+                `Isso permitirá gerar novos recibos para todos os documentos.\n\n` +
+                `Continuar?`
+            );
+
+            if (!confirmacao) {
+                addLog('info', 'Operação cancelada pelo usuário');
+                return;
+            }
+
+            try {
+                addLog('info', '🔄 Resetando status de recibos...');
+                
+                const { data, error } = await supabase
+                    .from('contracheques')
+                    .update({ recibo_gerado: false })
+                    .eq('recibo_gerado', true);
+
+                if (error) throw error;
+
+                const numRegistros = data ? data.length : 'todos os';
+                addLog('success', `✅ Status de recibos resetado! (${numRegistros} registros atualizados)`);
+            } catch (error) {
+                addLog('error', `❌ Erro ao resetar recibos: ${error.message}`);
+                console.error(error);
+            }
+        }
+
+        async function limparRecibosDocumentos() {
+            const confirmacao = confirm(
+                `⚠️ ATENÇÃO!\n\n` +
+                `Você está prestes a DELETAR TODOS os registros de recibos e assinaturas digitais.\n` +
+                `Isso removerá:\n` +
+                `- Todas as assinaturas digitais capturadas\n` +
+                `- Todos os registros de confirmação de recebimento\n` +
+                `- Todo histórico de recibos do painel RH\n\n` +
+                `Esta ação é IRREVERSÍVEL!\n\n` +
+                `Deseja continuar?`
+            );
+
+            if (!confirmacao) {
+                addLog('info', 'Operação cancelada pelo usuário: limpar recibos_documentos');
+                return;
+            }
+
+            try {
+                addLog('info', '🔄 Iniciando limpeza da tabela "recibos_documentos"...');
+                
+                const { data, error, count } = await supabase
+                    .from('recibos_documentos')
+                    .delete()
+                    .neq('id', '00000000-0000-0000-0000-000000000000');
+
+                if (error) throw error;
+
+                const numRegistros = data ? data.length : 'todos os';
+                addLog('success', `✅ Tabela "recibos_documentos" limpa com sucesso! (${numRegistros} registros removidos)`);
+                addLog('info', '💡 Dica: Use "Resetar Status de Recibos" para desbloquear documentos para nova assinatura');
+            } catch (error) {
+                addLog('error', `❌ Erro ao limpar recibos_documentos: ${error.message}`);
+                console.error(error);
+            }
+        }
+
+        async function limparStorage() {
+            const confirmacao = confirm(
+                `⚠️ ATENÇÃO!\n\n` +
+                `Você está prestes a DELETAR TODOS os arquivos do Storage (bucket contracheques).\n\n` +
+                `Esta ação é IRREVERSÍVEL!\n\n` +
+                `Deseja continuar?`
+            );
+
+            if (!confirmacao) {
+                addLog('info', 'Operação cancelada pelo usuário');
+                return;
+            }
+
+            try {
+                addLog('info', '🔄 Listando arquivos no storage...');
+                
+                // Listar todos os arquivos
+                const { data: files, error: listError } = await supabase
+                    .storage
+                    .from('contracheques')
+                    .list('', {
+                        limit: 1000,
+                        offset: 0,
+                    });
+
+                if (listError) throw listError;
+
+                if (!files || files.length === 0) {
+                    addLog('info', 'ℹ️ Nenhum arquivo encontrado no storage');
+                    return;
+                }
+
+                addLog('info', `📁 Encontrados ${files.length} arquivos. Iniciando remoção...`);
+
+                // Remover arquivos em lote
+                const filePaths = files.map(file => file.name);
+                const { data, error: deleteError } = await supabase
+                    .storage
+                    .from('contracheques')
+                    .remove(filePaths);
+
+                if (deleteError) throw deleteError;
+
+                addLog('success', `✅ ${filePaths.length} arquivos removidos do storage com sucesso!`);
+            } catch (error) {
+                addLog('error', `❌ Erro ao limpar storage: ${error.message}`);
+                console.error(error);
+            }
+        }
+
+        async function limpezaCompletaTeste() {
+            const confirmacao = confirm(
+                `⚠️ LIMPEZA COMPLETA DE DADOS DE TESTE!\n\n` +
+                `Serão removidos:\n` +
+                `- Todos os contracheques\n` +
+                `- Todos os registros de recibos e assinaturas\n` +
+                `- Colaboradores de teste (CPF 000...)\n` +
+                `- Todos os arquivos do storage\n\n` +
+                `Esta ação é IRREVERSÍVEL!\n\n` +
+                `Deseja continuar?`
+            );
+
+            if (!confirmacao) {
+                addLog('info', 'Operação cancelada pelo usuário');
+                return;
+            }
+
+            addLog('info', '🧹 Iniciando limpeza completa de testes...');
+
+            // Limpar na ordem correta (documentos primeiro, depois colaboradores)
+            await limparTabela('contracheques');
+            await limparRecibosDocumentos();
+            await limparColaboradoresTeste();
+            await limparStorage();
+
+            addLog('success', '✅ Limpeza completa de testes finalizada!');
+        }
+
+        async function resetTotal() {
+            const senha = prompt(
+                `🚨 RESET TOTAL DO BANCO DE DADOS! 🚨\n\n` +
+                `Esta é uma operação EXTREMAMENTE PERIGOSA!\n\n` +
+                `TODOS OS DADOS serão PERMANENTEMENTE DELETADOS:\n` +
+                `- Todos os colaboradores\n` +
+                `- Todos os contracheques\n` +
+                `- Todos os recibos e assinaturas\n` +
+                `- Todos os arquivos\n\n` +
+                `Digite "DELETAR TUDO" para confirmar:`
+            );
+
+            if (senha !== 'DELETAR TUDO') {
+                addLog('info', 'Reset total cancelado');
+                return;
+            }
+
+            addLog('warning', '💀 Iniciando RESET TOTAL do banco de dados...');
+
+            try {
+                // Ordem: documentos -> recibos -> colaboradores -> storage
+                await limparTabela('contracheques');
+                await limparRecibosDocumentos();
+                await limparTabela('colaboradores');
+                await limparStorage();
+
+                addLog('success', '✅ RESET TOTAL concluído! Banco de dados zerado.');
+            } catch (error) {
+                addLog('error', `❌ Erro durante reset total: ${error.message}`);
+            }
+        }
+
+        // Expor funções globalmente
+        window.limparTabela = limparTabela;
+        window.limparColaboradoresTeste = limparColaboradoresTeste;
+        window.resetarRecibos = resetarRecibos;
+        window.limparRecibosDocumentos = limparRecibosDocumentos;
+        window.limparStorage = limparStorage;
+        window.limpezaCompletaTeste = limpezaCompletaTeste;
+        window.resetTotal = resetTotal;
+    </script>
+</body>
+</html>

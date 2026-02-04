@@ -110,6 +110,10 @@
                     <i class="fa-solid fa-file-arrow-up"></i>
                     <span>Enviar Documentos</span>
                 </button>
+                <button class="nav-item" data-section="upload-lote">
+                    <i class="fa-solid fa-robot"></i>
+                    <span>Upload em Lote (IA)</span>
+                </button>
                 <button class="nav-item" data-section="historico">
                     <i class="fa-solid fa-clock-rotate-left"></i>
                     <span>Histórico de Envios</span>
@@ -220,6 +224,23 @@
                                     required
                                 >
                             </div>
+
+                            <div class="form-group">
+                                <label for="cadCodigo" class="form-label">
+                                    <i class="fa-solid fa-hashtag"></i>
+                                    Código do Funcionário *
+                                </label>
+                                <input 
+                                    type="text" 
+                                    id="cadCodigo" 
+                                    name="codigo" 
+                                    class="form-input"
+                                    placeholder="Ex: 001, F123, FUNC-456"
+                                    maxlength="20"
+                                    required
+                                >
+                                <small class="form-hint">Código que aparece no contracheque do funcionário</small>
+                            </div>
                         </div>
 
                         <div class="form-row">
@@ -326,6 +347,7 @@
                         <table class="data-table">
                             <thead>
                                 <tr>
+                                    <th>Código</th>
                                     <th>Nome</th>
                                     <th>CPF</th>
                                     <th>E-mail</th>
@@ -335,7 +357,7 @@
                             </thead>
                             <tbody id="tabelaFuncionarios">
                                 <tr>
-                                    <td colspan="5" class="empty-state">
+                                    <td colspan="6" class="empty-state">
                                         <i class="fa-solid fa-users-slash"></i>
                                         <p>Nenhum funcionário cadastrado ainda</p>
                                     </td>
@@ -451,6 +473,152 @@
                             </button>
                         </div>
                     </form>
+                </div>
+            </section>
+
+            <!-- Seção: Upload em Lote (IA) -->
+            <section id="section-upload-lote" class="content-section">
+                <div class="form-card">
+                    <h2><i class="fa-solid fa-robot"></i> Upload Inteligente em Lote</h2>
+                    <p class="form-description">
+                        Sistema automático que lê múltiplos PDFs e identifica o funcionário pelo código e nome.
+                        <strong>Envie até 300 documentos de uma vez!</strong>
+                    </p>
+
+                    <!-- Alertas e Instruções -->
+                    <div class="alert-info" style="background: #e3f2fd; border-left: 4px solid #2196f3; padding: 16px; margin-bottom: 24px; border-radius: 8px;">
+                        <h3 style="margin: 0 0 12px 0; color: #1976d2;">
+                            <i class="fa-solid fa-info-circle"></i> Como Funciona
+                        </h3>
+                        <ul style="margin: 0; padding-left: 20px; color: #424242;">
+                            <li>O sistema lê automaticamente o <strong>código</strong> e <strong>nome completo</strong> de cada PDF</li>
+                            <li>Busca o funcionário correspondente no banco de dados</li>
+                            <li>Envia o documento automaticamente para o colaborador correto</li>
+                            <li>Suporta múltiplos formatos de contracheques</li>
+                            <li>Mostra relatório detalhado de sucessos/avisos/erros</li>
+                        </ul>
+                    </div>
+
+                    <!-- Área de Upload -->
+                    <div class="upload-lote-zone" id="uploadLoteZone">
+                        <input type="file" id="uploadLoteFiles" accept="application/pdf" multiple hidden>
+                        <div class="upload-lote-content" id="uploadLoteContent">
+                            <i class="fa-solid fa-cloud-upload-alt" style="font-size: 4rem; color: #2196f3; margin-bottom: 16px;"></i>
+                            <h3>Arraste múltiplos PDFs aqui</h3>
+                            <p>ou clique para selecionar arquivos</p>
+                            <small>Apenas arquivos PDF • Máx. 10MB cada • Até 300 arquivos</small>
+                        </div>
+                    </div>
+
+                    <!-- Lista de Arquivos Selecionados -->
+                    <div id="listaArquivosLote" class="arquivos-lote-container" style="display: none;">
+                        <h3><i class="fa-solid fa-list"></i> Arquivos Selecionados: <span id="totalArquivos">0</span></h3>
+                        <div id="arquivosLoteList" class="arquivos-grid"></div>
+                        <button type="button" class="btn-secondary" id="btnLimparLote" style="margin-top: 16px;">
+                            <i class="fa-solid fa-trash"></i>
+                            Limpar Seleção
+                        </button>
+                    </div>
+
+                    <!-- Configurações de Processamento -->
+                    <div id="configProcessar" style="display: none; margin-top: 24px; background: #f8f9fa; padding: 20px; border-radius: 8px; border: 2px solid #dee2e6;">
+                        <h3 style="margin: 0 0 16px 0; color: #495057;">
+                            <i class="fa-solid fa-cog"></i> Configurações de Processamento
+                        </h3>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="tipoDocumentoLote" class="form-label">
+                                    <i class="fa-solid fa-file-lines"></i>
+                                    Tipo de Documento Padrão *
+                                </label>
+                                <select id="tipoDocumentoLote" class="form-input" required>
+                                    <option value="contracheque">Contracheque Mensal</option>
+                                    <option value="informe_ir">Informe de Imposto de Renda</option>
+                                </select>
+                                <small class="form-hint">O sistema tentará detectar automaticamente, mas usará este como padrão se não conseguir</small>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="anoLote" class="form-label">
+                                    <i class="fa-solid fa-calendar"></i>
+                                    Ano Padrão *
+                                </label>
+                                <select id="anoLote" class="form-input" required>
+                                    <option value="2026">2026</option>
+                                    <option value="2025" selected>2025</option>
+                                    <option value="2024">2024</option>
+                                </select>
+                                <small class="form-hint">Será usado se o sistema não conseguir detectar o ano no PDF</small>
+                            </div>
+                        </div>
+
+                        <div style="background: #fff3cd; padding: 12px; border-radius: 6px; margin-top: 12px; border-left: 4px solid #ffc107;">
+                            <p style="margin: 0; color: #856404; font-size: 14px;">
+                                <i class="fa-solid fa-info-circle"></i>
+                                <strong>Detecção Automática:</strong> O sistema vai tentar extrair mês e ano de cada PDF. 
+                                Se não conseguir, usará o ano padrão acima e você será notificado no log.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Botão Processar -->
+                    <div id="areaProcessar" style="display: none; margin-top: 24px;">
+                        <button type="button" class="btn-primary btn-large" id="btnProcessarLote">
+                            <i class="fa-solid fa-magic"></i>
+                            Processar Automaticamente
+                        </button>
+                    </div>
+
+                    <!-- Progresso -->
+                    <div id="progressoLote" class="progresso-container" style="display: none;">
+                        <h3><i class="fa-solid fa-tasks"></i> Processando Documentos...</h3>
+                        <div class="progress-bar-lote">
+                            <div class="progress-fill-lote" id="progressFillLote">0%</div>
+                        </div>
+                        <p id="progressoTexto" style="text-align: center; margin-top: 12px; color: #666;">
+                            Iniciando processamento...
+                        </p>
+                    </div>
+
+                    <!-- Estatísticas -->
+                    <div id="statsLote" class="stats-grid" style="display: none; margin-top: 24px;">
+                        <div class="stat-card">
+                            <div class="stat-icon" style="background: linear-gradient(135deg, #4caf50 0%, #8bc34a 100%);">
+                                <i class="fa-solid fa-check-circle"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h3 id="statSuccessLote">0</h3>
+                                <p>Processados</p>
+                            </div>
+                        </div>
+
+                        <div class="stat-card">
+                            <div class="stat-icon" style="background: linear-gradient(135deg, #ff9800 0%, #ffc107 100%);">
+                                <i class="fa-solid fa-exclamation-triangle"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h3 id="statWarningLote">0</h3>
+                                <p>Avisos</p>
+                            </div>
+                        </div>
+
+                        <div class="stat-card">
+                            <div class="stat-icon" style="background: linear-gradient(135deg, #f44336 0%, #e91e63 100%);">
+                                <i class="fa-solid fa-times-circle"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h3 id="statErrorLote">0</h3>
+                                <p>Erros</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Log de Processamento -->
+                    <div id="logLote" class="log-container-lote" style="display: none;">
+                        <h3><i class="fa-solid fa-list-check"></i> Log de Processamento</h3>
+                        <div id="logLoteContent" class="log-content-lote"></div>
+                    </div>
                 </div>
             </section>
 
@@ -641,6 +809,21 @@
                 </div>
 
                 <div class="form-group">
+                    <label for="editCodigo" class="form-label">
+                        <i class="fa-solid fa-hashtag"></i>
+                        Código do Funcionário *
+                    </label>
+                    <input 
+                        type="text" 
+                        id="editCodigo" 
+                        class="form-input"
+                        maxlength="20"
+                        required
+                    >
+                    <small class="form-hint">Código que aparece no contracheque</small>
+                </div>
+
+                <div class="form-group">
                     <label for="editCPF" class="form-label">
                         <i class="fa-solid fa-id-card"></i>
                         CPF *
@@ -717,10 +900,14 @@
     <!-- Supabase JavaScript Client -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     
+    <!-- PDF.js para leitura de PDFs -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    
     <!-- JavaScript -->
     <script src="assets/js/supabase-config.js"></script>
     <script src="assets/js/supabase-admin.js"></script>
     <script src="assets/js/recibo-admin.js?v=3.5"></script>
+    <script src="assets/js/upload-lote.js?v=2.0"></script>
     <script src="assets/js/admin-rh.js?v=3.3"></script>
 </body>
 </html>

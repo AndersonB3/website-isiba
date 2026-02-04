@@ -144,10 +144,30 @@ async function buscarMeusContracheques(colaboradorId) {
  */
 async function downloadMeuContracheque(arquivoUrl) {
     try {
+        // Extrair o caminho relativo da URL completa
+        // Ex: https://.../contracheques/UUID/arquivo.pdf -> UUID/arquivo.pdf
+        let caminhoArquivo = arquivoUrl;
+        
+        if (arquivoUrl.includes('/contracheques/')) {
+            // Pega tudo depois de /contracheques/
+            const partes = arquivoUrl.split('/contracheques/');
+            caminhoArquivo = partes[1]; // Ex: UUID/contracheque_Dezembro_2025.pdf
+        } else if (arquivoUrl.includes('/')) {
+            // Fallback: pega os 2 últimos segmentos (UUID/arquivo.pdf)
+            const partes = arquivoUrl.split('/');
+            if (partes.length >= 2) {
+                caminhoArquivo = partes[partes.length - 2] + '/' + partes[partes.length - 1];
+            } else {
+                caminhoArquivo = partes[partes.length - 1];
+            }
+        }
+        
+        console.log('🔍 Caminho do arquivo no Storage:', caminhoArquivo);
+        
         const { data, error } = await window.supabaseClient
             .storage
             .from(window.CONFIG.bucket)
-            .createSignedUrl(arquivoUrl, 60); // URL válida por 60 segundos
+            .createSignedUrl(caminhoArquivo, 60); // URL válida por 60 segundos
         
         if (error) throw error;
         
