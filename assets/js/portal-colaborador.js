@@ -1,10 +1,10 @@
 /* ========================================
-   PORTAL DO COLABORADOR - VERSÃO 3.8 iOS MODAL
+   PORTAL DO COLABORADOR - VERSÃO 3.9 SELECT FIX
    Suporta Contracheques e Informes de IR
-   Modal de instruções para iOS
+   Correção dos dropdowns customizados
    ======================================== */
 
-console.log('🔥 Portal do Colaborador VERSÃO 3.8 - iOS MODAL FIX carregado!');
+console.log('🔥 Portal do Colaborador VERSÃO 3.9 - SELECT DROPDOWN FIX carregado!');
 
 document.addEventListener('DOMContentLoaded', () => {
     // Aguardar um pouco para garantir que o Supabase foi inicializado
@@ -367,32 +367,82 @@ document.head.appendChild(style);
 // CUSTOM SELECT DROPDOWNS
 // ========================================
 function initCustomSelects() {
-    const customSelects = document.querySelectorAll('.custom-select');
+    console.log('🎯 Inicializando custom selects...');
     
-    customSelects.forEach(select => {
-        const trigger = select.querySelector('.custom-select-trigger');
-        const options = select.querySelectorAll('.custom-option');
-        const hiddenInput = select.closest('.custom-select-wrapper').querySelector('input[type="hidden"]');
+    const customSelects = document.querySelectorAll('.custom-select');
+    console.log(`📋 Encontrados ${customSelects.length} custom selects`);
+    
+    customSelects.forEach((select, index) => {
+        console.log(`  Inicializando select ${index + 1}:`, select.id);
         
-        // Toggle dropdown ao clicar
-        select.addEventListener('click', (e) => {
+        const trigger = select.querySelector('.custom-select-trigger');
+        const arrow = select.querySelector('.custom-select-arrow');
+        const optionsContainer = select.querySelector('.custom-options');
+        const options = select.querySelectorAll('.custom-option');
+        const wrapper = select.closest('.custom-select-wrapper');
+        const hiddenInput = wrapper ? wrapper.querySelector('input[type="hidden"]') : null;
+        
+        if (!trigger || !optionsContainer) {
+            console.error('❌ Elementos necessários não encontrados para', select.id);
+            return;
+        }
+        
+        console.log(`  ✅ Elementos encontrados:`, {
+            trigger: !!trigger,
+            arrow: !!arrow,
+            optionsContainer: !!optionsContainer,
+            options: options.length,
+            hiddenInput: !!hiddenInput
+        });
+        
+        // Remover event listeners antigos (se existirem)
+        const newTrigger = trigger.cloneNode(true);
+        trigger.parentNode.replaceChild(newTrigger, trigger);
+        
+        const newArrow = arrow ? arrow.cloneNode(true) : null;
+        if (arrow && newArrow) {
+            arrow.parentNode.replaceChild(newArrow, arrow);
+        }
+        
+        // Função para toggle do dropdown
+        const toggleDropdown = (e) => {
+            e.preventDefault();
             e.stopPropagation();
+            
+            console.log(`🖱️ Click no select: ${select.id}`);
             
             // Fechar outros dropdowns
             document.querySelectorAll('.custom-select').forEach(s => {
-                if (s !== select) {
+                if (s !== select && s.classList.contains('open')) {
+                    console.log(`  Fechando: ${s.id}`);
                     s.classList.remove('open');
                 }
             });
             
             // Toggle este dropdown
-            select.classList.toggle('open');
+            const isOpen = select.classList.toggle('open');
+            console.log(`  ${isOpen ? 'Abrindo' : 'Fechando'}: ${select.id}`);
+        };
+        
+        // Adicionar eventos de click
+        newTrigger.addEventListener('click', toggleDropdown);
+        if (newArrow) {
+            newArrow.addEventListener('click', toggleDropdown);
+        }
+        select.addEventListener('click', (e) => {
+            // Se clicou no próprio select (mas não nas opções)
+            if (e.target === select || e.target === trigger || e.target === arrow) {
+                toggleDropdown(e);
+            }
         });
         
         // Selecionar opção
         options.forEach(option => {
             option.addEventListener('click', (e) => {
+                e.preventDefault();
                 e.stopPropagation();
+                
+                console.log(`✔️ Opção selecionada:`, option.dataset.value);
                 
                 // Remover active de todas as opções
                 options.forEach(opt => opt.classList.remove('active'));
@@ -401,30 +451,44 @@ function initCustomSelects() {
                 option.classList.add('active');
                 
                 // Atualizar o trigger
-                const icon = option.querySelector('i').outerHTML;
-                const text = option.querySelector('span').textContent;
-                trigger.innerHTML = icon + ' ' + text;
+                const icon = option.querySelector('i');
+                const text = option.querySelector('span');
+                if (icon && text) {
+                    newTrigger.innerHTML = icon.outerHTML + ' ' + text.textContent;
+                }
                 
                 // Atualizar input hidden
-                hiddenInput.value = option.dataset.value;
+                if (hiddenInput) {
+                    hiddenInput.value = option.dataset.value;
+                    console.log(`  Input hidden atualizado: ${hiddenInput.value}`);
+                }
                 
                 // Fechar dropdown
                 select.classList.remove('open');
+                console.log(`  Dropdown fechado`);
                 
                 // Atualizar título da seção e carregar documentos
                 atualizarTituloSecao();
                 const colaboradorData = JSON.parse(sessionStorage.getItem('colaborador_data'));
-                carregarDocumentos(colaboradorData.id);
+                if (colaboradorData) {
+                    carregarDocumentos(colaboradorData.id);
+                }
             });
         });
     });
     
     // Fechar dropdowns ao clicar fora
-    document.addEventListener('click', () => {
-        document.querySelectorAll('.custom-select').forEach(select => {
-            select.classList.remove('open');
-        });
+    document.addEventListener('click', (e) => {
+        if (!e.target.closest('.custom-select')) {
+            const openSelects = document.querySelectorAll('.custom-select.open');
+            if (openSelects.length > 0) {
+                console.log(`🚪 Fechando ${openSelects.length} dropdowns (click fora)`);
+                openSelects.forEach(select => select.classList.remove('open'));
+            }
+        }
     });
+    
+    console.log('✅ Custom selects inicializados!');
 }
 
 // ========================================
