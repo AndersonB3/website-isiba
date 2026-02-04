@@ -7,22 +7,32 @@
 // ========================================
 // INICIALIZAÇÃO
 // ========================================
-document.addEventListener('DOMContentLoaded', () => {
-    // Verificar se Supabase foi inicializado
-    if (!window.supabaseClient) {
-        console.error('❌ Erro: Supabase não foi inicializado!');
-        alert('Erro ao conectar com o banco de dados. Verifique a configuração.');
-        return;
-    }
 
-    initLogin();
-    initDashboard();
-    initCadastro();
-    initListagem();
-    initUpload();
-    initHistorico();
-    initModalEdicao();
-    populateYearSelect();
+// Função auxiliar para aguardar o Supabase estar pronto
+function aguardarSupabase(callback, tentativas = 0) {
+    if (window.supabaseClient) {
+        callback();
+    } else if (tentativas < 20) {
+        setTimeout(() => aguardarSupabase(callback, tentativas + 1), 100);
+    } else {
+        console.error('❌ Erro: Supabase não foi inicializado após 2 segundos!');
+        alert('Erro ao conectar com o banco de dados. Verifique a configuração.');
+    }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    // Aguardar Supabase estar pronto antes de inicializar
+    aguardarSupabase(() => {
+        console.log('✅ Supabase detectado, inicializando painel...');
+        initLogin();
+        initDashboard();
+        initCadastro();
+        initListagem();
+        initUpload();
+        initHistorico();
+        initModalEdicao();
+        populateYearSelect();
+    });
 });
 
 // ========================================

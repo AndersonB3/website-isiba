@@ -3,10 +3,8 @@
  * ISIBA Social - Sistema de Gestão de Contracheques
  */
 
-// Verificar se o Supabase foi inicializado
-if (!window.supabaseClient) {
-    console.error('❌ Supabase não foi inicializado! Verifique se supabase-config.js foi carregado.');
-}
+// A verificação do Supabase será feita quando as funções forem chamadas,
+// não na inicialização do script
 
 // ==================== FUNÇÕES DE HASH ====================
 
