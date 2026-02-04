@@ -1,10 +1,10 @@
 /* ========================================
-   PORTAL DO COLABORADOR - VERSÃO 3.7 iOS FIX
+   PORTAL DO COLABORADOR - VERSÃO 3.8 iOS MODAL
    Suporta Contracheques e Informes de IR
-   Downloads otimizados para iOS/Android
+   Modal de instruções para iOS
    ======================================== */
 
-console.log('🔥 Portal do Colaborador VERSÃO 3.7 - iOS DOWNLOAD FIX carregado!');
+console.log('🔥 Portal do Colaborador VERSÃO 3.8 - iOS MODAL FIX carregado!');
 
 document.addEventListener('DOMContentLoaded', () => {
     // Aguardar um pouco para garantir que o Supabase foi inicializado
@@ -653,6 +653,75 @@ function isIOS() {
            (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
 }
 
+// Modal de instruções para iOS
+function mostrarModalDownloadIOS(url, nomeArquivo) {
+    // Criar overlay
+    const overlay = document.createElement('div');
+    overlay.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.85);
+        z-index: 10000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        animation: fadeIn 0.3s ease;
+    `;
+    
+    // Criar modal
+    const modal = document.createElement('div');
+    modal.style.cssText = `
+        background: white;
+        border-radius: 16px;
+        padding: 24px;
+        max-width: 400px;
+        width: 100%;
+        text-align: center;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+    `;
+    
+    modal.innerHTML = `
+        <div style="margin-bottom: 20px;">
+            <i class="fas fa-mobile-alt" style="font-size: 48px; color: #0066cc;"></i>
+        </div>
+        <h3 style="margin: 0 0 12px 0; color: #333; font-size: 20px;">📱 Download no iPhone</h3>
+        <p style="color: #666; font-size: 14px; line-height: 1.6; margin-bottom: 20px;">
+            Toque no botão abaixo para abrir o PDF.<br>
+            Depois, toque no ícone <strong>compartilhar ⬆️</strong> e escolha <strong>"Salvar em Arquivos"</strong>.
+        </p>
+        <a href="${url}" 
+           target="_blank"
+           download="${nomeArquivo}"
+           style="display: inline-block; background: #0066cc; color: white; padding: 14px 28px; border-radius: 8px; text-decoration: none; font-weight: 600; margin-bottom: 12px; font-size: 16px;">
+            <i class="fas fa-file-pdf"></i> Abrir PDF
+        </a>
+        <br>
+        <button id="closeModalIOS" style="background: transparent; border: none; color: #999; padding: 8px; cursor: pointer; font-size: 14px;">
+            Fechar
+        </button>
+    `;
+    
+    overlay.appendChild(modal);
+    document.body.appendChild(overlay);
+    
+    // Fechar modal
+    document.getElementById('closeModalIOS').onclick = () => {
+        overlay.style.animation = 'fadeOut 0.3s ease';
+        setTimeout(() => overlay.remove(), 300);
+    };
+    
+    overlay.onclick = (e) => {
+        if (e.target === overlay) {
+            overlay.style.animation = 'fadeOut 0.3s ease';
+            setTimeout(() => overlay.remove(), 300);
+        }
+    };
+}
+
 async function baixarDocumento(arquivoUrl, nomeArquivo) {
     // Verificar se foi chamado por um evento de clique ou programaticamente
     const btn = event?.target?.closest('.btn-download');
@@ -662,7 +731,7 @@ async function baixarDocumento(arquivoUrl, nomeArquivo) {
     if (btn) {
         originalHtml = btn.innerHTML;
         btn.disabled = true;
-        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Baixando...';
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Gerando link...';
     }
 
     try {
@@ -679,39 +748,20 @@ async function baixarDocumento(arquivoUrl, nomeArquivo) {
             throw new Error('URL de download não retornada');
         }
 
-        console.log('✅ URL gerada, iniciando download...');
+        console.log('✅ URL gerada!');
         
         const iOS = isIOS();
         
+        // Restaurar botão
+        if (btn) {
+            btn.disabled = false;
+            btn.innerHTML = originalHtml;
+        }
+        
         if (iOS) {
-            // iOS: Mostrar mensagem e abrir em nova aba
-            // No iOS, o usuário precisa fazer ações manuais
-            console.log('📱 Dispositivo iOS detectado');
-            
-            // Tentar abrir diretamente
-            const linkElement = document.createElement('a');
-            linkElement.href = result.url;
-            linkElement.target = '_blank';
-            linkElement.rel = 'noopener noreferrer';
-            document.body.appendChild(linkElement);
-            linkElement.click();
-            document.body.removeChild(linkElement);
-            
-            // Feedback com instruções para iOS
-            if (btn) {
-                btn.innerHTML = '<i class="fa-solid fa-check"></i> Aberto!';
-                setTimeout(() => {
-                    btn.disabled = false;
-                    btn.innerHTML = originalHtml;
-                }, 2000);
-            }
-            
-            // Toast com instruções
-            mostrarToast(
-                'PDF aberto em nova aba! Para salvar: toque no botão compartilhar (⬆️) e escolha "Salvar em Arquivos"',
-                'info',
-                5000
-            );
+            // iOS: Mostrar modal com instruções
+            console.log('📱 Dispositivo iOS detectado - mostrando modal');
+            mostrarModalDownloadIOS(result.url, nomeArquivo);
             
         } else {
             // Android/Desktop: Forçar download
