@@ -75,8 +75,6 @@
             display: grid;
             grid-template-columns: 1fr 1fr;
             min-height: 100vh;
-            max-height: 100vh;
-            overflow: hidden;
             width: 100%;
         }
 
@@ -89,8 +87,7 @@
             padding: 40px 30px;
             position: relative;
             overflow: hidden;
-            height: 100vh;
-            max-height: 100vh;
+            min-height: 100vh;
         }
 
         .portal-welcome::before {
@@ -192,27 +189,27 @@
         .portal-form {
             background: white;
             display: flex;
-            align-items: center;
+            align-items: flex-start; /* MUDADO de center para flex-start */
             justify-content: center;
             padding: 40px 30px;
-            overflow-y: auto;
-            overflow-x: hidden; /* Evita scroll horizontal */
-            height: 100vh;
-            max-height: 100vh;
-            -webkit-overflow-scrolling: touch; /* Scroll suave no iOS */
+            overflow-y: auto; /* Permite scroll vertical */
+            overflow-x: hidden;
+            min-height: 100vh; /* MUDADO de height para min-height */
+            -webkit-overflow-scrolling: touch;
         }
 
         .form-content {
             width: 100%;
             max-width: 450px;
-            padding: 0 15px; /* Mais padding para não cortar elementos */
-            box-sizing: border-box; /* Garante que padding não ultrapasse */
+            padding: 20px 15px; /* AUMENTADO padding */
+            box-sizing: border-box;
+            margin: auto 0; /* Centraliza verticalmente quando há espaço */
         }
 
         .form-header {
             text-align: center;
             margin-bottom: 30px;
-            padding: 0 10px; /* Padding adicional no header */
+            padding: 15px 10px; /* AUMENTADO padding */
         }
 
         .form-icon {
@@ -510,99 +507,207 @@
         }
 
         /* ========================================
-           RESPONSIVIDADE COMPLETA
+           RESPONSIVIDADE COMPLETA - VERSÃO OTIMIZADA
            ======================================== */
 
         /* Tablets e Dispositivos Médios (até 1024px) */
         @media (max-width: 1024px) {
             .portal-container {
                 grid-template-columns: 1fr;
-                min-height: auto;
+                min-height: 100vh;
             }
 
             .portal-welcome {
-                min-height: 300px;
-                padding: 40px 30px;
+                min-height: 350px;
+                padding: 50px 40px;
             }
 
             .welcome-logo {
-                max-width: 120px;
+                max-width: 140px;
             }
 
             .welcome-title {
-                font-size: 2rem;
+                font-size: 2.2rem;
             }
 
             .portal-form {
-                padding: 40px 30px;
+                min-height: calc(100vh - 350px);
+                padding: 50px 40px;
             }
 
             .form-content {
-                max-width: 500px;
+                max-width: 550px;
+                padding: 30px 20px;
             }
         }
 
-        /* Tablets Pequenos (até 768px) */
+        /* Tablets Pequenos e Landscape (até 768px) */
         @media (max-width: 768px) {
             .portal-welcome {
-                display: none; /* Esconde lado esquerdo em telas menores */
+                display: none;
+            }
+
+            .portal-container {
+                grid-template-columns: 1fr;
             }
 
             .portal-form {
-                padding: 40px 25px; /* Mais padding para não cortar */
-                display: flex;
-                align-items: center;
-                justify-content: center;
+                min-height: 100vh;
+                padding: 50px 30px; /* MUITO PADDING */
+                align-items: flex-start; /* Não centraliza verticalmente */
             }
 
             .form-content {
                 max-width: 100%;
                 width: 100%;
-                padding: 10px; /* Adiciona padding interno */
+                padding: 30px 20px; /* MUITO PADDING INTERNO */
+                margin-top: 20px; /* Espaço no topo */
             }
 
             .form-header {
-                margin-bottom: 30px;
-                padding: 0 5px; /* Padding adicional no header */
+                margin-bottom: 35px;
+                padding: 20px 15px; /* MUITO PADDING */
             }
 
             .form-header h2 {
-                font-size: 1.8rem;
+                font-size: 1.9rem;
+                line-height: 1.3;
+                margin-bottom: 12px;
+            }
+
+            .form-header p {
+                font-size: 1rem;
+                line-height: 1.5;
             }
 
             .form-icon {
-                width: 60px;
-                height: 60px;
-                font-size: 1.5rem;
+                width: 70px;
+                height: 70px;
+                font-size: 1.8rem;
+                margin: 0 auto 20px;
             }
 
             .form-group {
-                margin-bottom: 20px;
+                margin-bottom: 25px;
             }
         }
 
         /* Smartphones (até 480px) */
         @media (max-width: 480px) {
             body {
-                font-size: 14px;
+                font-size: 15px;
             }
 
             .portal-form {
-                padding: 30px 20px; /* Padding maior em smartphones */
+                padding: 40px 25px; /* PADDING MAIOR */
+                min-height: 100vh;
             }
 
             .form-content {
-                padding: 10px 5px; /* Padding interno */
+                padding: 25px 15px; /* PADDING INTERNO MAIOR */
+                margin-top: 15px;
             }
 
             .form-header {
-                margin-bottom: 25px;
-                padding: 0 10px; /* Garante espaço nas laterais */
+                margin-bottom: 30px;
+                padding: 15px 12px; /* PADDING GARANTIDO */
             }
 
             .form-header h2 {
+                font-size: 1.6rem;
+                line-height: 1.4;
+                margin-bottom: 10px;
+                word-wrap: break-word;
+            }
+
+            .form-header p {
+                font-size: 0.95rem;
+                line-height: 1.4;
+            }
+
+            .form-icon {
+                width: 60px;
+                height: 60px;
                 font-size: 1.5rem;
-                word-wrap: break-word; /* Quebra texto longo */
+                margin: 0 auto 18px;
+            }
+
+            .form-label {
+                font-size: 0.95rem;
+                margin-bottom: 10px;
+            }
+
+            .form-input {
+                padding: 14px 45px 14px 16px;
+                font-size: 15px;
+            }
+
+            .toggle-password {
+                padding: 0 14px;
+            }
+
+            .strength-meter {
+                margin-top: 12px;
+            }
+
+            .strength-bar {
+                height: 7px;
+            }
+
+            .strength-text {
+                font-size: 0.85rem;
+                margin-top: 8px;
+            }
+
+            .requirements {
+                padding: 18px;
+                margin: 18px 0;
+            }
+
+            .requirements-title {
+                font-size: 0.9rem;
+                margin-bottom: 12px;
+            }
+
+            .requirement {
+                font-size: 0.9rem;
+                padding: 10px 0;
+            }
+
+            .requirement i {
+                font-size: 1rem;
+            }
+
+            .btn-primary {
+                padding: 16px 22px;
+                font-size: 1rem;
+            }
+
+            .status-message {
+                padding: 12px 16px;
+                font-size: 0.9rem;
+            }
+        }
+
+        /* Smartphones Pequenos (até 375px) */
+        @media (max-width: 375px) {
+            .portal-form {
+                padding: 35px 20px; /* PADDING AINDA MAIOR */
+            }
+
+            .form-content {
+                padding: 20px 12px; /* PADDING INTERNO */
+                margin-top: 10px;
+            }
+
+            .form-header {
+                padding: 12px 10px; /* PADDING NO HEADER */
+                margin-bottom: 25px;
+            }
+
+            .form-header h2 {
+                font-size: 1.4rem;
+                line-height: 1.3;
             }
 
             .form-header p {
@@ -610,47 +715,19 @@
             }
 
             .form-icon {
-                width: 50px;
-                height: 50px;
-                font-size: 1.3rem;
-                margin: 0 auto 15px; /* Centraliza */
-            }
-
-            .form-label {
-                font-size: 0.9rem;
-                margin-bottom: 8px;
+                width: 55px;
+                height: 55px;
+                font-size: 1.4rem;
+                margin: 0 auto 15px;
             }
 
             .form-input {
-                padding: 12px 14px;
+                padding: 13px 42px 13px 14px;
                 font-size: 14px;
-            }
-
-            .toggle-password {
-                padding: 0 12px;
-            }
-
-            .strength-meter {
-                margin-top: 10px;
-            }
-
-            .strength-bar {
-                height: 6px;
-            }
-
-            .strength-text {
-                font-size: 0.8rem;
-                margin-top: 6px;
             }
 
             .requirements {
                 padding: 15px;
-                margin: 15px 0;
-            }
-
-            .requirements-title {
-                font-size: 0.85rem;
-                margin-bottom: 10px;
             }
 
             .requirement {
@@ -658,100 +735,76 @@
                 padding: 8px 0;
             }
 
-            .requirement i {
-                font-size: 0.9rem;
-            }
-
             .btn-primary {
                 padding: 14px 20px;
                 font-size: 0.95rem;
             }
-
-            .status-message {
-                padding: 10px 14px;
-                font-size: 0.85rem;
-            }
         }
 
-        /* Smartphones Pequenos (até 360px) */
-        @media (max-width: 360px) {
+        /* Smartphones Muito Pequenos (até 320px) */
+        @media (max-width: 320px) {
             .portal-form {
-                padding: 20px 15px; /* Padding maior para não cortar */
+                padding: 30px 15px; /* MÁXIMO PADDING POSSÍVEL */
             }
 
             .form-content {
-                padding: 0 10px; /* Padding interno adicional */
+                padding: 18px 10px;
+                margin-top: 8px;
             }
 
             .form-header {
-                padding: 0 5px; /* Garante espaço nas laterais */
+                padding: 10px 8px;
+                margin-bottom: 20px;
             }
 
             .form-header h2 {
                 font-size: 1.3rem;
-                line-height: 1.3; /* Melhora espaçamento */
-            }
-
-            .form-header p {
-                font-size: 0.85rem;
+                line-height: 1.3;
             }
 
             .form-icon {
-                width: 45px;
-                height: 45px;
-                font-size: 1.2rem;
-                margin: 0 auto 12px; /* Centraliza e espaça */
-            }
-
-            .form-input {
-                padding: 10px 12px;
-                font-size: 13px;
-            }
-
-            .requirements {
-                padding: 12px;
-            }
-
-            .requirement {
-                font-size: 0.8rem;
-                padding: 6px 0;
-            }
-
-            .btn-primary {
-                padding: 12px 18px;
-                font-size: 0.9rem;
+                width: 50px;
+                height: 50px;
+                font-size: 1.3rem;
+                margin: 0 auto 12px;
             }
         }
 
-        /* Landscape (Orientação Paisagem em Celulares) */
-        @media (max-height: 600px) and (orientation: landscape) {
+        /* Landscape (Orientação Paisagem) */
+        @media (max-height: 650px) and (orientation: landscape) {
             .portal-form {
+                padding: 30px 25px;
+                align-items: flex-start;
+            }
+
+            .form-content {
+                margin-top: 10px;
                 padding: 20px 15px;
-                overflow-y: auto;
             }
 
             .form-header {
                 margin-bottom: 20px;
+                padding: 10px;
             }
 
             .form-icon {
-                width: 40px;
-                height: 40px;
-                font-size: 1.1rem;
-                margin-bottom: 10px;
+                width: 50px;
+                height: 50px;
+                font-size: 1.3rem;
+                margin-bottom: 12px;
             }
 
             .form-header h2 {
-                font-size: 1.3rem;
-                margin-bottom: 5px;
+                font-size: 1.4rem;
+                margin-bottom: 8px;
             }
 
             .form-header p {
-                font-size: 0.85rem;
+                font-size: 0.9rem;
             }
 
             .form-group {
-                margin-bottom: 15px;
+                margin-bottom: 18px;
             }
 
             .requirements {
@@ -760,7 +813,8 @@
             }
 
             .requirement {
-                padding: 5px 0;
+                padding: 6px 0;
+                font-size: 0.85rem;
             }
         }
     </style>
