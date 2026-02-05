@@ -49,6 +49,21 @@
             box-sizing: border-box;
         }
 
+        /* Remove qualquer checkbox ou input que apareça indevidamente */
+        input[type="checkbox"]:not([id]),
+        input[type="radio"]:not([id]) {
+            display: none !important;
+        }
+
+        /* Remove outline de botões */
+        button:focus {
+            outline: none !important;
+        }
+
+        button::-moz-focus-inner {
+            border: 0;
+        }
+
         body {
             font-family: 'Inter', sans-serif;
             background: var(--bg-light);
@@ -258,6 +273,18 @@
             position: relative;
             display: flex;
             align-items: center;
+            width: 100%; /* Garante largura total */
+        }
+
+        /* Remove qualquer pseudo-elemento ou checkbox que possa aparecer */
+        .input-group::before,
+        .input-group::after {
+            display: none !important;
+        }
+
+        .input-group input[type="checkbox"],
+        .input-group input[type="radio"] {
+            display: none !important; /* Remove checkboxes/radios indesejados */
         }
 
         .form-input {
@@ -291,10 +318,29 @@
             font-size: 1.1rem;
             transition: var(--transition);
             z-index: 2;
+            outline: none; /* Remove outline */
+            -webkit-appearance: none; /* Remove aparência padrão iOS */
+            -moz-appearance: none; /* Remove aparência padrão Firefox */
+            appearance: none; /* Remove aparência padrão */
+        }
+
+        .toggle-password:focus {
+            outline: none; /* Remove outline no foco */
+            box-shadow: none; /* Remove sombra */
         }
 
         .toggle-password:hover {
             color: var(--primary-color);
+        }
+
+        /* Garante que não apareça checkbox */
+        .toggle-password::before,
+        .toggle-password::after {
+            display: none !important;
+        }
+
+        .toggle-password i {
+            pointer-events: none; /* Ícone não interfere em cliques */
         }
 
         /* Indicador de Força da Senha */
