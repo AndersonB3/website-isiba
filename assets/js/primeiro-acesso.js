@@ -2,7 +2,23 @@
    PRIMEIRO ACESSO - TROCA DE SENHA OBRIGATÓRIA
    ======================================== */
 
+// ========================================
+// FUNÇÃO DE HASH (caso não esteja disponível)
+// ========================================
+if (!window.hashString) {
+    window.hashString = async function(str) {
+        const encoder = new TextEncoder();
+        const data = encoder.encode(str);
+        const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+        const hashArray = Array.from(new Uint8Array(hashBuffer));
+        const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+        return hashHex;
+    };
+}
+
 document.addEventListener('DOMContentLoaded', () => {
+    console.log('🔄 [PRIMEIRO-ACESSO] Inicializando...');
+    
     // Verificar se Supabase foi inicializado
     if (!window.supabaseClient) {
         console.error('❌ Erro: Supabase não foi inicializado!');
@@ -26,8 +42,19 @@ document.addEventListener('DOMContentLoaded', () => {
     const colaborador = JSON.parse(colaboradorData);
     console.log('👤 Colaborador:', colaborador);
 
+    // Inicializar requisitos como "não atendidos"
+    const reqElements = ['req-length', 'req-uppercase', 'req-lowercase', 'req-number'];
+    reqElements.forEach(id => {
+        const element = document.getElementById(id);
+        if (element) {
+            element.classList.add('unmet');
+        }
+    });
+
     initPasswordStrength();
     initForm(colaborador);
+    
+    console.log('✅ [PRIMEIRO-ACESSO] Inicializado com sucesso!');
 });
 
 // ========================================
@@ -186,56 +213,64 @@ function initForm(colaborador) {
         btnSubmit.disabled = true;
         btnSubmit.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Verificando senha...';
         
-        // BUSCAR HASH ATUAL DIRETO DO BANCO (não confiar na sessão!)
-        console.log('🔍 [DEBUG] Buscando senha atual do banco para colaborador:', colaborador.id);
-        const { data: dadosBanco, error: erroBusca } = await window.supabaseClient
-            .from('colaboradores')
-            .select('senha_hash')
-            .eq('id', colaborador.id)
-            .single();
-        
-        if (erroBusca) {
-            console.error('❌ Erro ao buscar dados do banco:', erroBusca);
-            showStatus('error', 'Erro ao verificar senha. Tente novamente.');
-            btnSubmit.disabled = false;
-            btnSubmit.innerHTML = '<i class="fas fa-check"></i> Alterar Senha e Continuar';
-            return;
-        }
-        
-        console.log('🔍 [DEBUG] Hash no banco:', dadosBanco.senha_hash);
-        
-        // Gerar hash da senha digitada
-        const senhaAtualHash = await hashString(senhaAtual);
-        console.log('🔍 [DEBUG] Hash da senha digitada:', senhaAtualHash);
-        console.log('🔍 [DEBUG] Hashes coincidem?', senhaAtualHash === dadosBanco.senha_hash);
-        
-        // Verificar se a senha atual está correta (comparar com banco, não com sessão!)
-        if (senhaAtualHash !== dadosBanco.senha_hash) {
-            showStatus('error', 'Senha temporária incorreta! Verifique com o RH.');
-            btnSubmit.disabled = false;
-            btnSubmit.innerHTML = '<i class="fas fa-check"></i> Alterar Senha e Continuar';
-            return;
-        }
-        
-        console.log('✅ [DEBUG] Senha temporária correta! Atualizando...');
-        btnSubmit.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Atualizando senha...';
-        
-        // Atualizar senha no banco de dados
-        const result = await trocarSenhaPrimeiroAcesso(colaborador.id, novaSenha);
-        
-        if (result.success) {
-            showStatus('success', '✅ Senha atualizada com sucesso! Redirecionando...');
+        try {
+            // BUSCAR HASH ATUAL DIRETO DO BANCO (não confiar na sessão!)
+            console.log('🔍 [DEBUG] Buscando senha atual do banco para colaborador:', colaborador.id);
+            const { data: dadosBanco, error: erroBusca } = await window.supabaseClient
+                .from('colaboradores')
+                .select('senha_hash')
+                .eq('id', colaborador.id)
+                .single();
             
-            // Atualizar dados na sessão
-            colaborador.primeiro_acesso = false;
-            sessionStorage.setItem('colaborador_data', JSON.stringify(colaborador));
+            if (erroBusca) {
+                console.error('❌ Erro ao buscar dados do banco:', erroBusca);
+                showStatus('error', 'Erro ao verificar senha. Tente novamente.');
+                btnSubmit.disabled = false;
+                btnSubmit.innerHTML = '<i class="fas fa-check"></i> Alterar Senha e Continuar';
+                return;
+            }
             
-            // Redirecionar para o portal
-            setTimeout(() => {
-                window.location.href = 'portal-colaborador.html';
-            }, 2000);
-        } else {
-            showStatus('error', 'Erro ao atualizar senha: ' + result.error);
+            console.log('🔍 [DEBUG] Hash no banco:', dadosBanco.senha_hash);
+            
+            // Gerar hash da senha digitada
+            console.log('🔍 [DEBUG] Gerando hash da senha atual...');
+            const senhaAtualHash = await window.hashString(senhaAtual);
+            console.log('🔍 [DEBUG] Hash da senha digitada:', senhaAtualHash);
+            console.log('🔍 [DEBUG] Hashes coincidem?', senhaAtualHash === dadosBanco.senha_hash);
+            
+            // Verificar se a senha atual está correta (comparar com banco, não com sessão!)
+            if (senhaAtualHash !== dadosBanco.senha_hash) {
+                showStatus('error', 'Senha temporária incorreta! Verifique com o RH.');
+                btnSubmit.disabled = false;
+                btnSubmit.innerHTML = '<i class="fas fa-check"></i> Alterar Senha e Continuar';
+                return;
+            }
+            
+            console.log('✅ [DEBUG] Senha temporária correta! Atualizando...');
+            btnSubmit.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Atualizando senha...';
+            
+            // Atualizar senha no banco de dados
+            const result = await trocarSenhaPrimeiroAcesso(colaborador.id, novaSenha);
+            
+            if (result.success) {
+                showStatus('success', '✅ Senha atualizada com sucesso! Redirecionando...');
+                
+                // Atualizar dados na sessão
+                colaborador.primeiro_acesso = false;
+                sessionStorage.setItem('colaborador_data', JSON.stringify(colaborador));
+                
+                // Redirecionar para o portal
+                setTimeout(() => {
+                    window.location.href = 'portal-colaborador.html';
+                }, 2000);
+            } else {
+                showStatus('error', 'Erro ao atualizar senha: ' + result.error);
+                btnSubmit.disabled = false;
+                btnSubmit.innerHTML = '<i class="fas fa-check"></i> Alterar Senha e Continuar';
+            }
+        } catch (error) {
+            console.error('❌ [ERRO CRÍTICO]', error);
+            showStatus('error', 'Erro inesperado: ' + error.message);
             btnSubmit.disabled = false;
             btnSubmit.innerHTML = '<i class="fas fa-check"></i> Alterar Senha e Continuar';
         }
@@ -247,12 +282,15 @@ function initForm(colaborador) {
 // ========================================
 async function trocarSenhaPrimeiroAcesso(colaboradorId, novaSenha) {
     try {
-        console.log('🔄 Atualizando senha do colaborador:', colaboradorId);
+        console.log('🔄 [TROCA-SENHA] Atualizando senha do colaborador:', colaboradorId);
         
         // Gerar hash da nova senha
-        const novaSenhaHash = await hashString(novaSenha);
+        console.log('🔄 [TROCA-SENHA] Gerando hash da nova senha...');
+        const novaSenhaHash = await window.hashString(novaSenha);
+        console.log('✅ [TROCA-SENHA] Hash gerado:', novaSenhaHash);
         
         // Atualizar no banco de dados
+        console.log('🔄 [TROCA-SENHA] Atualizando no banco de dados...');
         const { data, error } = await window.supabaseClient
             .from('colaboradores')
             .update({
@@ -263,13 +301,16 @@ async function trocarSenhaPrimeiroAcesso(colaboradorId, novaSenha) {
             .eq('id', colaboradorId)
             .select();
         
-        if (error) throw error;
+        if (error) {
+            console.error('❌ [TROCA-SENHA] Erro ao atualizar:', error);
+            throw error;
+        }
         
-        console.log('✅ Senha atualizada com sucesso!', data);
+        console.log('✅ [TROCA-SENHA] Senha atualizada com sucesso!', data);
         return { success: true, data: data[0] };
         
     } catch (error) {
-        console.error('❌ Erro ao trocar senha:', error);
+        console.error('❌ [TROCA-SENHA] Erro ao trocar senha:', error);
         return { success: false, error: error.message };
     }
 }

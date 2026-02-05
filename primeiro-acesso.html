@@ -109,18 +109,20 @@
             position: relative;
         }
 
-        .input-group i {
+        .input-group > i:first-of-type {
             position: absolute;
             left: 15px;
             top: 50%;
             transform: translateY(-50%);
             color: #999;
             font-size: 16px;
+            z-index: 1;
+            pointer-events: none;
         }
 
         input {
             width: 100%;
-            padding: 12px 15px 12px 45px;
+            padding: 12px 45px 12px 45px;
             border: 2px solid #e0e0e0;
             border-radius: 10px;
             font-size: 14px;
@@ -142,6 +144,10 @@
             color: #999;
             font-size: 16px;
             transition: color 0.3s;
+            z-index: 2;
+            background: none;
+            border: none;
+            padding: 5px;
         }
 
         .toggle-password:hover {
@@ -168,11 +174,13 @@
             gap: 8px;
             margin-bottom: 5px;
             color: #666;
+            transition: all 0.3s;
         }
 
         .requirement i {
-            font-size: 12px;
+            font-size: 14px;
             width: 16px;
+            transition: all 0.3s;
         }
 
         .requirement.met {
@@ -181,6 +189,10 @@
 
         .requirement.met i {
             color: #28a745;
+        }
+
+        .requirement.unmet {
+            color: #666;
         }
 
         .requirement.unmet i {
