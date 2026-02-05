@@ -11,6 +11,9 @@ vendor/
 **/supabase-config.js
 !**/supabase-config.example.js
 
+# 🔒 CREDENCIAIS DE DESENVOLVIMENTO (NUNCA COMMITAR!)
+**/supabase-config.dev.js
+
 # Logs
 *.log
 npm-debug.log*

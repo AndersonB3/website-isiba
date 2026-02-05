@@ -4,6 +4,7 @@
 ![HTML5](https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white)
 ![CSS3](https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white)
 ![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)
+![Supabase](https://img.shields.io/badge/Supabase-3ECF8E?style=for-the-badge&logo=supabase&logoColor=white)
 
 ## 📋 Sobre o Projeto
 
@@ -16,6 +17,25 @@ Website institucional moderno e profissional para o **ISIBA**, instituição de 
 - Comunicar humanização no cuidado em saúde
 - Apresentar eficiência e organização
 - Oferecer navegação simples e intuitiva
+
+## 🚀 Novidade: Ambientes Separados!
+
+O sistema agora possui **ambientes completamente isolados** para desenvolvimento e produção:
+
+- 🔴 **PRODUÇÃO:** GitHub Pages (dados reais) → `supabase-config.js`
+- 🔧 **DESENVOLVIMENTO:** Localhost (dados de teste) → `supabase-config.dev.js`
+
+### Quick Start para Desenvolvimento
+
+```bash
+# 1. Criar projeto "isiba-desenvolvimento" no Supabase
+# 2. Executar: database/MIGRAÇÃO-DESENVOLVIMENTO.sql
+# 3. Configurar: assets/js/supabase-config.dev.js
+# 4. Iniciar servidor local
+python -m http.server 8000
+```
+
+📚 **Guia Completo:** [`QUICK-START-DEV.md`](QUICK-START-DEV.md) | [`GUIA-AMBIENTES.md`](GUIA-AMBIENTES.md)
 
 ## ✨ Características
 
