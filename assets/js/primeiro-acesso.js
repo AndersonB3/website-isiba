@@ -192,18 +192,34 @@ function initForm(colaborador) {
         e.preventDefault();
         console.log('🔄 [FORM] Evento de submit disparado!');
         
-        const senhaAtual = document.getElementById('senhaAtual').value;
-        const novaSenha = document.getElementById('novaSenha').value;
-        const confirmarSenha = document.getElementById('confirmarSenha').value;
+        console.log('📝 [FORM] Capturando valores dos campos...');
+        const senhaAtual = document.getElementById('senhaAtual')?.value || '';
+        const novaSenha = document.getElementById('novaSenha')?.value || '';
+        const confirmarSenha = document.getElementById('confirmarSenha')?.value || '';
+        
+        console.log('📝 [FORM] Valores capturados:', {
+            senhaAtual: senhaAtual ? '***' : '(vazio)',
+            novaSenha: novaSenha ? '***' : '(vazio)',
+            confirmarSenha: confirmarSenha ? '***' : '(vazio)'
+        });
+        console.log('📝 [FORM] Valores capturados:', {
+            senhaAtual: senhaAtual ? '***' : '(vazio)',
+            novaSenha: novaSenha ? '***' : '(vazio)',
+            confirmarSenha: confirmarSenha ? '***' : '(vazio)'
+        });
+        
+        console.log('✅ [FORM] Iniciando validações...');
         
         // Validações
         if (novaSenha.length < 8) {
+            console.log('❌ [VALIDAÇÃO] Senha muito curta:', novaSenha.length);
             showStatus('error', 'A nova senha deve ter no mínimo 8 caracteres!');
             return;
         }
 
         // Verificar requisitos da senha
         if (!/[A-Z]/.test(novaSenha)) {
+            console.log('❌ [VALIDAÇÃO] Falta letra maiúscula');
             showStatus('error', 'A senha deve conter pelo menos uma letra maiúscula!');
             return;
         }
