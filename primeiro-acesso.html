@@ -2,8 +2,9 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
     <meta name="description" content="Primeiro Acesso - Altere sua senha temporária">
+    <meta name="theme-color" content="#0066cc">
     <title>Primeiro Acesso | ISIBA</title>
     
     <!-- Favicon -->
@@ -51,16 +52,17 @@
         body {
             font-family: 'Inter', sans-serif;
             background: var(--bg-light);
-            overflow: hidden;
+            overflow-x: hidden; /* Evita scroll horizontal */
         }
 
         /* Container Principal */
         .portal-container {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            height: 100vh;
+            min-height: 100vh;
             max-height: 100vh;
             overflow: hidden;
+            width: 100%;
         }
 
         /* Lado Esquerdo - Informações */
@@ -73,6 +75,7 @@
             position: relative;
             overflow: hidden;
             height: 100vh;
+            max-height: 100vh;
         }
 
         .portal-welcome::before {
@@ -178,12 +181,16 @@
             justify-content: center;
             padding: 40px 30px;
             overflow-y: auto;
+            overflow-x: hidden; /* Evita scroll horizontal */
             height: 100vh;
+            max-height: 100vh;
+            -webkit-overflow-scrolling: touch; /* Scroll suave no iOS */
         }
 
         .form-content {
             width: 100%;
             max-width: 450px;
+            padding: 0 10px; /* Evita que conteúdo encoste nas bordas */
         }
 
         .form-header {
@@ -258,10 +265,12 @@
             padding: 12px 45px 12px 15px;
             border: 2px solid #e0e0e0;
             border-radius: var(--radius-sm);
-            font-size: 0.95rem;
+            font-size: 16px; /* 16px evita zoom automático no iOS */
             font-family: 'Inter', sans-serif;
             transition: var(--transition);
             background: var(--bg-light);
+            box-sizing: border-box; /* Garante que padding não ultrapasse largura */
+            max-width: 100%; /* Impede overflow */
         }
 
         .form-input:focus {
@@ -321,6 +330,8 @@
             padding: 12px;
             border-radius: var(--radius-sm);
             border: 1px solid #e0e0e0;
+            word-wrap: break-word; /* Quebra palavras longas */
+            overflow-wrap: break-word;
         }
 
         .requirements-title {
@@ -331,20 +342,24 @@
             display: flex;
             align-items: center;
             gap: 6px;
+            flex-wrap: wrap; /* Permite quebra de linha */
         }
 
         .requirements-title i {
             color: var(--primary-color);
+            flex-shrink: 0; /* Ícone não encolhe */
         }
 
         .requirement {
             display: flex;
-            align-items: center;
+            align-items: flex-start; /* Alinha no topo para evitar sobreposição */
             gap: 8px;
             font-size: 0.85rem;
             color: var(--text-light);
-            margin-bottom: 6px;
+            margin-bottom: 8px;
             transition: var(--transition);
+            line-height: 1.4; /* Melhora espaçamento de linhas */
+            word-break: break-word; /* Quebra palavras longas */
         }
 
         .requirement:last-child {
@@ -354,6 +369,12 @@
         .requirement i {
             font-size: 0.85rem;
             width: 14px;
+            flex-shrink: 0; /* Ícone não encolhe */
+            margin-top: 2px; /* Alinha com texto */
+        }
+
+        .requirement span {
+            flex: 1; /* Texto ocupa espaço disponível */
         }
 
         .requirement.met {
@@ -440,28 +461,241 @@
             font-size: 1.1rem;
         }
 
-        /* Responsivo */
-        @media (max-width: 968px) {
+        /* ========================================
+           RESPONSIVIDADE COMPLETA
+           ======================================== */
+
+        /* Tablets e Dispositivos Médios (até 1024px) */
+        @media (max-width: 1024px) {
             .portal-container {
                 grid-template-columns: 1fr;
+                min-height: auto;
             }
 
             .portal-welcome {
-                display: none;
+                min-height: 300px;
+                padding: 40px 30px;
+            }
+
+            .welcome-logo {
+                max-width: 120px;
+            }
+
+            .welcome-title {
+                font-size: 2rem;
             }
 
             .portal-form {
-                padding: 20px;
+                padding: 40px 30px;
+            }
+
+            .form-content {
+                max-width: 500px;
             }
         }
 
-        @media (max-width: 480px) {
-            .form-header h2 {
-                font-size: 1.5rem;
+        /* Tablets Pequenos (até 768px) */
+        @media (max-width: 768px) {
+            .portal-welcome {
+                display: none; /* Esconde lado esquerdo em telas menores */
+            }
+
+            .portal-form {
+                padding: 30px 20px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
             }
 
             .form-content {
                 max-width: 100%;
+                width: 100%;
+                padding: 0;
+            }
+
+            .form-header {
+                margin-bottom: 30px;
+            }
+
+            .form-header h2 {
+                font-size: 1.8rem;
+            }
+
+            .form-icon {
+                width: 60px;
+                height: 60px;
+                font-size: 1.5rem;
+            }
+
+            .form-group {
+                margin-bottom: 20px;
+            }
+        }
+
+        /* Smartphones (até 480px) */
+        @media (max-width: 480px) {
+            body {
+                font-size: 14px;
+            }
+
+            .portal-form {
+                padding: 20px 15px;
+            }
+
+            .form-header {
+                margin-bottom: 25px;
+            }
+
+            .form-header h2 {
+                font-size: 1.5rem;
+            }
+
+            .form-header p {
+                font-size: 0.9rem;
+            }
+
+            .form-icon {
+                width: 50px;
+                height: 50px;
+                font-size: 1.3rem;
+            }
+
+            .form-label {
+                font-size: 0.9rem;
+                margin-bottom: 8px;
+            }
+
+            .form-input {
+                padding: 12px 14px;
+                font-size: 14px;
+            }
+
+            .toggle-password {
+                padding: 0 12px;
+            }
+
+            .strength-meter {
+                margin-top: 10px;
+            }
+
+            .strength-bar {
+                height: 6px;
+            }
+
+            .strength-text {
+                font-size: 0.8rem;
+                margin-top: 6px;
+            }
+
+            .requirements {
+                padding: 15px;
+                margin: 15px 0;
+            }
+
+            .requirements-title {
+                font-size: 0.85rem;
+                margin-bottom: 10px;
+            }
+
+            .requirement {
+                font-size: 0.85rem;
+                padding: 8px 0;
+            }
+
+            .requirement i {
+                font-size: 0.9rem;
+            }
+
+            .btn-primary {
+                padding: 14px 20px;
+                font-size: 0.95rem;
+            }
+
+            .status-message {
+                padding: 10px 14px;
+                font-size: 0.85rem;
+            }
+        }
+
+        /* Smartphones Pequenos (até 360px) */
+        @media (max-width: 360px) {
+            .portal-form {
+                padding: 15px 10px;
+            }
+
+            .form-header h2 {
+                font-size: 1.3rem;
+            }
+
+            .form-header p {
+                font-size: 0.85rem;
+            }
+
+            .form-icon {
+                width: 45px;
+                height: 45px;
+                font-size: 1.2rem;
+                margin-bottom: 12px;
+            }
+
+            .form-input {
+                padding: 10px 12px;
+                font-size: 13px;
+            }
+
+            .requirements {
+                padding: 12px;
+            }
+
+            .requirement {
+                font-size: 0.8rem;
+                padding: 6px 0;
+            }
+
+            .btn-primary {
+                padding: 12px 18px;
+                font-size: 0.9rem;
+            }
+        }
+
+        /* Landscape (Orientação Paisagem em Celulares) */
+        @media (max-height: 600px) and (orientation: landscape) {
+            .portal-form {
+                padding: 20px 15px;
+                overflow-y: auto;
+            }
+
+            .form-header {
+                margin-bottom: 20px;
+            }
+
+            .form-icon {
+                width: 40px;
+                height: 40px;
+                font-size: 1.1rem;
+                margin-bottom: 10px;
+            }
+
+            .form-header h2 {
+                font-size: 1.3rem;
+                margin-bottom: 5px;
+            }
+
+            .form-header p {
+                font-size: 0.85rem;
+            }
+
+            .form-group {
+                margin-bottom: 15px;
+            }
+
+            .requirements {
+                margin: 15px 0;
+                padding: 12px;
+            }
+
+            .requirement {
+                padding: 5px 0;
             }
         }
     </style>
