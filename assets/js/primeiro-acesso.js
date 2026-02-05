@@ -54,6 +54,17 @@ document.addEventListener('DOMContentLoaded', () => {
     initPasswordStrength();
     initForm(colaborador);
     
+    // DEBUG: Verificar se botão está funcionando
+    const btnSubmit = document.getElementById('submitBtn');
+    if (btnSubmit) {
+        console.log('✅ [DEBUG] Botão submit encontrado:', btnSubmit);
+        btnSubmit.addEventListener('click', (e) => {
+            console.log('🖱️ [DEBUG] Botão submit foi clicado! Tipo de botão:', btnSubmit.type);
+        });
+    } else {
+        console.error('❌ [DEBUG] Botão #submitBtn não encontrado!');
+    }
+    
     console.log('✅ [PRIMEIRO-ACESSO] Inicializado com sucesso!');
 });
 
@@ -169,8 +180,17 @@ function calculatePasswordStrength(password) {
 function initForm(colaborador) {
     const form = document.getElementById('passwordForm');
     
+    if (!form) {
+        console.error('❌ [ERRO] Formulário #passwordForm não encontrado!');
+        showStatus('error', 'Erro ao inicializar formulário. Recarregue a página.');
+        return;
+    }
+    
+    console.log('✅ [FORM] Formulário encontrado, registrando evento de submit...');
+    
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
+        console.log('🔄 [FORM] Evento de submit disparado!');
         
         const senhaAtual = document.getElementById('senhaAtual').value;
         const novaSenha = document.getElementById('novaSenha').value;
