@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Primeiro Acesso - ISIBA</title>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            padding: 40px;
+            max-width: 500px;
+            width: 100%;
+            animation: slideIn 0.5s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .logo img {
+            max-width: 200px;
+            height: auto;
+        }
+
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 15px;
+            font-size: 24px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .alert {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin-bottom: 25px;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .alert i {
+            color: #ffc107;
+            font-size: 20px;
+        }
+
+        .alert-text {
+            color: #856404;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        .input-group {
+            position: relative;
+        }
+
+        .input-group i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #999;
+            font-size: 16px;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px 15px 12px 45px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .toggle-password {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: #999;
+            font-size: 16px;
+            transition: color 0.3s;
+        }
+
+        .toggle-password:hover {
+            color: #667eea;
+        }
+
+        .password-requirements {
+            margin-top: 10px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            font-size: 12px;
+        }
+
+        .password-requirements h4 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 13px;
+        }
+
+        .requirement {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 5px;
+            color: #666;
+        }
+
+        .requirement i {
+            font-size: 12px;
+            width: 16px;
+        }
+
+        .requirement.met {
+            color: #28a745;
+        }
+
+        .requirement.met i {
+            color: #28a745;
+        }
+
+        .requirement.unmet i {
+            color: #dc3545;
+        }
+
+        .password-strength {
+            margin-top: 10px;
+        }
+
+        .strength-bar {
+            height: 6px;
+            background: #e0e0e0;
+            border-radius: 3px;
+            overflow: hidden;
+            margin-bottom: 5px;
+        }
+
+        .strength-bar-fill {
+            height: 100%;
+            width: 0;
+            transition: all 0.3s;
+        }
+
+        .strength-text {
+            font-size: 12px;
+            color: #666;
+        }
+
+        .btn-primary {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 10px;
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .btn-primary i {
+            margin-right: 8px;
+        }
+
+        .loading-spinner {
+            display: none;
+            margin-left: 8px;
+        }
+
+        .status-message {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+            align-items: center;
+            gap: 10px;
+            animation: fadeIn 0.3s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .status-message.success {
+            background: #d4edda;
+            border-left: 4px solid #28a745;
+            color: #155724;
+        }
+
+        .status-message.error {
+            background: #f8d7da;
+            border-left: 4px solid #dc3545;
+            color: #721c24;
+        }
+
+        .status-message i {
+            font-size: 18px;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 30px 20px;
+            }
+
+            h1 {
+                font-size: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">
+            <img src="assets/img/logomarca superior.png" alt="ISIBA Logo">
+        </div>
+
+        <h1><i class="fas fa-key"></i> Primeiro Acesso</h1>
+        <p class="subtitle">
+            Por motivos de segurança, você precisa criar uma nova senha<br>
+            antes de acessar o sistema.
+        </p>
+
+        <div class="alert">
+            <i class="fas fa-shield-alt"></i>
+            <div class="alert-text">
+                <strong>Segurança:</strong> Sua senha atual é temporária. 
+                Escolha uma senha forte e única para proteger seus dados.
+            </div>
+        </div>
+
+        <div id="statusMessage" class="status-message"></div>
+
+        <form id="passwordForm">
+            <div class="form-group">
+                <label for="senhaAtual">
+                    <i class="fas fa-lock"></i> Senha Atual (Temporária)
+                </label>
+                <div class="input-group">
+                    <i class="fas fa-lock"></i>
+                    <input 
+                        type="password" 
+                        id="senhaAtual" 
+                        name="senhaAtual" 
+                        placeholder="Digite sua senha temporária"
+                        required
+                    >
+                    <i class="fas fa-eye toggle-password" onclick="togglePassword('senhaAtual')"></i>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="novaSenha">
+                    <i class="fas fa-key"></i> Nova Senha
+                </label>
+                <div class="input-group">
+                    <i class="fas fa-key"></i>
+                    <input 
+                        type="password" 
+                        id="novaSenha" 
+                        name="novaSenha" 
+                        placeholder="Digite sua nova senha"
+                        required
+                    >
+                    <i class="fas fa-eye toggle-password" onclick="togglePassword('novaSenha')"></i>
+                </div>
+                
+                <div class="password-requirements">
+                    <h4><i class="fas fa-info-circle"></i> Requisitos da Senha:</h4>
+                    <div class="requirement" id="req-length">
+                        <i class="fas fa-times-circle"></i>
+                        <span>Mínimo de 8 caracteres</span>
+                    </div>
+                    <div class="requirement" id="req-uppercase">
+                        <i class="fas fa-times-circle"></i>
+                        <span>Pelo menos 1 letra maiúscula</span>
+                    </div>
+                    <div class="requirement" id="req-lowercase">
+                        <i class="fas fa-times-circle"></i>
+                        <span>Pelo menos 1 letra minúscula</span>
+                    </div>
+                    <div class="requirement" id="req-number">
+                        <i class="fas fa-times-circle"></i>
+                        <span>Pelo menos 1 número</span>
+                    </div>
+                </div>
+
+                <div class="password-strength">
+                    <div class="strength-bar">
+                        <div id="strengthBarFill" class="strength-bar-fill"></div>
+                    </div>
+                    <div id="strengthText" class="strength-text">Digite uma senha</div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="confirmarSenha">
+                    <i class="fas fa-check-circle"></i> Confirmar Nova Senha
+                </label>
+                <div class="input-group">
+                    <i class="fas fa-check-circle"></i>
+                    <input 
+                        type="password" 
+                        id="confirmarSenha" 
+                        name="confirmarSenha" 
+                        placeholder="Digite a senha novamente"
+                        required
+                    >
+                    <i class="fas fa-eye toggle-password" onclick="togglePassword('confirmarSenha')"></i>
+                </div>
+            </div>
+
+            <button type="submit" class="btn-primary" id="submitBtn">
+                <i class="fas fa-check"></i>
+                Alterar Senha e Continuar
+                <span class="loading-spinner">
+                    <i class="fas fa-spinner fa-spin"></i>
+                </span>
+            </button>
+        </form>
+    </div>
+
+    <!-- Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
+    <!-- Scripts do Sistema -->
+    <script src="assets/js/supabase-config.js"></script>
+    <script src="assets/js/supabase-colaborador.js"></script>
+    <script src="assets/js/primeiro-acesso.js"></script>
+</body>
+</html>

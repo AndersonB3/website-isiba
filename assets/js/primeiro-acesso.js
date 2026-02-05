@@ -2,51 +2,11 @@
    PRIMEIRO ACESSO - TROCA DE SENHA OBRIGATÓRIA
    ======================================== */
 
-// ========================================
-// SISTEMA DE TOAST NOTIFICATION (Definir primeiro!)
-// ========================================
-function showToast(type, message) {
-    // Remover toasts antigos
-    const oldToasts = document.querySelectorAll('.custom-toast');
-    oldToasts.forEach(toast => toast.remove());
-    
-    // Criar toast
-    const toast = document.createElement('div');
-    toast.className = `custom-toast custom-toast-${type}`;
-    
-    // Ícone baseado no tipo
-    let icon = '';
-    if (type === 'success') icon = '<i class="fas fa-check-circle"></i>';
-    else if (type === 'error') icon = '<i class="fas fa-exclamation-circle"></i>';
-    else if (type === 'warning') icon = '<i class="fas fa-exclamation-triangle"></i>';
-    else if (type === 'info') icon = '<i class="fas fa-info-circle"></i>';
-    
-    toast.innerHTML = `
-        <div class="toast-icon">${icon}</div>
-        <div class="toast-message">${message}</div>
-        <button class="toast-close" onclick="this.parentElement.remove()">
-            <i class="fas fa-times"></i>
-        </button>
-    `;
-    
-    document.body.appendChild(toast);
-    
-    // Animar entrada
-    setTimeout(() => toast.classList.add('show'), 10);
-    
-    // Auto-remover após 5 segundos (exceto success que fica mais tempo)
-    const duration = type === 'success' ? 3000 : 5000;
-    setTimeout(() => {
-        toast.classList.remove('show');
-        setTimeout(() => toast.remove(), 300);
-    }, duration);
-}
-
 document.addEventListener('DOMContentLoaded', () => {
     // Verificar se Supabase foi inicializado
-    if (!window.supabase || !window.supabaseClient) {
+    if (!window.supabaseClient) {
         console.error('❌ Erro: Supabase não foi inicializado!');
-        showToast('error', 'Erro ao conectar com o banco de dados. Verifique a configuração.');
+        showStatus('error', 'Erro ao conectar com o banco de dados. Verifique a configuração.');
         setTimeout(() => {
             window.location.href = 'colaborador.html';
         }, 3000);
@@ -56,7 +16,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Verificar se tem dados do colaborador na sessão
     const colaboradorData = sessionStorage.getItem('colaborador_data');
     if (!colaboradorData) {
-        showToast('error', 'Sessão expirada. Faça login novamente.');
+        showStatus('error', 'Sessão expirada. Faça login novamente.');
         setTimeout(() => {
             window.location.href = 'colaborador.html';
         }, 2000);
@@ -64,12 +24,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     const colaborador = JSON.parse(colaboradorData);
-    
-    // Atualizar nome do colaborador
-    const primeiroNome = colaborador.nome.split(' ')[0];
-    document.getElementById('nomeColaborador').textContent = primeiroNome;
+    console.log('👤 Colaborador:', colaborador);
 
-    initPasswordToggles();
     initPasswordStrength();
     initForm(colaborador);
 });
@@ -77,27 +33,19 @@ document.addEventListener('DOMContentLoaded', () => {
 // ========================================
 // TOGGLE DE SENHA
 // ========================================
-function initPasswordToggles() {
-    const toggles = [
-        { btn: 'toggleSenhaAtual', input: 'senhaAtual' },
-        { btn: 'toggleNovaSenha', input: 'novaSenha' },
-        { btn: 'toggleConfirmarSenha', input: 'confirmarSenha' }
-    ];
-
-    toggles.forEach(({ btn, input }) => {
-        const button = document.getElementById(btn);
-        const inputField = document.getElementById(input);
-        
-        if (button && inputField) {
-            button.addEventListener('click', () => {
-                const type = inputField.getAttribute('type');
-                inputField.setAttribute('type', type === 'password' ? 'text' : 'password');
-                button.innerHTML = type === 'password' 
-                    ? '<i class="fas fa-eye-slash"></i>' 
-                    : '<i class="fas fa-eye"></i>';
-            });
-        }
-    });
+function togglePassword(inputId) {
+    const input = document.getElementById(inputId);
+    const icon = input.parentElement.querySelector('.toggle-password');
+    
+    if (input.type === 'password') {
+        input.type = 'text';
+        icon.classList.remove('fa-eye');
+        icon.classList.add('fa-eye-slash');
+    } else {
+        input.type = 'password';
+        icon.classList.remove('fa-eye-slash');
+        icon.classList.add('fa-eye');
+    }
 }
 
 // ========================================
@@ -105,50 +53,86 @@ function initPasswordToggles() {
 // ========================================
 function initPasswordStrength() {
     const novaSenhaInput = document.getElementById('novaSenha');
-    const strengthContainer = document.getElementById('passwordStrength');
-    const strengthFill = document.getElementById('strengthFill');
+    const strengthBarFill = document.getElementById('strengthBarFill');
     const strengthText = document.getElementById('strengthText');
 
     novaSenhaInput.addEventListener('input', (e) => {
         const password = e.target.value;
         
         if (password.length === 0) {
-            strengthContainer.style.display = 'none';
+            strengthBarFill.style.width = '0';
+            strengthText.textContent = 'Digite uma senha';
+            strengthText.style.color = '#666';
+            updateRequirements(password);
             return;
         }
 
-        strengthContainer.style.display = 'block';
-        
         const strength = calculatePasswordStrength(password);
         
-        // Remover classes anteriores
-        strengthFill.className = 'strength-fill';
-        strengthText.className = 'strength-text';
-        
-        // Adicionar novas classes
-        strengthFill.classList.add(strength.level);
-        strengthText.classList.add(strength.level);
+        // Atualizar barra de força
+        strengthBarFill.style.width = strength.percentage + '%';
+        strengthBarFill.style.background = strength.color;
         strengthText.textContent = strength.text;
+        strengthText.style.color = strength.color;
+
+        // Atualizar requisitos
+        updateRequirements(password);
     });
+}
+
+function updateRequirements(password) {
+    const requirements = {
+        'req-length': password.length >= 8,
+        'req-uppercase': /[A-Z]/.test(password),
+        'req-lowercase': /[a-z]/.test(password),
+        'req-number': /[0-9]/.test(password)
+    };
+
+    for (const [id, met] of Object.entries(requirements)) {
+        const element = document.getElementById(id);
+        const icon = element.querySelector('i');
+        
+        if (met) {
+            element.classList.add('met');
+            element.classList.remove('unmet');
+            icon.className = 'fas fa-check-circle';
+        } else {
+            element.classList.remove('met');
+            element.classList.add('unmet');
+            icon.className = 'fas fa-times-circle';
+        }
+    }
 }
 
 function calculatePasswordStrength(password) {
     let score = 0;
     
     // Critérios de força
-    if (password.length >= 6) score++;
     if (password.length >= 8) score++;
+    if (password.length >= 12) score++;
     if (/[a-z]/.test(password)) score++;
     if (/[A-Z]/.test(password)) score++;
     if (/[0-9]/.test(password)) score++;
     if (/[^a-zA-Z0-9]/.test(password)) score++;
     
     if (score <= 2) {
-        return { level: 'weak', text: 'Fraca - Considere uma senha mais forte' };
+        return { 
+            percentage: 33, 
+            color: '#dc3545', 
+            text: 'Senha Fraca' 
+        };
     } else if (score <= 4) {
-        return { level: 'medium', text: 'Média - Boa senha' };
+        return { 
+            percentage: 66, 
+            color: '#ffc107', 
+            text: 'Senha Média' 
+        };
     } else {
-        return { level: 'strong', text: 'Forte - Excelente senha!' };
+        return { 
+            percentage: 100, 
+            color: '#28a745', 
+            text: 'Senha Forte' 
+        };
     }
 }
 
@@ -156,7 +140,7 @@ function calculatePasswordStrength(password) {
 // FORMULÁRIO DE TROCA DE SENHA
 // ========================================
 function initForm(colaborador) {
-    const form = document.getElementById('changePasswordForm');
+    const form = document.getElementById('passwordForm');
     
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
@@ -166,8 +150,24 @@ function initForm(colaborador) {
         const confirmarSenha = document.getElementById('confirmarSenha').value;
         
         // Validações
-        if (novaSenha.length < 6) {
-            showStatus('error', 'A nova senha deve ter no mínimo 6 caracteres!');
+        if (novaSenha.length < 8) {
+            showStatus('error', 'A nova senha deve ter no mínimo 8 caracteres!');
+            return;
+        }
+
+        // Verificar requisitos da senha
+        if (!/[A-Z]/.test(novaSenha)) {
+            showStatus('error', 'A senha deve conter pelo menos uma letra maiúscula!');
+            return;
+        }
+        
+        if (!/[a-z]/.test(novaSenha)) {
+            showStatus('error', 'A senha deve conter pelo menos uma letra minúscula!');
+            return;
+        }
+        
+        if (!/[0-9]/.test(novaSenha)) {
+            showStatus('error', 'A senha deve conter pelo menos um número!');
             return;
         }
         
@@ -182,7 +182,7 @@ function initForm(colaborador) {
         }
         
         // Desabilitar botão
-        const btnSubmit = document.getElementById('btnSubmit');
+        const btnSubmit = document.getElementById('submitBtn');
         btnSubmit.disabled = true;
         btnSubmit.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Verificando senha...';
         
@@ -198,7 +198,7 @@ function initForm(colaborador) {
             console.error('❌ Erro ao buscar dados do banco:', erroBusca);
             showStatus('error', 'Erro ao verificar senha. Tente novamente.');
             btnSubmit.disabled = false;
-            btnSubmit.innerHTML = '<i class="fa-solid fa-check"></i> Confirmar e Acessar Portal';
+            btnSubmit.innerHTML = '<i class="fas fa-check"></i> Alterar Senha e Continuar';
             return;
         }
         
@@ -213,7 +213,7 @@ function initForm(colaborador) {
         if (senhaAtualHash !== dadosBanco.senha_hash) {
             showStatus('error', 'Senha temporária incorreta! Verifique com o RH.');
             btnSubmit.disabled = false;
-            btnSubmit.innerHTML = '<i class="fa-solid fa-check"></i> Confirmar e Acessar Portal';
+            btnSubmit.innerHTML = '<i class="fas fa-check"></i> Alterar Senha e Continuar';
             return;
         }
         
@@ -237,7 +237,7 @@ function initForm(colaborador) {
         } else {
             showStatus('error', 'Erro ao atualizar senha: ' + result.error);
             btnSubmit.disabled = false;
-            btnSubmit.innerHTML = '<i class="fa-solid fa-check"></i> Confirmar e Acessar Portal';
+            btnSubmit.innerHTML = '<i class="fas fa-check"></i> Alterar Senha e Continuar';
         }
     });
 }
@@ -275,10 +275,22 @@ async function trocarSenhaPrimeiroAcesso(colaboradorId, novaSenha) {
 }
 
 // ========================================
-// MOSTRAR STATUS (MANTIDO PARA COMPATIBILIDADE)
+// MOSTRAR STATUS
 // ========================================
 function showStatus(type, message) {
-    showToast(type, message);
+    const statusDiv = document.getElementById('statusMessage');
+    statusDiv.className = 'status-message ' + type;
+    statusDiv.style.display = 'flex';
+    
+    const icon = type === 'success' ? 'check-circle' : 'exclamation-circle';
+    statusDiv.innerHTML = `<i class="fas fa-${icon}"></i> ${message}`;
+    
+    // Auto-esconder após 5 segundos (exceto success)
+    if (type !== 'success') {
+        setTimeout(() => {
+            statusDiv.style.display = 'none';
+        }, 5000);
+    }
 }
 
 console.log('✅ Primeiro Acesso carregado!');
