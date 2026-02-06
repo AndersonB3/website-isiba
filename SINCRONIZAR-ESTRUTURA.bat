@@ -35,7 +35,12 @@ echo │  PASSO 1: Exportar estrutura do banco de PRODUÇÃO                    
 echo └────────────────────────────────────────────────────────────────────────┘
 echo.
 echo Exportando...
-supabase db dump --project-ref kklhcmrnraroletwbbid --schema-only > estrutura-producao-temp.sql
+
+REM Link ao projeto PROD
+supabase link --project-ref kklhcmrnraroletwbbid 2>nul
+
+REM Dump sem dados
+supabase db dump --schema public --data-only=false > estrutura-producao-temp.sql
 
 if %errorlevel% neq 0 (
     echo ❌ Erro ao exportar! Verifique:
@@ -64,7 +69,12 @@ if /i not "%CONFIRMA%"=="S" (
 
 echo.
 echo Aplicando estrutura...
-supabase db execute -f estrutura-producao-temp.sql --project-ref ikwnemhqqkpjurdpauim
+
+REM Link ao projeto DEV
+supabase link --project-ref ikwnemhqqkpjurdpauim 2>nul
+
+REM Executar SQL
+supabase db execute -f estrutura-producao-temp.sql
 
 if %errorlevel% neq 0 (
     echo ❌ Erro ao aplicar estrutura!

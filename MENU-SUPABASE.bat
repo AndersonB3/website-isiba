@@ -105,10 +105,12 @@ set /p proj="Escolha: "
 
 if "%proj%"=="1" (
     echo.
-    supabase projects info kklhcmrnraroletwbbid
+    supabase link --project-ref kklhcmrnraroletwbbid 2>nul
+    supabase projects api-keys --project-ref kklhcmrnraroletwbbid
 ) else if "%proj%"=="2" (
     echo.
-    supabase projects info ikwnemhqqkpjurdpauim
+    supabase link --project-ref ikwnemhqqkpjurdpauim 2>nul
+    supabase projects api-keys --project-ref ikwnemhqqkpjurdpauim
 ) else (
     echo.
     echo Opcao invalida!
@@ -148,9 +150,11 @@ echo Executando SQL...
 echo.
 
 if "%banco%"=="1" (
-    supabase db execute --project-ref kklhcmrnraroletwbbid --file "%arquivo%"
+    supabase link --project-ref kklhcmrnraroletwbbid 2>nul
+    supabase db execute --file "%arquivo%"
 ) else if "%banco%"=="2" (
-    supabase db execute --project-ref ikwnemhqqkpjurdpauim --file "%arquivo%"
+    supabase link --project-ref ikwnemhqqkpjurdpauim 2>nul
+    supabase db execute --file "%arquivo%"
 ) else (
     echo Opcao invalida!
 )

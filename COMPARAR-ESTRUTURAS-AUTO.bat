@@ -25,7 +25,12 @@ echo [1/3] Exportando estrutura PRODUCAO...
 echo.
 
 set PROD_SCHEMA=estrutura-PROD.sql
-supabase db dump --project-ref kklhcmrnraroletwbbid --schema public --data-only=false > %PROD_SCHEMA%
+
+REM Link ao projeto PROD
+supabase link --project-ref kklhcmrnraroletwbbid 2>nul
+
+REM Dump da estrutura
+supabase db dump --schema public --data-only=false > %PROD_SCHEMA%
 
 if %ERRORLEVEL% NEQ 0 (
     echo [ERRO] Falha ao exportar PRODUCAO!
@@ -40,7 +45,12 @@ echo [2/3] Exportando estrutura DESENVOLVIMENTO...
 echo.
 
 set DEV_SCHEMA=estrutura-DEV.sql
-supabase db dump --project-ref ikwnemhqqkpjurdpauim --schema public --data-only=false > %DEV_SCHEMA%
+
+REM Link ao projeto DEV
+supabase link --project-ref ikwnemhqqkpjurdpauim 2>nul
+
+REM Dump da estrutura
+supabase db dump --schema public --data-only=false > %DEV_SCHEMA%
 
 if %ERRORLEVEL% NEQ 0 (
     echo [ERRO] Falha ao exportar DEV!

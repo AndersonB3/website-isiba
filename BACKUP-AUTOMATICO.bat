@@ -32,7 +32,14 @@ set TIMESTAMP=%datetime:~0,4%-%datetime:~4,2%-%datetime:~6,2%_%datetime:~8,2%-%d
 set BACKUP_PROD=backup-PROD-%TIMESTAMP%.sql
 
 echo Conectando ao banco PRODUCAO...
-supabase db dump --project-ref kklhcmrnraroletwbbid --schema public > %BACKUP_PROD%
+echo IMPORTANTE: O CLI precisa estar linkado ao projeto!
+echo.
+
+REM Link temporário ao projeto PROD
+supabase link --project-ref kklhcmrnraroletwbbid 2>nul
+
+REM Fazer dump
+supabase db dump --schema public > %BACKUP_PROD%
 
 if %ERRORLEVEL% EQU 0 (
     echo.
@@ -54,7 +61,13 @@ echo.
 set BACKUP_DEV=backup-DEV-%TIMESTAMP%.sql
 
 echo Conectando ao banco DESENVOLVIMENTO...
-supabase db dump --project-ref ikwnemhqqkpjurdpauim --schema public > %BACKUP_DEV%
+echo.
+
+REM Link temporário ao projeto DEV
+supabase link --project-ref ikwnemhqqkpjurdpauim 2>nul
+
+REM Fazer dump
+supabase db dump --schema public > %BACKUP_DEV%
 
 if %ERRORLEVEL% EQU 0 (
     echo.
