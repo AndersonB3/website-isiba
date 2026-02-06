@@ -48,8 +48,18 @@
     // Carregar o arquivo de configuração correto de forma SÍNCRONA
     console.log(`%c📦 Carregando: ${configFile}`, 'color: #666; font-style: italic;');
     
-    // Usar document.write para garantir carregamento síncrono
-    // Isso garante que o config seja carregado ANTES dos outros scripts
-    document.write(`<script src="assets/js/${configFile}"><\/script>`);
+    // Criar script de forma síncrona usando XMLHttpRequest
+    const xhr = new XMLHttpRequest();
+    xhr.open('GET', `assets/js/${configFile}`, false); // false = síncrono
+    xhr.send();
+    
+    if (xhr.status === 200) {
+        // Executar o código JavaScript
+        eval(xhr.responseText);
+        console.log('%c✅ Configuração carregada com sucesso!', 'color: #00a651; font-weight: bold;');
+    } else {
+        console.error(`%c❌ ERRO ao carregar ${configFile}`, 'color: #ff0000; font-weight: bold;');
+        alert(`⚠️ ERRO: Não foi possível carregar ${configFile}\n\nStatus: ${xhr.status}`);
+    }
     
 })();
