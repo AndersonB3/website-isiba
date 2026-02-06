@@ -20,6 +20,7 @@ echo  [5] Backup completo DESENVOLVIMENTO
 echo  [6] Comparar estruturas dos bancos
 echo  [7] Abrir Dashboard Supabase (navegador)
 echo.
+echo  [8] Instalar Supabase CLI (guia manual)
 echo  [9] PowerShell CLI Completo
 echo  [0] Sair
 echo.
@@ -34,6 +35,7 @@ if "%opcao%"=="4" goto BACKUP_PROD
 if "%opcao%"=="5" goto BACKUP_DEV
 if "%opcao%"=="6" goto COMPARAR
 if "%opcao%"=="7" goto DASHBOARD
+if "%opcao%"=="8" goto INSTALAR_CLI
 if "%opcao%"=="9" goto POWERSHELL_CLI
 if "%opcao%"=="0" goto SAIR
 
@@ -203,6 +205,20 @@ if "%db%"=="2" (
     start https://supabase.com/dashboard/project/ikwnemhqqkpjurdpauim
 )
 
+timeout /t 1 /nobreak >nul
+goto MENU
+
+:INSTALAR_CLI
+cls
+echo.
+echo ========================================================
+echo   INSTALAR SUPABASE CLI
+echo ========================================================
+echo.
+echo Abrindo guia de instalação manual...
+echo.
+pause
+start INSTALAR-SUPABASE-CLI-MANUAL.md
 timeout /t 1 /nobreak >nul
 goto MENU
 

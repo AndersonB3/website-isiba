@@ -166,6 +166,19 @@ WHERE routine_schema = 'public'
 ORDER BY routine_name;
 
 -- ═══════════════════════════════════════════════════════════════════════════
+-- PARTE 11: LISTAR TODOS OS TRIGGERS
+-- ═══════════════════════════════════════════════════════════════════════════
+
+SELECT 
+    trigger_name AS nome_trigger,
+    event_object_table AS tabela,
+    action_timing AS timing,
+    event_manipulation AS evento
+FROM information_schema.triggers
+WHERE trigger_schema = 'public'
+ORDER BY event_object_table, trigger_name;
+
+-- ═══════════════════════════════════════════════════════════════════════════
 -- ✅ INSTRUÇÕES DE USO:
 -- ═══════════════════════════════════════════════════════════════════════════
 -- 
