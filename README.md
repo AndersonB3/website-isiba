@@ -18,24 +18,61 @@ Website institucional moderno e profissional para o **ISIBA**, instituição de 
 - Apresentar eficiência e organização
 - Oferecer navegação simples e intuitiva
 
-## 🚀 Novidade: Ambientes Separados!
+## 🚀 Arquitetura: Branches e Bancos de Dados
 
-O sistema agora possui **ambientes completamente isolados** para desenvolvimento e produção:
+### 🌳 GIT BRANCHES
 
-- 🔴 **PRODUÇÃO:** GitHub Pages (dados reais) → `supabase-config.js`
-- 🔧 **DESENVOLVIMENTO:** Localhost (dados de teste) → `supabase-config.dev.js`
+```
+┌─────────────────────────────────────────────────────────────┐
+│  BRANCH: master → GitHub Pages (PRODUÇÃO)                   │
+│  └─ Banco: kklhcmrnraroletwbbid (PRODUÇÃO - dados reais)    │
+└─────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────┐
+│  BRANCH: develop → Localhost (DESENVOLVIMENTO)              │
+│  └─ Banco: ikwnemhqqkpjurdpauim (DEV - dados de teste)     │
+└─────────────────────────────────────────────────────────────┘
+```
+
+### 🔄 Fluxo de Trabalho
+
+```bash
+# 1. Desenvolver na branch develop
+git checkout develop
+# Fazer alterações, testar localmente em http://localhost:8000
+
+# 2. Quando pronto, subir para produção
+git checkout master
+git merge develop
+git push origin master  # Deploy automático no GitHub Pages
+```
+
+### 💾 Detecção Automática de Ambiente
+
+| Ambiente | URL | Banco | Arquivo |
+|----------|-----|-------|---------|
+| **DESENVOLVIMENTO** | `localhost:8000` | ikwnemhqqkpjurdpauim | `supabase-config.dev.js` |
+| **PRODUÇÃO** | `andersonb3.github.io` | kklhcmrnraroletwbbid | `supabase-config.js` |
+
+📚 **Documentação Completa:** [`ARQUITETURA-BRANCHES-BANCOS.md`](ARQUITETURA-BRANCHES-BANCOS.md)
 
 ### Quick Start para Desenvolvimento
 
 ```bash
-# 1. Criar projeto "isiba-desenvolvimento" no Supabase
-# 2. Executar: database/MIGRAÇÃO-DESENVOLVIMENTO.sql
-# 3. Configurar: assets/js/supabase-config.dev.js
-# 4. Iniciar servidor local
-python -m http.server 8000
-```
+# 1. Clone o repositório
+git clone https://github.com/AndersonB3/website-isiba.git
 
-📚 **Guia Completo:** [`QUICK-START-DEV.md`](QUICK-START-DEV.md) | [`GUIA-AMBIENTES.md`](GUIA-AMBIENTES.md)
+# 2. Configure credenciais de desenvolvimento
+# Edite: assets/js/supabase-config.dev.js
+# Cole suas credenciais do projeto de DEV no Supabase
+
+# 3. Inicie o servidor local
+INICIAR-TUDO.bat
+# Ou: python -m http.server 8000
+
+# 4. Abra: http://localhost:8000
+# Deve ver badge laranja: "🔧 DESENVOLVIMENTO"
+```
 
 ## ✨ Características
 
