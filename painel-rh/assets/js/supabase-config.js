@@ -1,27 +1,21 @@
-/**
- * Configuração do Supabase - ARQUIVO DE EXEMPLO
- * 
- * ⚠️ IMPORTANTE:
- * 1. Copie este arquivo para "supabase-config.js" (mesmo diretório)
- * 2. Preencha com suas credenciais reais do Supabase
- * 3. NUNCA faça commit do arquivo "supabase-config.js" no Git
- * 
- * Como obter as credenciais:
- * 1. Acesse: https://supabase.com/dashboard
- * 2. Selecione seu projeto
- * 3. Vá em Settings > API
- * 4. Copie:
- *    - Project URL
- *    - Project API keys > anon public
- */
+/*=============== SUPABASE CONFIGURATION ===============*/
 
-const SUPABASE_URL = 'https://SEU-PROJETO-ID.supabase.co';
-const SUPABASE_ANON_KEY = 'SUA-CHAVE-PUBLICA-ANONIMA-AQUI';
+// ⚠️ ATENÇÃO: A chave que você colocou está INCORRETA!
+// Você precisa da chave "anon" ou "public", NÃO da "publishable"
+// 
+// Siga estes passos:
+// 1. Acesse: https://supabase.com/dashboard/project/kklhcmrnraroletwbbid
+// 2. Vá em: Settings > API
+// 3. Copie a chave "anon" que começa com: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+// 4. Cole aqui embaixo na variável SUPABASE_ANON_KEY
+
+const SUPABASE_URL = 'https://kklhcmrnraroletwbbid.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtrbGhjbXJucmFyb2xldHdiYmlkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjkxMjM2NDEsImV4cCI6MjA4NDY5OTY0MX0.dk1aXu6WiNN_Yn-PU-ST2nHOTca0PjDDZgYKauiUP0Y';
 
 // Verificar se as credenciais foram configuradas
-if (SUPABASE_ANON_KEY.includes('SUA-CHAVE') || SUPABASE_URL.includes('SEU-PROJETO')) {
-    console.error('❌ ERRO: Configure as credenciais corretas no arquivo supabase-config.js');
-    console.log('📍 Acesse: https://supabase.com/dashboard');
+if (SUPABASE_ANON_KEY.includes('COLE_AQUI')) {
+    console.error('❌ ERRO: Configure a chave ANON correta no arquivo supabase-config.js');
+    console.log('📍 Acesse: https://supabase.com/dashboard/project/kklhcmrnraroletwbbid/settings/api');
 }
 
 // Configurações adicionais do sistema

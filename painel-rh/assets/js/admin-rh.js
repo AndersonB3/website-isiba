@@ -7,22 +7,45 @@
 // ========================================
 // INICIALIZAÇÃO
 // ========================================
-document.addEventListener('DOMContentLoaded', () => {
-    // Verificar se Supabase foi inicializado
-    if (!window.supabaseClient) {
-        console.error('❌ Erro: Supabase não foi inicializado!');
-        alert('Erro ao conectar com o banco de dados. Verifique a configuração.');
-        return;
-    }
 
-    initLogin();
-    initDashboard();
-    initCadastro();
-    initListagem();
-    initUpload();
-    initHistorico();
-    initModalEdicao();
-    populateYearSelect();
+// Função auxiliar para aguardar o Supabase estar pronto
+function aguardarSupabase(callback, tentativas = 0) {
+    if (tentativas === 0) {
+        console.log('🔍 Aguardando Supabase inicializar...');
+    }
+    
+    if (window.supabaseClient) {
+        console.log('✅ Supabase detectado, inicializando painel...');
+        callback();
+    } else if (tentativas < 50) {
+        // Aumentado de 20 para 50 tentativas (5 segundos)
+        if (tentativas % 10 === 0) {
+            console.log(`⏳ Tentativa ${tentativas}/50...`);
+        }
+        setTimeout(() => aguardarSupabase(callback, tentativas + 1), 100);
+    } else {
+        console.error('❌ Erro: Supabase não foi inicializado após 5 segundos!');
+        console.log('Debug:', {
+            supabase: !!window.supabase,
+            supabaseClient: !!window.supabaseClient,
+            CONFIG: !!window.CONFIG
+        });
+        alert('Erro ao conectar com o banco de dados. Verifique a configuração.');
+    }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    // Aguardar Supabase estar pronto antes de inicializar
+    aguardarSupabase(() => {
+        initLogin();
+        initDashboard();
+        initCadastro();
+        initListagem();
+        initUpload();
+        initHistorico();
+        initModalEdicao();
+        populateYearSelect();
+    });
 });
 
 // ========================================
@@ -129,6 +152,7 @@ function initDashboard() {
                 'cadastrar': ['Cadastrar Funcionário', 'Adicione novos colaboradores ao sistema'],
                 'listar': ['Listar Funcionários', 'Visualize e gerencie todos os cadastros'],
                 'upload': ['Enviar Contracheque', 'Faça upload de contracheques em PDF'],
+                'upload-lote': ['Upload Inteligente em Lote', 'Sistema automático de leitura de PDFs com IA'],
                 'historico': ['Histórico de Envios', 'Consulte todos os envios realizados'],
                 'recibos': ['Recibos de Documentos', 'Visualize todos os recibos digitais gerados']
             };
@@ -253,12 +277,20 @@ function initCadastro() {
             btnCadastrar.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Cadastrando...';
 
             const nome = document.getElementById('cadNome').value.trim();
+            const codigo = document.getElementById('cadCodigo').value.trim().toUpperCase();
             const cpf = document.getElementById('cadCPF').value;
             const email = document.getElementById('cadEmail').value.trim();
             const senha = document.getElementById('cadSenha').value;
             const status = document.getElementById('cadStatus').value;
 
             // Validações
+            if (!codigo) {
+                showCadastroStatus('error', 'Código do funcionário é obrigatório!');
+                btnCadastrar.disabled = false;
+                btnCadastrar.innerHTML = '<i class="fa-solid fa-save"></i> Cadastrar Funcionário';
+                return;
+            }
+
             const cpfLimpo = cpf.replace(/\D/g, '');
             if (!validarCPF(cpfLimpo)) {
                 showCadastroStatus('error', 'CPF inválido!');
@@ -270,6 +302,7 @@ function initCadastro() {
             // Cadastrar no Supabase
             const result = await cadastrarColaborador({
                 nome,
+                codigo_funcionario: codigo,
                 cpf,
                 email,
                 senha,
@@ -357,7 +390,7 @@ async function renderFuncionarios(filtro = '') {
     if (!result.success || result.data.length === 0) {
         tbody.innerHTML = `
             <tr>
-                <td colspan="5" class="empty-state">
+                <td colspan="6" class="empty-state">
                     <i class="fa-solid fa-users-slash"></i>
                     <p>${filtro ? 'Nenhum funcionário encontrado' : 'Nenhum funcionário cadastrado ainda'}</p>
                 </td>
@@ -369,6 +402,7 @@ async function renderFuncionarios(filtro = '') {
     // Renderizar funcionários
     tbody.innerHTML = result.data.map(func => `
         <tr>
+            <td>${func.codigo_funcionario || '-'}</td>
             <td>${func.nome_completo}</td>
             <td>${formatarCPF(func.cpf)}</td>
             <td>${func.email || '-'}</td>
@@ -403,6 +437,7 @@ async function editarFuncionario(id) {
     // Preencher o modal com os dados
     document.getElementById('editId').value = func.id;
     document.getElementById('editNome').value = func.nome_completo;
+    document.getElementById('editCodigo').value = func.codigo_funcionario || '';
     document.getElementById('editCPF').value = formatarCPF(func.cpf);
     document.getElementById('editEmail').value = func.email || '';
     document.getElementById('editSenha').value = '';
@@ -456,13 +491,23 @@ function initModalEdicao() {
         
         const id = document.getElementById('editId').value;
         const nome = document.getElementById('editNome').value.trim();
+        const codigo = document.getElementById('editCodigo').value.trim().toUpperCase();
         const email = document.getElementById('editEmail').value.trim();
         const senha = document.getElementById('editSenha').value.trim();
         const status = document.getElementById('editStatus').value;
         
+        // Validação do código
+        if (!codigo) {
+            alert('O código do funcionário é obrigatório!');
+            btnSalvar.disabled = false;
+            btnSalvar.innerHTML = '<i class="fa-solid fa-save"></i> Salvar Alterações';
+            return;
+        }
+        
         // Montar dados para atualização
         const dados = {
             nome,
+            codigo_funcionario: codigo,
             email: email || null,
             status
         };

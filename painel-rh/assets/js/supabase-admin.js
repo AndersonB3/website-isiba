@@ -3,10 +3,8 @@
  * ISIBA Social - Sistema de Gestão de Contracheques
  */
 
-// Verificar se o Supabase foi inicializado
-if (!window.supabaseClient) {
-    console.error('❌ Supabase não foi inicializado! Verifique se supabase-config.js foi carregado.');
-}
+// A verificação do Supabase será feita quando as funções forem chamadas,
+// não na inicialização do script
 
 // ==================== FUNÇÕES DE HASH ====================
 
@@ -165,12 +163,26 @@ async function cadastrarColaborador(dados) {
         if (existente) {
             throw new Error('CPF já cadastrado no sistema');
         }
+
+        // Verificar se código já existe
+        if (dados.codigo_funcionario) {
+            const { data: existenteCodigo } = await window.supabaseClient
+                .from('colaboradores')
+                .select('id')
+                .eq('codigo_funcionario', dados.codigo_funcionario)
+                .single();
+            
+            if (existenteCodigo) {
+                throw new Error('Código de funcionário já cadastrado no sistema');
+            }
+        }
         
         // Inserir colaborador
         const { data, error } = await window.supabaseClient
             .from('colaboradores')
             .insert([{
                 nome_completo: dados.nome,
+                codigo_funcionario: dados.codigo_funcionario || null,
                 cpf: cpfLimpo,
                 cpf_hash: cpfHash,
                 senha_hash: senhaHash,
@@ -245,6 +257,7 @@ async function atualizarColaborador(id, dados) {
     try {
         const updateData = {
             nome_completo: dados.nome,
+            codigo_funcionario: dados.codigo_funcionario || null,
             email: dados.email || null,
             ativo: dados.status === 'ativo'
         };

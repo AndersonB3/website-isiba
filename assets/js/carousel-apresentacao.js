@@ -1,6 +1,7 @@
 /* ========================================
    CARROSSEL DE APRESENTAÇÃO INSTITUCIONAL
    Loop automático com imagens locais
+   + PRÉ-CARREGAMENTO para GitHub Pages
    ======================================== */
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -31,6 +32,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let currentSlide = 0;
     let autoplayInterval;
+    let imagesPreloaded = false;
     const slidesContainer = document.getElementById('carouselSlides');
     const indicatorsContainer = document.getElementById('carouselIndicators');
     const slideCounter = document.getElementById('slideCounter');
@@ -43,7 +45,47 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
     }
 
-    // Criar slides
+    // ========================================
+    // PRÉ-CARREGAR TODAS AS IMAGENS
+    // ========================================
+    function preloadImages() {
+        return new Promise((resolve) => {
+            let loadedCount = 0;
+            const totalImages = slides.length;
+            
+            console.log('🔄 Pré-carregando', totalImages, 'imagens do carrossel...');
+            
+            slides.forEach((slideUrl, index) => {
+                const img = new Image();
+                
+                img.onload = () => {
+                    loadedCount++;
+                    console.log(`✅ Imagem ${loadedCount}/${totalImages} carregada`);
+                    
+                    if (loadedCount === totalImages) {
+                        imagesPreloaded = true;
+                        console.log('🎉 TODAS as imagens pré-carregadas!');
+                        resolve();
+                    }
+                };
+                
+                img.onerror = () => {
+                    loadedCount++;
+                    console.warn(`⚠️ Erro ao carregar: ${slideUrl}`);
+                    
+                    if (loadedCount === totalImages) {
+                        imagesPreloaded = true;
+                        resolve();
+                    }
+                };
+                
+                // Iniciar carregamento
+                img.src = slideUrl;
+            });
+        });
+    }
+
+    // Criar slides (APÓS pré-carregamento)
     function createSlides() {
         slidesContainer.innerHTML = '';
         
@@ -54,7 +96,8 @@ document.addEventListener('DOMContentLoaded', () => {
             const img = document.createElement('img');
             img.src = slideUrl;
             img.alt = `Slide ${index + 1} da Apresentação Institucional`;
-            img.loading = index === 0 ? 'eager' : 'lazy'; // Primeira imagem carrega rápido
+            // REMOVER lazy loading - todas as imagens já estão pré-carregadas
+            img.loading = 'eager';
             
             // Fallback caso a imagem não exista
             img.onerror = () => {
@@ -67,7 +110,7 @@ document.addEventListener('DOMContentLoaded', () => {
             slidesContainer.appendChild(slideDiv);
         });
         
-        console.log(`✅ ${slides.length} slides carregados`);
+        console.log(`✅ ${slides.length} slides criados no DOM`);
     }
 
     // Criar indicadores
@@ -199,11 +242,25 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Inicializar
-    createSlides();
-    createIndicators();
-    updateCounter();
-    startAutoplay();
+    // Inicializar APÓS pré-carregamento
+    async function init() {
+        console.log('🚀 Iniciando carrossel de apresentação...');
+        
+        // Mostrar loading (opcional)
+        slidesContainer.innerHTML = '<div style="text-align: center; padding: 50px; color: #0066cc;"><i class="fas fa-spinner fa-spin fa-3x"></i><p style="margin-top: 20px;">Carregando apresentação...</p></div>';
+        
+        // Aguardar pré-carregamento
+        await preloadImages();
+        
+        // Criar slides no DOM
+        createSlides();
+        createIndicators();
+        updateCounter();
+        startAutoplay();
+        
+        console.log('✅ Carrossel de apresentação inicializado com autoplay!');
+    }
     
-    console.log('✅ Carrossel de apresentação inicializado com autoplay!');
+    // Iniciar
+    init();
 });

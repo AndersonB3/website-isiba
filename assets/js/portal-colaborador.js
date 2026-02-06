@@ -1,9 +1,10 @@
 /* ========================================
-   PORTAL DO COLABORADOR - VERSÃO 3.6 FIX
+   PORTAL DO COLABORADOR - VERSÃO 3.9 SELECT FIX
    Suporta Contracheques e Informes de IR
+   Correção dos dropdowns customizados
    ======================================== */
 
-console.log('🔥 Portal do Colaborador VERSÃO 3.6 - FIX UPDATE + DEBUG RLS carregado!');
+console.log('🔥 Portal do Colaborador VERSÃO 3.9 - SELECT DROPDOWN FIX carregado!');
 
 document.addEventListener('DOMContentLoaded', () => {
     // Aguardar um pouco para garantir que o Supabase foi inicializado
@@ -366,32 +367,82 @@ document.head.appendChild(style);
 // CUSTOM SELECT DROPDOWNS
 // ========================================
 function initCustomSelects() {
-    const customSelects = document.querySelectorAll('.custom-select');
+    console.log('🎯 Inicializando custom selects...');
     
-    customSelects.forEach(select => {
-        const trigger = select.querySelector('.custom-select-trigger');
-        const options = select.querySelectorAll('.custom-option');
-        const hiddenInput = select.closest('.custom-select-wrapper').querySelector('input[type="hidden"]');
+    const customSelects = document.querySelectorAll('.custom-select');
+    console.log(`📋 Encontrados ${customSelects.length} custom selects`);
+    
+    customSelects.forEach((select, index) => {
+        console.log(`  Inicializando select ${index + 1}:`, select.id);
         
-        // Toggle dropdown ao clicar
-        select.addEventListener('click', (e) => {
+        const trigger = select.querySelector('.custom-select-trigger');
+        const arrow = select.querySelector('.custom-select-arrow');
+        const optionsContainer = select.querySelector('.custom-options');
+        const options = select.querySelectorAll('.custom-option');
+        const wrapper = select.closest('.custom-select-wrapper');
+        const hiddenInput = wrapper ? wrapper.querySelector('input[type="hidden"]') : null;
+        
+        if (!trigger || !optionsContainer) {
+            console.error('❌ Elementos necessários não encontrados para', select.id);
+            return;
+        }
+        
+        console.log(`  ✅ Elementos encontrados:`, {
+            trigger: !!trigger,
+            arrow: !!arrow,
+            optionsContainer: !!optionsContainer,
+            options: options.length,
+            hiddenInput: !!hiddenInput
+        });
+        
+        // Remover event listeners antigos (se existirem)
+        const newTrigger = trigger.cloneNode(true);
+        trigger.parentNode.replaceChild(newTrigger, trigger);
+        
+        const newArrow = arrow ? arrow.cloneNode(true) : null;
+        if (arrow && newArrow) {
+            arrow.parentNode.replaceChild(newArrow, arrow);
+        }
+        
+        // Função para toggle do dropdown
+        const toggleDropdown = (e) => {
+            e.preventDefault();
             e.stopPropagation();
+            
+            console.log(`🖱️ Click no select: ${select.id}`);
             
             // Fechar outros dropdowns
             document.querySelectorAll('.custom-select').forEach(s => {
-                if (s !== select) {
+                if (s !== select && s.classList.contains('open')) {
+                    console.log(`  Fechando: ${s.id}`);
                     s.classList.remove('open');
                 }
             });
             
             // Toggle este dropdown
-            select.classList.toggle('open');
+            const isOpen = select.classList.toggle('open');
+            console.log(`  ${isOpen ? 'Abrindo' : 'Fechando'}: ${select.id}`);
+        };
+        
+        // Adicionar eventos de click
+        newTrigger.addEventListener('click', toggleDropdown);
+        if (newArrow) {
+            newArrow.addEventListener('click', toggleDropdown);
+        }
+        select.addEventListener('click', (e) => {
+            // Se clicou no próprio select (mas não nas opções)
+            if (e.target === select || e.target === trigger || e.target === arrow) {
+                toggleDropdown(e);
+            }
         });
         
         // Selecionar opção
         options.forEach(option => {
             option.addEventListener('click', (e) => {
+                e.preventDefault();
                 e.stopPropagation();
+                
+                console.log(`✔️ Opção selecionada:`, option.dataset.value);
                 
                 // Remover active de todas as opções
                 options.forEach(opt => opt.classList.remove('active'));
@@ -400,30 +451,44 @@ function initCustomSelects() {
                 option.classList.add('active');
                 
                 // Atualizar o trigger
-                const icon = option.querySelector('i').outerHTML;
-                const text = option.querySelector('span').textContent;
-                trigger.innerHTML = icon + ' ' + text;
+                const icon = option.querySelector('i');
+                const text = option.querySelector('span');
+                if (icon && text) {
+                    newTrigger.innerHTML = icon.outerHTML + ' ' + text.textContent;
+                }
                 
                 // Atualizar input hidden
-                hiddenInput.value = option.dataset.value;
+                if (hiddenInput) {
+                    hiddenInput.value = option.dataset.value;
+                    console.log(`  Input hidden atualizado: ${hiddenInput.value}`);
+                }
                 
                 // Fechar dropdown
                 select.classList.remove('open');
+                console.log(`  Dropdown fechado`);
                 
                 // Atualizar título da seção e carregar documentos
                 atualizarTituloSecao();
                 const colaboradorData = JSON.parse(sessionStorage.getItem('colaborador_data'));
-                carregarDocumentos(colaboradorData.id);
+                if (colaboradorData) {
+                    carregarDocumentos(colaboradorData.id);
+                }
             });
         });
     });
     
     // Fechar dropdowns ao clicar fora
-    document.addEventListener('click', () => {
-        document.querySelectorAll('.custom-select').forEach(select => {
-            select.classList.remove('open');
-        });
+    document.addEventListener('click', (e) => {
+        if (!e.target.closest('.custom-select')) {
+            const openSelects = document.querySelectorAll('.custom-select.open');
+            if (openSelects.length > 0) {
+                console.log(`🚪 Fechando ${openSelects.length} dropdowns (click fora)`);
+                openSelects.forEach(select => select.classList.remove('open'));
+            }
+        }
     });
+    
+    console.log('✅ Custom selects inicializados!');
 }
 
 // ========================================
@@ -645,6 +710,82 @@ async function carregarDocumentos(colaboradorId) {
 // ========================================
 // DOWNLOAD DE DOCUMENTO
 // ========================================
+
+// Detectar se é iOS (iPhone/iPad)
+function isIOS() {
+    return /iPad|iPhone|iPod/.test(navigator.userAgent) || 
+           (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+}
+
+// Modal de instruções para iOS
+function mostrarModalDownloadIOS(url, nomeArquivo) {
+    // Criar overlay
+    const overlay = document.createElement('div');
+    overlay.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.85);
+        z-index: 10000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        animation: fadeIn 0.3s ease;
+    `;
+    
+    // Criar modal
+    const modal = document.createElement('div');
+    modal.style.cssText = `
+        background: white;
+        border-radius: 16px;
+        padding: 24px;
+        max-width: 400px;
+        width: 100%;
+        text-align: center;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+    `;
+    
+    modal.innerHTML = `
+        <div style="margin-bottom: 20px;">
+            <i class="fas fa-mobile-alt" style="font-size: 48px; color: #0066cc;"></i>
+        </div>
+        <h3 style="margin: 0 0 12px 0; color: #333; font-size: 20px;">📱 Download no iPhone</h3>
+        <p style="color: #666; font-size: 14px; line-height: 1.6; margin-bottom: 20px;">
+            Toque no botão abaixo para abrir o PDF.<br>
+            Depois, toque no ícone <strong>compartilhar ⬆️</strong> e escolha <strong>"Salvar em Arquivos"</strong>.
+        </p>
+        <a href="${url}" 
+           target="_blank"
+           download="${nomeArquivo}"
+           style="display: inline-block; background: #0066cc; color: white; padding: 14px 28px; border-radius: 8px; text-decoration: none; font-weight: 600; margin-bottom: 12px; font-size: 16px;">
+            <i class="fas fa-file-pdf"></i> Abrir PDF
+        </a>
+        <br>
+        <button id="closeModalIOS" style="background: transparent; border: none; color: #999; padding: 8px; cursor: pointer; font-size: 14px;">
+            Fechar
+        </button>
+    `;
+    
+    overlay.appendChild(modal);
+    document.body.appendChild(overlay);
+    
+    // Fechar modal
+    document.getElementById('closeModalIOS').onclick = () => {
+        overlay.style.animation = 'fadeOut 0.3s ease';
+        setTimeout(() => overlay.remove(), 300);
+    };
+    
+    overlay.onclick = (e) => {
+        if (e.target === overlay) {
+            overlay.style.animation = 'fadeOut 0.3s ease';
+            setTimeout(() => overlay.remove(), 300);
+        }
+    };
+}
+
 async function baixarDocumento(arquivoUrl, nomeArquivo) {
     // Verificar se foi chamado por um evento de clique ou programaticamente
     const btn = event?.target?.closest('.btn-download');
@@ -654,7 +795,7 @@ async function baixarDocumento(arquivoUrl, nomeArquivo) {
     if (btn) {
         originalHtml = btn.innerHTML;
         btn.disabled = true;
-        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Baixando...';
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Gerando link...';
     }
 
     try {
@@ -671,18 +812,66 @@ async function baixarDocumento(arquivoUrl, nomeArquivo) {
             throw new Error('URL de download não retornada');
         }
 
-        console.log('✅ URL gerada, abrindo download...');
+        console.log('✅ URL gerada!');
         
-        // Abrir em nova aba
-        window.open(result.url, '_blank');
+        const iOS = isIOS();
         
-        // Feedback de sucesso (apenas se houver botão)
+        // Restaurar botão
         if (btn) {
-            btn.innerHTML = '<i class="fa-solid fa-check"></i> Baixado!';
-            setTimeout(() => {
-                btn.disabled = false;
-                btn.innerHTML = originalHtml;
-            }, 2000);
+            btn.disabled = false;
+            btn.innerHTML = originalHtml;
+        }
+        
+        if (iOS) {
+            // iOS: Mostrar modal com instruções
+            console.log('📱 Dispositivo iOS detectado - mostrando modal');
+            mostrarModalDownloadIOS(result.url, nomeArquivo);
+            
+        } else {
+            // Android/Desktop: Forçar download
+            console.log('💻 Dispositivo Desktop/Android detectado');
+            
+            try {
+                // Tentar fetch e forçar download
+                const response = await fetch(result.url);
+                const blob = await response.blob();
+                
+                // Criar link de download
+                const blobUrl = window.URL.createObjectURL(blob);
+                const linkElement = document.createElement('a');
+                linkElement.href = blobUrl;
+                linkElement.download = nomeArquivo || 'documento.pdf';
+                document.body.appendChild(linkElement);
+                linkElement.click();
+                document.body.removeChild(linkElement);
+                
+                // Limpar objeto URL
+                setTimeout(() => window.URL.revokeObjectURL(blobUrl), 100);
+                
+                // Feedback de sucesso
+                if (btn) {
+                    btn.innerHTML = '<i class="fa-solid fa-check"></i> Baixado!';
+                    setTimeout(() => {
+                        btn.disabled = false;
+                        btn.innerHTML = originalHtml;
+                    }, 2000);
+                }
+                
+                mostrarToast('Download iniciado! Verifique sua pasta de downloads.', 'success');
+                
+            } catch (fetchError) {
+                // Fallback: abrir em nova aba
+                console.warn('⚠️ Fetch falhou, abrindo em nova aba:', fetchError);
+                window.open(result.url, '_blank');
+                
+                if (btn) {
+                    btn.innerHTML = '<i class="fa-solid fa-check"></i> Aberto!';
+                    setTimeout(() => {
+                        btn.disabled = false;
+                        btn.innerHTML = originalHtml;
+                    }, 2000);
+                }
+            }
         }
 
     } catch (error) {

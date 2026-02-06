@@ -8,7 +8,8 @@ vendor/
 .env.*.local
 
 # ⚠️ IMPORTANTE: Arquivos com credenciais do Supabase
-**/supabase-config.js
+# Comentado para permitir deploy no GitHub Pages (chaves são públicas mesmo)
+# **/supabase-config.js
 !**/supabase-config.example.js
 
 # 🔒 CREDENCIAIS DE DESENVOLVIMENTO (NUNCA COMMITAR!)

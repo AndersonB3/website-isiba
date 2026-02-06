@@ -2,9 +2,10 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Primeiro Acesso - Troca de Senha Obrigatória">
-    <title>Troca de Senha | Portal do Colaborador ISIBA</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <meta name="description" content="Primeiro Acesso - Altere sua senha temporária">
+    <meta name="theme-color" content="#0066cc">
+    <title>Primeiro Acesso | ISIBA</title>
     
     <!-- Favicon -->
     <link rel="icon" type="image/png" href="assets/img/favicon.png">
@@ -17,239 +18,464 @@
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     
-    <!-- CSS -->
-    <link rel="stylesheet" href="assets/css/colaborador.css">
-    
     <style>
-        /* ===== RESET E BLOQUEIO DE SCROLL ===== */
+        /* ========================================
+           PRIMEIRO ACESSO - PALETA ISIBA
+           ======================================== */
+
+        /* Variables */
+        :root {
+            --primary-color: #0066cc;
+            --primary-dark: #004c99;
+            --secondary-color: #00a651;
+            --accent-color: #ff6b35;
+            --text-color: #333;
+            --text-light: #666;
+            --bg-light: #f8f9fa;
+            --bg-gradient: linear-gradient(135deg, #0066cc 0%, #00a651 100%);
+            --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.08);
+            --shadow-md: 0 4px 20px rgba(0, 0, 0, 0.12);
+            --shadow-lg: 0 10px 40px rgba(0, 0, 0, 0.15);
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 20px;
+            --transition: all 0.3s ease;
+        }
+
+        /* Reset */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
 
-        html, body {
-            height: 100vh;
-            width: 100vw;
-            overflow: hidden !important;
-            margin: 0;
-            padding: 0;
+        /* Remove qualquer checkbox ou input que apareça indevidamente */
+        input[type="checkbox"]:not([id]),
+        input[type="radio"]:not([id]) {
+            display: none !important;
         }
 
-        .change-password-container {
-            height: 100vh;
-            width: 100vw;
-            display: grid;
-            place-items: center;
-            background: linear-gradient(135deg, #0066cc 0%, #00a651 100%);
-            padding: 0.5rem;
-            overflow: hidden !important;
+        /* Remove outline de botões */
+        button:focus {
+            outline: none !important;
         }
 
-        .change-password-card {
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            padding: 0.85rem 2rem;
-            max-width: 850px;
-            width: 100%;
-            max-height: 96vh;
-            overflow-y: auto;
-            animation: slideUp 0.5s ease;
-            
-            /* Esconder scrollbar mas manter funcionalidade */
-            scrollbar-width: none; /* Firefox */
-            -ms-overflow-style: none; /* IE/Edge */
+        button::-moz-focus-inner {
+            border: 0;
         }
 
-        .change-password-card::-webkit-scrollbar {
-            display: none; /* Chrome/Safari/Opera */
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-light);
+            overflow-x: hidden; /* Evita scroll horizontal */
         }
 
-        @keyframes slideUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .change-password-header {
-            text-align: center;
-            margin-bottom: 0.6rem;
-        }
-
-        .change-password-logo {
-            width: 80px;
-            margin-bottom: 0.4rem;
-        }
-
-        .change-password-header h1 {
-            font-size: 1.15rem;
-            color: #1a1a1a;
-            margin-bottom: 0.2rem;
-        }
-
-        .change-password-header p {
-            color: #666;
-            font-size: 0.78rem;
-            line-height: 1.2;
-        }
-
-        .alert-box {
-            background: #fff3cd;
-            border: 1px solid #ffc107;
-            border-radius: 6px;
-            padding: 0.45rem 0.6rem;
-            margin-bottom: 0.55rem;
-            display: flex;
-            align-items: flex-start;
-            gap: 0.4rem;
-        }
-
-        .alert-box i {
-            color: #ffc107;
-            font-size: 0.85rem;
-            flex-shrink: 0;
-            margin-top: 0px;
-        }
-
-        .alert-box p {
-            color: #856404;
-            font-size: 0.72rem;
-            margin: 0;
-            line-height: 1.2;
-        }
-
-        .password-requirements {
-            background: #f8f9fa;
-            border-radius: 6px;
-            padding: 0.45rem 0.6rem;
-            margin-bottom: 0.55rem;
-        }
-
-        .password-requirements h3 {
-            font-size: 0.72rem;
-            color: #333;
-            margin-bottom: 0.3rem;
-            display: flex;
-            align-items: center;
-            gap: 0.3rem;
-        }
-
-        .password-requirements h3 i {
-            color: #0066cc;
-            font-size: 0.75rem;
-        }
-
-        .password-requirements ul {
-            list-style: none;
-            padding: 0;
-            margin: 0;
+        /* Container Principal */
+        .portal-container {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 0.1rem 0.75rem;
+            min-height: 100vh;
+            width: 100%;
         }
 
-        .password-requirements li {
-            font-size: 0.7rem;
-            color: #666;
-            padding: 0.08rem 0;
+        /* Lado Esquerdo - Informações */
+        .portal-welcome {
+            background: var(--bg-gradient);
             display: flex;
             align-items: center;
-            gap: 0.28rem;
+            justify-content: center;
+            padding: 40px 30px;
+            position: relative;
+            overflow: hidden;
+            min-height: 100vh;
         }
 
-        .password-requirements li i {
-            color: #00a651;
-            font-size: 0.52rem;
+        .portal-welcome::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            animation: rotate 20s linear infinite;
         }
 
-        .change-password-form {
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .welcome-content {
+            position: relative;
+            z-index: 1;
+            color: white;
+            max-width: 450px;
+        }
+
+        .welcome-logo {
+            width: 160px;
+            height: auto;
+            margin-bottom: 20px;
+        }
+
+        .welcome-title {
+            font-family: 'Poppins', sans-serif;
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .welcome-subtitle {
+            font-size: 1rem;
+            margin-bottom: 30px;
+            opacity: 0.95;
+        }
+
+        .welcome-alert {
+            padding: 16px;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            border-radius: var(--radius-md);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            margin-bottom: 20px;
+        }
+
+        .welcome-alert i {
+            font-size: 1.5rem;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .welcome-alert h3 {
+            font-size: 1.1rem;
+            margin-bottom: 8px;
+        }
+
+        .welcome-alert p {
+            font-size: 0.9rem;
+            opacity: 0.95;
+            line-height: 1.5;
+        }
+
+        .welcome-features {
+            display: grid;
+            gap: 12px;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: var(--radius-md);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .feature-item i {
+            font-size: 1.1rem;
+            color: white;
+        }
+
+        .feature-item span {
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        /* Lado Direito - Formulário */
+        .portal-form {
+            background: white;
+            display: flex;
+            align-items: flex-start; /* MUDADO de center para flex-start */
+            justify-content: center;
+            padding: 40px 30px;
+            overflow-y: auto; /* Permite scroll vertical */
+            overflow-x: hidden;
+            min-height: 100vh; /* MUDADO de height para min-height */
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .form-content {
+            width: 100%;
+            max-width: 450px;
+            padding: 20px 15px; /* AUMENTADO padding */
+            box-sizing: border-box;
+            margin: auto 0; /* Centraliza verticalmente quando há espaço */
+        }
+
+        .form-header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 15px 10px; /* AUMENTADO padding */
+        }
+
+        .form-icon {
+            width: 60px;
+            height: 60px;
+            background: var(--bg-gradient);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 16px;
+            box-shadow: var(--shadow-md);
+        }
+
+        .form-icon i {
+            font-size: 1.5rem;
+            color: white;
+        }
+
+        .form-header h2 {
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.75rem;
+            color: var(--text-color);
+            margin-bottom: 8px;
+        }
+
+        .form-header p {
+            color: var(--text-light);
+            font-size: 0.95rem;
+        }
+
+        /* Formulário */
+        .password-form {
             display: flex;
             flex-direction: column;
-            gap: 0.6rem;
+            gap: 20px;
         }
 
         .form-group {
             display: flex;
             flex-direction: column;
-            gap: 0.28rem;
         }
 
         .form-label {
-            font-weight: 500;
-            color: #333;
-            font-size: 0.72rem;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-color);
+            margin-bottom: 8px;
             display: flex;
             align-items: center;
-            gap: 0.28rem;
+            gap: 6px;
         }
 
         .form-label i {
-            color: #0066cc;
-            font-size: 0.72rem;
+            color: var(--primary-color);
+            font-size: 0.95rem;
         }
 
-        .password-wrapper {
+        .input-group {
             position: relative;
+            display: flex;
+            align-items: center;
+            width: 100%; /* Garante largura total */
+        }
+
+        /* Remove qualquer pseudo-elemento ou checkbox que possa aparecer */
+        .input-group::before,
+        .input-group::after {
+            display: none !important;
+        }
+
+        .input-group input[type="checkbox"],
+        .input-group input[type="radio"] {
+            display: none !important; /* Remove checkboxes/radios indesejados */
         }
 
         .form-input {
             width: 100%;
-            padding: 0.55rem 0.8rem;
-            padding-right: 2.5rem;
+            padding: 12px 45px 12px 15px;
             border: 2px solid #e0e0e0;
-            border-radius: 6px;
-            font-size: 0.82rem;
-            transition: all 0.3s ease;
-            font-family: inherit;
+            border-radius: var(--radius-sm);
+            font-size: 16px; /* 16px evita zoom automático no iOS */
+            font-family: 'Inter', sans-serif;
+            transition: var(--transition);
+            background: var(--bg-light);
+            box-sizing: border-box; /* Garante que padding não ultrapasse largura */
+            max-width: 100%; /* Impede overflow */
         }
 
         .form-input:focus {
             outline: none;
-            border-color: #0066cc;
+            border-color: var(--primary-color);
+            background: white;
             box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.1);
         }
 
-        .password-toggle {
+        .toggle-password {
             position: absolute;
-            right: 0.75rem;
-            top: 50%;
-            transform: translateY(-50%);
+            right: 12px;
             background: none;
             border: none;
-            color: #666;
+            color: var(--text-light);
             cursor: pointer;
-            padding: 0.35rem;
-            transition: color 0.3s ease;
+            padding: 4px 8px;
+            font-size: 1.1rem;
+            transition: var(--transition);
+            z-index: 2;
+            outline: none; /* Remove outline */
+            -webkit-appearance: none; /* Remove aparência padrão iOS */
+            -moz-appearance: none; /* Remove aparência padrão Firefox */
+            appearance: none; /* Remove aparência padrão */
+        }
+
+        .toggle-password:focus {
+            outline: none; /* Remove outline no foco */
+            box-shadow: none; /* Remove sombra */
+        }
+
+        .toggle-password:hover {
+            color: var(--primary-color);
+        }
+
+        /* Garante que não apareça checkbox */
+        .toggle-password::before,
+        .toggle-password::after {
+            display: none !important;
+        }
+
+        .toggle-password i {
+            pointer-events: none; /* Ícone não interfere em cliques */
+        }
+
+        /* Indicador de Força da Senha */
+        .strength-meter {
+            margin-top: 8px;
+        }
+
+        .strength-bar {
+            width: 100%;
+            height: 4px;
+            background: #e0e0e0;
+            border-radius: 2px;
+            overflow: hidden;
+            margin-bottom: 6px;
+        }
+
+        .strength-fill {
+            height: 100%;
+            width: 0;
+            transition: all 0.4s ease;
+            border-radius: 2px;
+        }
+
+        .strength-text {
             font-size: 0.85rem;
+            font-weight: 600;
+            text-align: center;
         }
 
-        .password-toggle:hover {
-            color: #0066cc;
+        /* Requisitos */
+        .requirements {
+            background: var(--bg-light);
+            padding: 12px;
+            border-radius: var(--radius-sm);
+            border: 1px solid #e0e0e0;
+            word-wrap: break-word; /* Quebra palavras longas */
+            overflow-wrap: break-word;
         }
 
-        .form-hint {
-            font-size: 0.75rem;
-            color: #666;
+        .requirements-title {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-color);
+            margin-bottom: 8px;
             display: flex;
             align-items: center;
-            gap: 0.25rem;
+            gap: 6px;
+            flex-wrap: wrap; /* Permite quebra de linha */
         }
 
-        .form-hint i {
-            font-size: 0.65rem;
+        .requirements-title i {
+            color: var(--primary-color);
+            flex-shrink: 0; /* Ícone não encolhe */
         }
 
-        .form-status {
-            padding: 0.65rem;
-            border-radius: 7px;
-            font-size: 0.8rem;
+        .requirement {
+            display: flex;
+            align-items: flex-start; /* Alinha no topo para evitar sobreposição */
+            gap: 8px;
+            font-size: 0.85rem;
+            color: var(--text-light);
+            margin-bottom: 8px;
+            transition: var(--transition);
+            line-height: 1.4; /* Melhora espaçamento de linhas */
+            word-break: break-word; /* Quebra palavras longas */
+        }
+
+        .requirement:last-child {
+            margin-bottom: 0;
+        }
+
+        .requirement i {
+            font-size: 0.85rem;
+            width: 14px;
+            flex-shrink: 0; /* Ícone não encolhe */
+            margin-top: 2px; /* Alinha com texto */
+        }
+
+        .requirement span {
+            flex: 1; /* Texto ocupa espaço disponível */
+        }
+
+        .requirement.met {
+            color: var(--secondary-color);
+        }
+
+        .requirement.met i {
+            color: var(--secondary-color);
+        }
+
+        .requirement.unmet i {
+            color: #ccc;
+        }
+
+        /* Botão */
+        .btn-primary {
+            width: 100%;
+            padding: 14px;
+            background: var(--bg-gradient);
+            color: white;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-size: 1rem;
+            font-weight: 600;
+            font-family: 'Inter', sans-serif;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: var(--transition);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        /* Status Message */
+        .status-message {
+            padding: 12px 16px;
+            border-radius: var(--radius-sm);
             display: none;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.9rem;
             animation: slideDown 0.3s ease;
         }
 
@@ -264,431 +490,494 @@
             }
         }
 
-        .form-status.success {
-            background: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
+        .status-message.error {
+            background: #fee;
+            border: 1px solid #fcc;
+            color: #c33;
         }
 
-        .form-status.error {
-            background: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
+        .status-message.success {
+            background: #efe;
+            border: 1px solid #cfc;
+            color: #3c3;
         }
 
-        .btn-submit {
-            background: linear-gradient(135deg, #0066cc 0%, #00a651 100%);
-            color: white;
-            padding: 0.65rem;
-            border: none;
-            border-radius: 6px;
-            font-size: 0.85rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.4rem;
-            margin-top: 0.2rem;
+        .status-message i {
+            font-size: 1.1rem;
         }
 
-        .btn-submit:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(0, 102, 204, 0.3);
+        /* ========================================
+           RESPONSIVIDADE COMPLETA - VERSÃO OTIMIZADA
+           ======================================== */
+
+        /* Tablets e Dispositivos Médios (até 1024px) */
+        @media (max-width: 1024px) {
+            .portal-container {
+                grid-template-columns: 1fr;
+                min-height: 100vh;
+            }
+
+            .portal-welcome {
+                min-height: 350px;
+                padding: 50px 40px;
+            }
+
+            .welcome-logo {
+                max-width: 140px;
+            }
+
+            .welcome-title {
+                font-size: 2.2rem;
+            }
+
+            .portal-form {
+                min-height: calc(100vh - 350px);
+                padding: 50px 40px;
+            }
+
+            .form-content {
+                max-width: 550px;
+                padding: 30px 20px;
+            }
         }
 
-        .btn-submit:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-            transform: none;
-        }
-
-        .password-strength {
-            margin-top: 0.3rem;
-        }
-
-        .strength-bar {
-            height: 2px;
-            background: #e0e0e0;
-            border-radius: 1px;
-            overflow: hidden;
-            margin-bottom: 0.3rem;
-        }
-
-        .strength-fill {
-            height: 100%;
-            width: 0;
-            transition: all 0.3s ease;
-            border-radius: 2px;
-        }
-
-        .strength-fill.weak {
-            width: 33%;
-            background: #dc3545;
-        }
-
-        .strength-fill.medium {
-            width: 66%;
-            background: #ffc107;
-        }
-
-        .strength-fill.strong {
-            width: 100%;
-            background: #28a745;
-        }
-
-        .strength-text {
-            font-size: 0.72rem;
-            font-weight: 500;
-        }
-
-        .strength-text.weak {
-            color: #dc3545;
-        }
-
-        .strength-text.medium {
-            color: #ffc107;
-        }
-
-        .strength-text.strong {
-            color: #28a745;
-        }
-
-        /* ===== RESPONSIVIDADE ===== */
-        
-        /* Tablets e telas médias */
+        /* Tablets Pequenos e Landscape (até 768px) */
         @media (max-width: 768px) {
-            .change-password-container {
-                padding: 1rem;
+            .portal-welcome {
+                display: none;
             }
 
-            .change-password-card {
-                padding: 1.5rem 2rem;
-                max-width: 100%;
-            }
-
-            .password-requirements ul {
+            .portal-container {
                 grid-template-columns: 1fr;
             }
+
+            .portal-form {
+                min-height: 100vh;
+                padding: 50px 30px; /* MUITO PADDING */
+                align-items: flex-start; /* Não centraliza verticalmente */
+            }
+
+            .form-content {
+                max-width: 100%;
+                width: 100%;
+                padding: 30px 20px; /* MUITO PADDING INTERNO */
+                margin-top: 20px; /* Espaço no topo */
+            }
+
+            .form-header {
+                margin-bottom: 35px;
+                padding: 20px 15px; /* MUITO PADDING */
+            }
+
+            .form-header h2 {
+                font-size: 1.9rem;
+                line-height: 1.3;
+                margin-bottom: 12px;
+            }
+
+            .form-header p {
+                font-size: 1rem;
+                line-height: 1.5;
+            }
+
+            .form-icon {
+                width: 70px;
+                height: 70px;
+                font-size: 1.8rem;
+                margin: 0 auto 20px;
+            }
+
+            .form-group {
+                margin-bottom: 25px;
+            }
         }
 
-        /* Smartphones */
+        /* Smartphones (até 480px) */
         @media (max-width: 480px) {
-            .change-password-container {
-                padding: 0.75rem;
+            body {
+                font-size: 15px;
             }
 
-            .change-password-card {
-                padding: 1.25rem 1.5rem;
-                border-radius: 15px;
+            .portal-form {
+                padding: 40px 25px; /* PADDING MAIOR */
+                min-height: 100vh;
             }
 
-            .change-password-logo {
-                width: 100px;
+            .form-content {
+                padding: 25px 15px; /* PADDING INTERNO MAIOR */
+                margin-top: 15px;
             }
 
-            .change-password-icon {
+            .form-header {
+                margin-bottom: 30px;
+                padding: 15px 12px; /* PADDING GARANTIDO */
+            }
+
+            .form-header h2 {
+                font-size: 1.6rem;
+                line-height: 1.4;
+                margin-bottom: 10px;
+                word-wrap: break-word;
+            }
+
+            .form-header p {
+                font-size: 0.95rem;
+                line-height: 1.4;
+            }
+
+            .form-icon {
+                width: 60px;
+                height: 60px;
+                font-size: 1.5rem;
+                margin: 0 auto 18px;
+            }
+
+            .form-label {
+                font-size: 0.95rem;
+                margin-bottom: 10px;
+            }
+
+            .form-input {
+                padding: 14px 45px 14px 16px;
+                font-size: 15px;
+            }
+
+            .toggle-password {
+                padding: 0 14px;
+            }
+
+            .strength-meter {
+                margin-top: 12px;
+            }
+
+            .strength-bar {
+                height: 7px;
+            }
+
+            .strength-text {
+                font-size: 0.85rem;
+                margin-top: 8px;
+            }
+
+            .requirements {
+                padding: 18px;
+                margin: 18px 0;
+            }
+
+            .requirements-title {
+                font-size: 0.9rem;
+                margin-bottom: 12px;
+            }
+
+            .requirement {
+                font-size: 0.9rem;
+                padding: 10px 0;
+            }
+
+            .requirement i {
+                font-size: 1rem;
+            }
+
+            .btn-primary {
+                padding: 16px 22px;
+                font-size: 1rem;
+            }
+
+            .status-message {
+                padding: 12px 16px;
+                font-size: 0.9rem;
+            }
+        }
+
+        /* Smartphones Pequenos (até 375px) */
+        @media (max-width: 375px) {
+            .portal-form {
+                padding: 35px 20px; /* PADDING AINDA MAIOR */
+            }
+
+            .form-content {
+                padding: 20px 12px; /* PADDING INTERNO */
+                margin-top: 10px;
+            }
+
+            .form-header {
+                padding: 12px 10px; /* PADDING NO HEADER */
+                margin-bottom: 25px;
+            }
+
+            .form-header h2 {
+                font-size: 1.4rem;
+                line-height: 1.3;
+            }
+
+            .form-header p {
+                font-size: 0.9rem;
+            }
+
+            .form-icon {
                 width: 55px;
                 height: 55px;
+                font-size: 1.4rem;
+                margin: 0 auto 15px;
             }
 
-            .change-password-icon i {
-                font-size: 1.3rem;
+            .form-input {
+                padding: 13px 42px 13px 14px;
+                font-size: 14px;
             }
 
-            .change-password-header h1 {
-                font-size: 1.3rem;
+            .requirements {
+                padding: 15px;
             }
 
-            .password-requirements ul {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        /* Telas muito pequenas */
-        @media (max-width: 360px) {
-            .change-password-card {
-                padding: 1rem 1.25rem;
+            .requirement {
+                font-size: 0.85rem;
+                padding: 8px 0;
             }
 
-            .change-password-logo {
-                width: 90px;
+            .btn-primary {
+                padding: 14px 20px;
+                font-size: 0.95rem;
             }
         }
 
-        /* Landscape mobile - manter compacto */
-        @media (max-height: 700px) and (orientation: landscape) {
-            .change-password-card {
-                padding: 1rem 2rem;
-                max-height: 95vh;
-                overflow-y: auto;
+        /* Smartphones Muito Pequenos (até 320px) */
+        @media (max-width: 320px) {
+            .portal-form {
+                padding: 30px 15px; /* MÁXIMO PADDING POSSÍVEL */
             }
 
-            .change-password-logo {
-                width: 90px;
-                margin-bottom: 0.5rem;
+            .form-content {
+                padding: 18px 10px;
+                margin-top: 8px;
             }
 
-            .change-password-icon {
+            .form-header {
+                padding: 10px 8px;
+                margin-bottom: 20px;
+            }
+
+            .form-header h2 {
+                font-size: 1.3rem;
+                line-height: 1.3;
+            }
+
+            .form-icon {
                 width: 50px;
                 height: 50px;
-                margin-bottom: 0.75rem;
-            }
-
-            .change-password-icon i {
-                font-size: 1.2rem;
-            }
-
-            .change-password-header {
-                margin-bottom: 1rem;
-            }
-
-            .alert-box {
-                margin-bottom: 0.75rem;
-                padding: 0.6rem;
-            }
-
-            .password-requirements {
-                margin-bottom: 0.75rem;
-                padding: 0.6rem;
-            }
-
-            .change-password-form {
-                gap: 0.75rem;
+                font-size: 1.3rem;
+                margin: 0 auto 12px;
             }
         }
 
-        /* ===== TOAST NOTIFICATIONS ===== */
-        .custom-toast {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            min-width: 350px;
-            max-width: 500px;
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
-            padding: 16px 20px;
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            z-index: 10000;
-            transform: translateX(120%);
-            transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-            border-left: 5px solid;
-            animation: slideInRight 0.3s ease forwards;
-        }
-
-        .custom-toast.show {
-            transform: translateX(0);
-        }
-
-        @keyframes slideInRight {
-            from {
-                transform: translateX(120%);
-                opacity: 0;
+        /* Landscape (Orientação Paisagem) */
+        @media (max-height: 650px) and (orientation: landscape) {
+            .portal-form {
+                padding: 30px 25px;
+                align-items: flex-start;
             }
-            to {
-                transform: translateX(0);
-                opacity: 1;
+
+            .form-content {
+                margin-top: 10px;
+                padding: 20px 15px;
             }
-        }
 
-        .custom-toast-success {
-            border-left-color: #00a651;
-            background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
-        }
+            .form-header {
+                margin-bottom: 20px;
+                padding: 10px;
+            }
 
-        .custom-toast-error {
-            border-left-color: #dc3545;
-            background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
-        }
+            .form-icon {
+                width: 50px;
+                height: 50px;
+                font-size: 1.3rem;
+                margin-bottom: 12px;
+            }
 
-        .custom-toast-warning {
-            border-left-color: #ffc107;
-            background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
-        }
+            .form-header h2 {
+                font-size: 1.4rem;
+                margin-bottom: 8px;
+            }
 
-        .custom-toast-info {
-            border-left-color: #0066cc;
-            background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
-        }
+            .form-header p {
+                font-size: 0.9rem;
+            }
 
-        .toast-icon {
-            font-size: 24px;
-            flex-shrink: 0;
-        }
+            .form-group {
+                margin-bottom: 18px;
+            }
 
-        .custom-toast-success .toast-icon {
-            color: #00a651;
-        }
+            .requirements {
+                margin: 15px 0;
+                padding: 12px;
+            }
 
-        .custom-toast-error .toast-icon {
-            color: #dc3545;
-        }
-
-        .custom-toast-warning .toast-icon {
-            color: #ffc107;
-        }
-
-        .custom-toast-info .toast-icon {
-            color: #0066cc;
-        }
-
-        .toast-message {
-            flex: 1;
-            color: #1a1a1a;
-            font-size: 14px;
-            font-weight: 500;
-            line-height: 1.5;
-        }
-
-        .toast-close {
-            background: none;
-            border: none;
-            color: #666;
-            font-size: 18px;
-            cursor: pointer;
-            padding: 5px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.2s;
-            border-radius: 50%;
-            width: 30px;
-            height: 30px;
-            flex-shrink: 0;
-        }
-
-        .toast-close:hover {
-            background: rgba(0, 0, 0, 0.1);
-            color: #1a1a1a;
-        }
-
-        /* Responsivo para toast */
-        @media (max-width: 768px) {
-            .custom-toast {
-                top: 10px;
-                right: 10px;
-                left: 10px;
-                min-width: auto;
-                max-width: calc(100% - 20px);
+            .requirement {
+                padding: 6px 0;
+                font-size: 0.85rem;
             }
         }
     </style>
 </head>
 <body>
-    <div class="change-password-container">
-        <div class="change-password-card">
-            <div class="change-password-header">
-                <img src="assets/img/logomarca alternativa.png" alt="ISIBA Logo" class="change-password-logo">
-                <h1>Bem-vindo(a), <span id="nomeColaborador">Colaborador</span>!</h1>
-                <p>Por segurança, crie sua própria senha no primeiro acesso.</p>
-            </div>
-
-            <div class="alert-box">
-                <i class="fa-solid fa-exclamation-triangle"></i>
-                <p><strong>Primeiro Acesso:</strong> Troque a senha temporária por uma pessoal e segura.</p>
-            </div>
-
-            <div class="password-requirements">
-                <h3><i class="fa-solid fa-shield-halved"></i> Requisitos:</h3>
-                <ul>
-                    <li><i class="fa-solid fa-check-circle"></i> Mínimo 6 caracteres</li>
-                    <li><i class="fa-solid fa-check-circle"></i> Senha memorável</li>
-                    <li><i class="fa-solid fa-check-circle"></i> Evite 123456</li>
-                    <li><i class="fa-solid fa-check-circle"></i> Não compartilhe</li>
-                </ul>
-            </div>
-
-            <form id="changePasswordForm" class="change-password-form">
-                <div class="form-group">
-                    <label for="senhaAtual" class="form-label">
-                        <i class="fa-solid fa-lock"></i>
-                        Senha Temporária (fornecida pelo RH)
-                    </label>
-                    <div class="password-wrapper">
-                        <input 
-                            type="password" 
-                            id="senhaAtual" 
-                            class="form-input"
-                            placeholder="Digite a senha temporária"
-                            required
-                            autocomplete="current-password"
-                        >
-                        <button type="button" class="password-toggle" id="toggleSenhaAtual">
-                            <i class="fas fa-eye"></i>
-                        </button>
-                    </div>
+    <div class="portal-container">
+        <!-- Lado Esquerdo - Informações -->
+        <div class="portal-welcome">
+            <div class="welcome-content">
+                <img src="assets/img/logomarca superior.png" alt="ISIBA Logo" class="welcome-logo">
+                <h1 class="welcome-title">Primeiro Acesso</h1>
+                <p class="welcome-subtitle">Configure sua senha de acesso ao portal</p>
+                
+                <div class="welcome-alert">
+                    <i class="fa-solid fa-shield-halved"></i>
+                    <h3>Segurança em Primeiro Lugar</h3>
+                    <p>Por motivos de segurança, você precisa alterar sua senha temporária antes de acessar o portal pela primeira vez.</p>
                 </div>
 
-                <div class="form-group">
-                    <label for="novaSenha" class="form-label">
+                <div class="welcome-features">
+                    <div class="feature-item">
+                        <i class="fa-solid fa-check-circle"></i>
+                        <span>Mínimo de 8 caracteres</span>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fa-solid fa-check-circle"></i>
+                        <span>Pelo menos uma letra maiúscula</span>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fa-solid fa-check-circle"></i>
+                        <span>Pelo menos uma letra minúscula</span>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fa-solid fa-check-circle"></i>
+                        <span>Pelo menos um número</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Lado Direito - Formulário -->
+        <div class="portal-form">
+            <div class="form-content">
+                <div class="form-header">
+                    <div class="form-icon">
                         <i class="fa-solid fa-key"></i>
-                        Nova Senha Pessoal
-                    </label>
-                    <div class="password-wrapper">
-                        <input 
-                            type="password" 
-                            id="novaSenha" 
-                            class="form-input"
-                            placeholder="Digite sua nova senha"
-                            minlength="6"
-                            required
-                            autocomplete="new-password"
-                        >
-                        <button type="button" class="password-toggle" id="toggleNovaSenha">
-                            <i class="fas fa-eye"></i>
-                        </button>
                     </div>
-                    <div class="password-strength" id="passwordStrength" style="display: none;">
-                        <div class="strength-bar">
-                            <div class="strength-fill" id="strengthFill"></div>
+                    <h2>Alterar Senha</h2>
+                    <p>Crie uma senha segura para acessar seu portal</p>
+                </div>
+
+                <form id="passwordForm" class="password-form">
+                    <!-- Senha Atual -->
+                    <div class="form-group">
+                        <label for="senhaAtual" class="form-label">
+                            <i class="fa-solid fa-lock"></i>
+                            Senha Temporária
+                        </label>
+                        <div class="input-group">
+                            <input 
+                                type="password" 
+                                id="senhaAtual" 
+                                class="form-input" 
+                                placeholder="Digite sua senha temporária"
+                                required
+                            >
+                            <button type="button" class="toggle-password" onclick="togglePassword('senhaAtual')">
+                                <i class="fa-solid fa-eye"></i>
+                            </button>
                         </div>
-                        <span class="strength-text" id="strengthText"></span>
                     </div>
-                </div>
 
-                <div class="form-group">
-                    <label for="confirmarSenha" class="form-label">
-                        <i class="fa-solid fa-check-double"></i>
-                        Confirmar Nova Senha
-                    </label>
-                    <div class="password-wrapper">
-                        <input 
-                            type="password" 
-                            id="confirmarSenha" 
-                            class="form-input"
-                            placeholder="Digite sua nova senha novamente"
-                            minlength="6"
-                            required
-                            autocomplete="new-password"
-                        >
-                        <button type="button" class="password-toggle" id="toggleConfirmarSenha">
-                            <i class="fas fa-eye"></i>
-                        </button>
+                    <!-- Nova Senha -->
+                    <div class="form-group">
+                        <label for="novaSenha" class="form-label">
+                            <i class="fa-solid fa-lock-open"></i>
+                            Nova Senha
+                        </label>
+                        <div class="input-group">
+                            <input 
+                                type="password" 
+                                id="novaSenha" 
+                                class="form-input" 
+                                placeholder="Digite sua nova senha"
+                                required
+                            >
+                            <button type="button" class="toggle-password" onclick="togglePassword('novaSenha')">
+                                <i class="fa-solid fa-eye"></i>
+                            </button>
+                        </div>
+                        
+                        <!-- Indicador de Força -->
+                        <div class="strength-meter">
+                            <div class="strength-bar">
+                                <div class="strength-fill" id="strengthBarFill"></div>
+                            </div>
+                            <div class="strength-text" id="strengthText">Digite uma senha</div>
+                        </div>
                     </div>
-                    <small class="form-hint">
-                        <i class="fa-solid fa-circle-info"></i>
-                        As senhas devem ser idênticas
-                    </small>
-                </div>
 
-                <button type="submit" class="btn-submit" id="btnSubmit">
-                    <i class="fa-solid fa-check"></i>
-                    Confirmar e Acessar Portal
-                </button>
-            </form>
+                    <!-- Confirmar Senha -->
+                    <div class="form-group">
+                        <label for="confirmarSenha" class="form-label">
+                            <i class="fa-solid fa-check-double"></i>
+                            Confirmar Nova Senha
+                        </label>
+                        <div class="input-group">
+                            <input 
+                                type="password" 
+                                id="confirmarSenha" 
+                                class="form-input" 
+                                placeholder="Confirme sua nova senha"
+                                required
+                            >
+                            <button type="button" class="toggle-password" onclick="togglePassword('confirmarSenha')">
+                                <i class="fa-solid fa-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Requisitos da Senha -->
+                    <div class="requirements">
+                        <div class="requirements-title">
+                            <i class="fa-solid fa-clipboard-list"></i>
+                            Requisitos da senha:
+                        </div>
+                        <div class="requirement unmet" id="req-length">
+                            <i class="fa-solid fa-circle-xmark"></i>
+                            <span>Mínimo de 8 caracteres</span>
+                        </div>
+                        <div class="requirement unmet" id="req-uppercase">
+                            <i class="fa-solid fa-circle-xmark"></i>
+                            <span>Pelo menos uma letra maiúscula (A-Z)</span>
+                        </div>
+                        <div class="requirement unmet" id="req-lowercase">
+                            <i class="fa-solid fa-circle-xmark"></i>
+                            <span>Pelo menos uma letra minúscula (a-z)</span>
+                        </div>
+                        <div class="requirement unmet" id="req-number">
+                            <i class="fa-solid fa-circle-xmark"></i>
+                            <span>Pelo menos um número (0-9)</span>
+                        </div>
+                    </div>
+
+                    <!-- Mensagem de Status -->
+                    <div id="statusMessage" class="status-message"></div>
+
+                    <!-- Botão Submeter -->
+                    <button type="submit" class="btn-primary" id="submitBtn">
+                        <i class="fa-solid fa-check"></i>
+                        <span>Alterar Senha e Continuar</span>
+                    </button>
+                </form>
+            </div>
         </div>
     </div>
 
-    <!-- Supabase JavaScript Client -->
+    <!-- Supabase -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     
-    <!-- JavaScript -->
-    <script src="assets/js/supabase-config.js"></script>
-    <script src="assets/js/supabase-colaborador.js"></script>
-    <script src="assets/js/primeiro-acesso.js"></script>
+    <!-- Scripts do Sistema -->
+    <script src="assets/js/supabase-config.js?v=1.0"></script>
+    <script src="assets/js/supabase-colaborador.js?v=1.0"></script>
+    <script src="assets/js/primeiro-acesso.js?v=2.2"></script>
 </body>
 </html>
