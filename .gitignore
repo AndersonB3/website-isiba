@@ -45,7 +45,9 @@ dist/
 build/
 
 # Backups e arquivos de teste
+backups/
 *.backup
+*.sql
 *.sql.backup
 **/teste-*.pdf
 **/contracheque-teste.pdf
