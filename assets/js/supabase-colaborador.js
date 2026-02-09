@@ -144,22 +144,15 @@ async function buscarMeusContracheques(colaboradorId) {
  */
 async function downloadMeuContracheque(arquivoUrl) {
     try {
-        // Extrair o caminho relativo da URL completa
-        // Ex: https://.../contracheques/UUID/arquivo.pdf -> UUID/arquivo.pdf
+        // O arquivo_url do banco já contém o caminho correto dentro do bucket
+        // Ex: "2026/01/08676044503_2026_01_contracheque.pdf"
+        // ou "UUID/contracheque_Dezembro_2025.pdf" (formato antigo)
         let caminhoArquivo = arquivoUrl;
         
+        // Se for URL completa (https://...), extrair apenas o caminho relativo
         if (arquivoUrl.includes('/contracheques/')) {
-            // Pega tudo depois de /contracheques/
             const partes = arquivoUrl.split('/contracheques/');
-            caminhoArquivo = partes[1]; // Ex: UUID/contracheque_Dezembro_2025.pdf
-        } else if (arquivoUrl.includes('/')) {
-            // Fallback: pega os 2 últimos segmentos (UUID/arquivo.pdf)
-            const partes = arquivoUrl.split('/');
-            if (partes.length >= 2) {
-                caminhoArquivo = partes[partes.length - 2] + '/' + partes[partes.length - 1];
-            } else {
-                caminhoArquivo = partes[partes.length - 1];
-            }
+            caminhoArquivo = partes[1];
         }
         
         console.log('🔍 Caminho do arquivo no Storage:', caminhoArquivo);

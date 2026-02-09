@@ -111,8 +111,8 @@
                     <span>Enviar Documentos</span>
                 </button>
                 <button class="nav-item" data-section="upload-lote">
-                    <i class="fa-solid fa-robot"></i>
-                    <span>Upload em Lote (IA)</span>
+                    <i class="fa-solid fa-file-pdf"></i>
+                    <span>Divisão de PDF Compilado</span>
                 </button>
                 <button class="nav-item" data-section="historico">
                     <i class="fa-solid fa-clock-rotate-left"></i>
@@ -479,10 +479,10 @@
             <!-- Seção: Upload em Lote (IA) -->
             <section id="section-upload-lote" class="content-section">
                 <div class="form-card">
-                    <h2><i class="fa-solid fa-robot"></i> Upload Inteligente em Lote</h2>
+                    <h2><i class="fa-solid fa-file-pdf"></i> Divisão Automática de Contracheques</h2>
                     <p class="form-description">
-                        Sistema automático que lê múltiplos PDFs e identifica o funcionário pelo código e nome.
-                        <strong>Envie até 300 documentos de uma vez!</strong>
+                        Sistema inteligente que divide um PDF compilado em contracheques individuais.
+                        <strong>Envie 1 PDF com todos os contracheques e o sistema divide automaticamente!</strong>
                     </p>
 
                     <!-- Alertas e Instruções -->
@@ -491,32 +491,43 @@
                             <i class="fa-solid fa-info-circle"></i> Como Funciona
                         </h3>
                         <ul style="margin: 0; padding-left: 20px; color: #424242;">
-                            <li>O sistema lê automaticamente o <strong>código</strong> e <strong>nome completo</strong> de cada PDF</li>
-                            <li>Busca o funcionário correspondente no banco de dados</li>
-                            <li>Envia o documento automaticamente para o colaborador correto</li>
-                            <li>Suporta múltiplos formatos de contracheques</li>
-                            <li>Mostra relatório detalhado de sucessos/avisos/erros</li>
+                            <li>Envie <strong>1 único PDF</strong> contendo todos os contracheques compilados</li>
+                            <li>Cada página representa 1 contracheque de 1 funcionário</li>
+                            <li>O sistema lê automaticamente o <strong>Código</strong> e <strong>Nome do Funcionário</strong> de cada página</li>
+                            <li>Extrai cada página individualmente e cria PDFs separados</li>
+                            <li>Vincula automaticamente cada contracheque ao colaborador correto</li>
+                            <li>Mostra relatório detalhado do processamento</li>
                         </ul>
+                    </div>
+
+                    <div class="alert-info" style="background: #fff3cd; border-left: 4px solid #ffc107; padding: 16px; margin-bottom: 24px; border-radius: 8px;">
+                        <h3 style="margin: 0 0 12px 0; color: #856404;">
+                            <i class="fa-solid fa-exclamation-triangle"></i> Importante
+                        </h3>
+                        <p style="margin: 0; color: #856404;">
+                            Certifique-se de que cada página do PDF contenha os campos <strong>"Código"</strong> e <strong>"Nome do Funcionário"</strong> 
+                            no mesmo padrão. O sistema procura por esses marcadores para identificar cada colaborador.
+                        </p>
                     </div>
 
                     <!-- Área de Upload -->
                     <div class="upload-lote-zone" id="uploadLoteZone">
-                        <input type="file" id="uploadLoteFiles" accept="application/pdf" multiple hidden>
+                        <input type="file" id="uploadLoteFiles" accept="application/pdf" hidden>
                         <div class="upload-lote-content" id="uploadLoteContent">
-                            <i class="fa-solid fa-cloud-upload-alt" style="font-size: 4rem; color: #2196f3; margin-bottom: 16px;"></i>
-                            <h3>Arraste múltiplos PDFs aqui</h3>
-                            <p>ou clique para selecionar arquivos</p>
-                            <small>Apenas arquivos PDF • Máx. 10MB cada • Até 300 arquivos</small>
+                            <i class="fa-solid fa-file-pdf" style="font-size: 4rem; color: #2196f3; margin-bottom: 16px;"></i>
+                            <h3>Arraste o PDF compilado aqui</h3>
+                            <p>ou clique para selecionar o arquivo</p>
+                            <small>Apenas 1 arquivo PDF • Máx. 50MB • Múltiplas páginas</small>
                         </div>
                     </div>
 
-                    <!-- Lista de Arquivos Selecionados -->
+                    <!-- Informações do Arquivo Selecionado -->
                     <div id="listaArquivosLote" class="arquivos-lote-container" style="display: none;">
-                        <h3><i class="fa-solid fa-list"></i> Arquivos Selecionados: <span id="totalArquivos">0</span></h3>
-                        <div id="arquivosLoteList" class="arquivos-grid"></div>
+                        <h3><i class="fa-solid fa-file-check"></i> Arquivo Selecionado</h3>
+                        <div id="arquivosLoteList" class="arquivo-info-card"></div>
                         <button type="button" class="btn-secondary" id="btnLimparLote" style="margin-top: 16px;">
                             <i class="fa-solid fa-trash"></i>
-                            Limpar Seleção
+                            Remover Arquivo
                         </button>
                     </div>
 
@@ -530,34 +541,53 @@
                             <div class="form-group">
                                 <label for="tipoDocumentoLote" class="form-label">
                                     <i class="fa-solid fa-file-lines"></i>
-                                    Tipo de Documento Padrão *
+                                    Tipo de Documento *
                                 </label>
                                 <select id="tipoDocumentoLote" class="form-input" required>
                                     <option value="contracheque">Contracheque Mensal</option>
                                     <option value="informe_ir">Informe de Imposto de Renda</option>
                                 </select>
-                                <small class="form-hint">O sistema tentará detectar automaticamente, mas usará este como padrão se não conseguir</small>
                             </div>
 
                             <div class="form-group">
                                 <label for="anoLote" class="form-label">
                                     <i class="fa-solid fa-calendar"></i>
-                                    Ano Padrão *
+                                    Ano *
                                 </label>
                                 <select id="anoLote" class="form-input" required>
                                     <option value="2026">2026</option>
                                     <option value="2025" selected>2025</option>
                                     <option value="2024">2024</option>
                                 </select>
-                                <small class="form-hint">Será usado se o sistema não conseguir detectar o ano no PDF</small>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="mesLote" class="form-label">
+                                    <i class="fa-solid fa-calendar-days"></i>
+                                    Mês de Referência *
+                                </label>
+                                <select id="mesLote" class="form-input" required>
+                                    <option value="01">Janeiro</option>
+                                    <option value="02">Fevereiro</option>
+                                    <option value="03">Março</option>
+                                    <option value="04">Abril</option>
+                                    <option value="05">Maio</option>
+                                    <option value="06">Junho</option>
+                                    <option value="07">Julho</option>
+                                    <option value="08">Agosto</option>
+                                    <option value="09">Setembro</option>
+                                    <option value="10">Outubro</option>
+                                    <option value="11">Novembro</option>
+                                    <option value="12">Dezembro</option>
+                                </select>
                             </div>
                         </div>
 
-                        <div style="background: #fff3cd; padding: 12px; border-radius: 6px; margin-top: 12px; border-left: 4px solid #ffc107;">
-                            <p style="margin: 0; color: #856404; font-size: 14px;">
-                                <i class="fa-solid fa-info-circle"></i>
-                                <strong>Detecção Automática:</strong> O sistema vai tentar extrair mês e ano de cada PDF. 
-                                Se não conseguir, usará o ano padrão acima e você será notificado no log.
+                        <div style="background: #e8f5e9; padding: 12px; border-radius: 6px; margin-top: 12px; border-left: 4px solid #4caf50;">
+                            <p style="margin: 0; color: #2e7d32; font-size: 14px;">
+                                <i class="fa-solid fa-magic"></i>
+                                <strong>Processamento Inteligente:</strong> O sistema irá dividir o PDF página por página, 
+                                identificar código e nome em cada uma, e criar contracheques individuais automaticamente.
                             </p>
                         </div>
                     </div>
@@ -565,8 +595,8 @@
                     <!-- Botão Processar -->
                     <div id="areaProcessar" style="display: none; margin-top: 24px;">
                         <button type="button" class="btn-primary btn-large" id="btnProcessarLote">
-                            <i class="fa-solid fa-magic"></i>
-                            Processar Automaticamente
+                            <i class="fa-solid fa-scissors"></i>
+                            Dividir e Processar PDF
                         </button>
                     </div>
 
@@ -907,7 +937,7 @@
     <script src="assets/js/supabase-config.js"></script>
     <script src="assets/js/supabase-admin.js"></script>
     <script src="assets/js/recibo-admin.js?v=3.5"></script>
-    <script src="assets/js/upload-lote.js?v=2.0"></script>
+    <script src="assets/js/divisao-pdf.js?v=2.5"></script>
     <script src="assets/js/admin-rh.js?v=3.3"></script>
 </body>
 </html>

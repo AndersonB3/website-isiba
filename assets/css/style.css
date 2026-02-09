@@ -796,38 +796,88 @@ button {
 /*=============== RELATÓRIO ===============*/
 .stats__grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 2rem;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.5rem;
   margin-bottom: 3rem;
 }
 
 .stat__card {
-  background: var(--white-color);
-  padding: 2.5rem 2rem;
-  border-radius: 20px;
+  position: relative;
+  background: linear-gradient(135deg, #ffffff 0%, #f8fcff 100%);
+  padding: 2rem 1.5rem 1.75rem;
+  border-radius: 18px;
   text-align: center;
-  box-shadow: 0 8px 32px hsla(210, 40%, 8%, 0.08);
-  transition: var(--transition-smooth);
+  box-shadow: 0 10px 40px hsla(210, 40%, 8%, 0.08);
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   border: 2px solid transparent;
+  overflow: hidden;
+}
+
+.stat__card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 5px;
+  background: linear-gradient(90deg, 
+    hsl(195, 85%, 55%) 0%, 
+    hsl(175, 75%, 45%) 50%, 
+    hsl(155, 70%, 50%) 100%);
+  transform: scaleX(0);
+  transition: transform 0.4s ease;
+}
+
+.stat__card:hover::before {
+  transform: scaleX(1);
 }
 
 .stat__card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 12px 40px hsla(210, 40%, 8%, 0.15);
-  border-color: var(--primary-color);
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: 0 20px 60px hsla(210, 40%, 8%, 0.15);
+  border-color: hsla(195, 85%, 55%, 0.3);
 }
 
 .stat__icon {
-  width: 70px;
-  height: 70px;
-  margin: 0 auto 1.5rem;
-  background: linear-gradient(135deg, hsla(200, 85%, 95%, 1) 0%, hsla(150, 60%, 95%, 1) 100%);
+  width: 65px;
+  height: 65px;
+  margin: 0 auto 1rem;
+  background: linear-gradient(135deg, 
+    hsla(195, 85%, 95%, 1) 0%, 
+    hsla(175, 75%, 92%, 1) 50%,
+    hsla(155, 70%, 95%, 1) 100%);
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.75rem;
+  font-size: 1.65rem;
   color: var(--primary-color);
+  box-shadow: 0 8px 24px hsla(195, 85%, 55%, 0.2);
+  transition: all 0.4s ease;
+  position: relative;
+}
+
+.stat__icon::after {
+  content: '';
+  position: absolute;
+  inset: -3px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, 
+    hsla(195, 85%, 55%, 0.4), 
+    hsla(175, 75%, 45%, 0.4),
+    hsla(155, 70%, 50%, 0.4));
+  z-index: -1;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+.stat__card:hover .stat__icon {
+  transform: scale(1.1) rotate(10deg);
+  box-shadow: 0 12px 32px hsla(195, 85%, 55%, 0.35);
+}
+
+.stat__card:hover .stat__icon::after {
+  opacity: 1;
 }
 
 .stat__content {
@@ -835,24 +885,43 @@ button {
 }
 
 .stat__number {
-  font-size: 3rem;
-  font-weight: var(--font-bold);
-  color: var(--primary-color);
+  font-size: 2.5rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, 
+    hsl(195, 85%, 45%) 0%, 
+    hsl(175, 75%, 40%) 50%,
+    hsl(155, 70%, 45%) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
   line-height: 1;
   display: inline-block;
+  letter-spacing: -1px;
 }
 
 .stat__suffix {
-  font-size: 2rem;
-  font-weight: var(--font-bold);
-  color: var(--primary-color);
+  font-size: 1.875rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, 
+    hsl(195, 85%, 45%) 0%, 
+    hsl(175, 75%, 40%) 50%,
+    hsl(155, 70%, 45%) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-left: 2px;
 }
 
 .stat__label {
-  font-size: var(--normal-font-size);
-  color: var(--text-color);
+  font-size: 0.9rem;
+  color: hsl(210, 15%, 45%);
   margin-top: 0.5rem;
-  font-weight: var(--font-medium);
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.stat__card:hover .stat__label {
+  color: hsl(210, 20%, 35%);
 }
 
 .relatorio__cta {
@@ -1163,7 +1232,29 @@ button {
 
   .stats__grid {
     grid-template-columns: repeat(2, 1fr);
-    gap: 1.5rem;
+    gap: 1.25rem;
+  }
+
+  .stat__card {
+    padding: 1.75rem 1.25rem 1.5rem;
+  }
+
+  .stat__icon {
+    width: 55px;
+    height: 55px;
+    font-size: 1.5rem;
+  }
+
+  .stat__number {
+    font-size: 2.25rem;
+  }
+
+  .stat__suffix {
+    font-size: 1.5rem;
+  }
+
+  .stat__label {
+    font-size: 0.85rem;
   }
 
   .footer__content {
@@ -1206,10 +1297,29 @@ button {
 
   .stats__grid {
     grid-template-columns: 1fr;
+    gap: 1.25rem;
+  }
+
+  .stat__card {
+    padding: 1.5rem 1.25rem;
+  }
+
+  .stat__icon {
+    width: 52px;
+    height: 52px;
+    font-size: 1.3rem;
   }
 
   .stat__number {
-    font-size: 2.5rem;
+    font-size: 2rem;
+  }
+
+  .stat__suffix {
+    font-size: 1.4rem;
+  }
+
+  .stat__label {
+    font-size: 0.8rem;
   }
 
   .footer__social {
