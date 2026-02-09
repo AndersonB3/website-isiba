@@ -1,16 +1,14 @@
-# Dependências
+# Dependencias
 node_modules/
 vendor/
 
-# Arquivos de ambiente (contém chaves sensíveis)
+# Arquivos de ambiente
 .env
 .env.local
 .env.*.local
 
-# ⚠️ IMPORTANTE: Arquivos com credenciais do Supabase
-# Comentado para permitir deploy no GitHub Pages (chaves são públicas mesmo)
-# **/supabase-config.js
-!**/supabase-config.example.js
+# Configuracoes Supabase
+**/supabase-config.example.js
 
 # 🔒 CREDENCIAIS DE DESENVOLVIMENTO (NUNCA COMMITAR!)
 **/supabase-config.dev.js
@@ -30,7 +28,7 @@ Desktop.ini
 *.sublime-project
 *.sublime-workspace
 
-# Arquivos temporários
+# Arquivos temporarios
 *.tmp
 *.temp
 *.swp
@@ -50,4 +48,3 @@ backups/
 *.sql
 *.sql.backup
 **/teste-*.pdf
-**/contracheque-teste.pdf
