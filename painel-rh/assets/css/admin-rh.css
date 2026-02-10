@@ -103,10 +103,12 @@ body.dashboard-active {
     padding: 48px 40px;
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3),
                 0 0 0 1px rgba(255, 255, 255, 0.1);
-    max-height: 90vh;
-    overflow-y: auto;
+    max-height: 96vh;
+    overflow: hidden;
     position: relative;
     border: 1px solid rgba(255, 255, 255, 0.2);
+    display: flex;
+    flex-direction: column;
 }
 
 .login-card::before {
@@ -125,18 +127,19 @@ body.dashboard-active {
 
 .login-header {
     text-align: center;
-    margin-bottom: 36px;
+    margin-bottom: 24px;
+    flex-shrink: 0;
 }
 
 .login-logo {
-    width: 200px;
-    margin: 0 auto 24px;
+    width: 160px;
+    margin: 0 auto 16px;
     filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.1));
 }
 
 .login-header h1 {
     font-family: 'Poppins', sans-serif;
-    font-size: 2rem;
+    font-size: 1.75rem;
     font-weight: 700;
     background: linear-gradient(135deg, 
         hsl(210, 100%, 30%) 0%, 
@@ -145,26 +148,29 @@ body.dashboard-active {
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
-    margin-bottom: 10px;
+    margin-bottom: 8px;
     letter-spacing: -0.5px;
 }
 
 .login-header p {
     color: hsl(210, 15%, 45%);
-    font-size: 1rem;
+    font-size: 0.95rem;
     font-weight: 500;
 }
 
 .login-form {
     display: flex;
     flex-direction: column;
-    gap: 24px;
+    gap: 18px;
+    flex: 1;
+    overflow-y: auto;
+    padding-right: 4px;
 }
 
 .form-group {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 8px;
 }
 
 .form-label {
@@ -183,11 +189,11 @@ body.dashboard-active {
 
 .form-input {
     width: 100%;
-    padding: 14px 18px;
+    padding: 12px 16px;
     border: 2px solid hsl(210, 15%, 85%);
     border-radius: 12px;
     font-family: 'Inter', sans-serif;
-    font-size: 1rem;
+    font-size: 0.95rem;
     transition: all 0.3s ease;
     background: white;
 }
@@ -288,7 +294,7 @@ body.dashboard-active {
 
 .btn-submit {
     width: 100%;
-    padding: 16px 28px;
+    padding: 13px 24px;
     background: linear-gradient(135deg, 
         hsl(195, 85%, 45%) 0%, 
         hsl(175, 75%, 42%) 50%,
@@ -297,7 +303,7 @@ body.dashboard-active {
     border: none;
     border-radius: 12px;
     font-family: 'Poppins', sans-serif;
-    font-size: 1.05rem;
+    font-size: 1rem;
     font-weight: 600;
     cursor: pointer;
     display: flex;
@@ -342,25 +348,26 @@ body.dashboard-active {
 }
 
 .login-footer {
-    margin-top: 32px;
+    margin-top: 20px;
     text-align: center;
-    padding-top: 24px;
+    padding-top: 16px;
     border-top: 2px solid hsl(210, 15%, 90%);
+    flex-shrink: 0;
 }
 
 .login-footer p {
-    font-size: 0.9rem;
+    font-size: 0.85rem;
     color: hsl(210, 15%, 45%);
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 10px;
+    gap: 8px;
     font-weight: 500;
 }
 
 .login-footer i {
     color: hsl(155, 70%, 45%);
-    font-size: 1.1rem;
+    font-size: 1rem;
 }
 
 /* ========================================
@@ -996,114 +1003,81 @@ body.dashboard-active {
 
 @media (max-height: 700px) {
     .login-card {
-        padding: 28px 32px;
-        max-height: 95vh;
-        border-radius: 20px;
+        padding: 20px 24px;
+        max-height: 98vh;
     }
 
     .login-logo {
-        width: 160px;
-        margin-bottom: 16px;
-    }
-
-    .login-header h1 {
-        font-size: 1.65rem;
-        margin-bottom: 8px;
-    }
-
-    .login-header p {
-        font-size: 0.9rem;
+        width: 120px;
+        margin-bottom: 10px;
     }
 
     .login-header {
-        margin-bottom: 24px;
-    }
-
-    .login-form {
-        gap: 18px;
-    }
-
-    .form-input {
-        padding: 12px 16px;
-    }
-
-    .btn-submit {
-        padding: 14px 24px;
-    }
-}
-
-@media (max-width: 768px) {
-    .login-container {
-        max-width: 420px;
-    }
-
-    .login-card {
-        padding: 36px 28px;
-        border-radius: 24px;
-    }
-
-    .login-logo {
-        width: 170px;
+        margin-bottom: 14px;
     }
 
     .login-header h1 {
-        font-size: 1.75rem;
+        font-size: 1.35rem;
+        margin-bottom: 4px;
+    }
+
+    .login-header p {
+        font-size: 0.8rem;
     }
 
     .login-form {
-        gap: 20px;
+        gap: 12px;
+    }
+
+    .form-group {
+        gap: 5px;
+    }
+
+    .form-label {
+        font-size: 0.85rem;
     }
 
     .form-input {
-        padding: 13px 16px;
-        font-size: 0.95rem;
+        padding: 10px 12px;
+        font-size: 0.875rem;
     }
 
     .btn-submit {
-        padding: 15px 24px;
-        font-size: 1rem;
+        padding: 11px 18px;
+        font-size: 0.9rem;
     }
 
     .login-footer {
-        margin-top: 24px;
-        padding-top: 20px;
+        margin-top: 12px;
+        padding-top: 12px;
     }
 
-    .dashboard {
-        grid-template-columns: 1fr;
+    .login-footer p {
+        font-size: 0.8rem;
+    }
+}
+
+/* Media Query para telas pequenas em largura */
+@media (max-width: 480px) {
+    .login-container {
+        max-width: 95%;
     }
 
-    .sidebar {
-        display: none;
+    .login-card {
+        padding: 24px 20px;
+        border-radius: 16px;
     }
 
-    .content-header {
-        padding: 20px;
+    .login-logo {
+        width: 130px;
     }
 
-    .content-section {
-        padding: 20px;
+    .login-header h1 {
+        font-size: 1.4rem;
     }
 
-    .form-card {
-        padding: 24px;
-    }
-
-    .stats-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .form-row {
-        grid-template-columns: 1fr;
-    }
-
-    .form-actions {
-        flex-direction: column;
-    }
-
-    .btn-primary, .btn-secondary {
-        width: 100%;
-        justify-content: center;
+    .form-input {
+        padding: 10px 14px;
     }
 }
 
