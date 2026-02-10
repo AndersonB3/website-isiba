@@ -35,7 +35,7 @@ Novo Currículo - {{from_name}}
 
 <hr>
 <p><strong>📎 Currículo:</strong> {{pdf_name}}</p>
-<p><small>✉️ Enviado através do site ISIBA Social - Trabalhe Conosco</small></p>
+<p><small>✉️ Enviado através do site ISIBA - Trabalhe Conosco</small></p>
 ```
 
 **⚠️ IMPORTANTE:** 

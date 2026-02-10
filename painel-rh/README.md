@@ -1,4 +1,4 @@
-# 🔐 PAINEL ADMINISTRATIVO RH - ISIBA SOCIAL
+# 🔐 PAINEL ADMINISTRATIVO RH - ISIBA
 ## Servidor Separado (Porta 3001)
 
 ---
@@ -77,7 +77,7 @@ npm run dev
 **Você verá:**
 ```
 ═══════════════════════════════════════════
-🚀 PAINEL ADMINISTRATIVO RH - ISIBA SOCIAL
+🚀 PAINEL ADMINISTRATIVO RH - ISIBA
 ═══════════════════════════════════════════
 ✅ Servidor rodando na porta: 3001
 🌐 Acesse: http://localhost:3001
@@ -232,7 +232,7 @@ http://localhost:3001/health
 ```json
 {
   "status": "OK",
-  "service": "Painel RH - ISIBA Social",
+  "service": "Painel RH - ISIBA",
   "port": 3001,
   "timestamp": "2026-01-28T..."
 }

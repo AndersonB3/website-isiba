@@ -261,4 +261,4 @@ Se tiver qualquer dúvida:
 
 **Data de Criação:** 05/02/2026  
 **Versão:** 1.0  
-**Autor:** Sistema ISIBA Social
+**Autor:** Sistema ISIBA

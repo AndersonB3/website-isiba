@@ -1,6 +1,6 @@
 /**
  * Funções do Supabase para o Painel Admin
- * ISIBA Social - Sistema de Gestão de Contracheques
+ * ISIBA - Sistema de Gestão de Contracheques
  */
 
 // A verificação do Supabase será feita quando as funções forem chamadas,

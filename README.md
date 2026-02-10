@@ -1,6 +1,6 @@
-# 🏥 ISIBA Social - Website Institucional
+# 🏥 ISIBA - Website Institucional
 
-![ISIBA Social](https://img.shields.io/badge/ISIBA-Social-0891b2?style=for-the-badge)
+![ISIBA](https://img.shields.io/badge/ISIBA-0891b2?style=for-the-badge)
 ![HTML5](https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white)
 ![CSS3](https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white)
 ![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)
@@ -274,7 +274,7 @@ Otimizado para buscadores:
 - Alt text em imagens
 - Estrutura hierárquica de headings
 
-## 📞 Contatos ISIBA Social
+## 📞 Contatos ISIBA
 
 ### Salvador – BA
 Edifício Guimarães Trade  
@@ -293,15 +293,15 @@ CEP: 01452-001
 
 ## 📄 Licença
 
-Este projeto foi desenvolvido para uso exclusivo do ISIBA Social.
+Este projeto foi desenvolvido para uso exclusivo do ISIBA.
 
 ## 👨‍💻 Suporte
 
-Para dúvidas ou suporte técnico, entre em contato através dos canais oficiais do ISIBA Social.
+Para dúvidas ou suporte técnico, entre em contato através dos canais oficiais do ISIBA.
 
 ---
 
 <div align="center">
   <p>Desenvolvido com ❤️ para transformar vidas através da gestão humanizada em saúde</p>
-  <p><strong>🏥 ISIBA Social - Gestão Humanizada</strong></p>
+  <p><strong>🏥 ISIBA - Gestão Humanizada</strong></p>
 </div>

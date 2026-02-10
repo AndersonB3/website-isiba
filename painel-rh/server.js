@@ -1,6 +1,6 @@
 /**
  * Servidor do Painel Administrativo RH
- * ISIBA Social
+ * ISIBA
  * 
  * Porta: 3001 (diferente do site principal)
  */
@@ -26,7 +26,7 @@ app.get('/', (req, res) => {
 app.get('/health', (req, res) => {
     res.json({ 
         status: 'OK', 
-        service: 'Painel RH - ISIBA Social',
+        service: 'Painel RH - ISIBA',
         port: PORT,
         timestamp: new Date().toISOString()
     });
@@ -35,7 +35,7 @@ app.get('/health', (req, res) => {
 // Iniciar servidor
 app.listen(PORT, () => {
     console.log('═══════════════════════════════════════════');
-    console.log('🚀 PAINEL ADMINISTRATIVO RH - ISIBA SOCIAL');
+    console.log('🚀 PAINEL ADMINISTRATIVO RH - ISIBA');
     console.log('═══════════════════════════════════════════');
     console.log(`✅ Servidor rodando na porta: ${PORT}`);
     console.log(`🌐 Acesse: http://localhost:${PORT}`);

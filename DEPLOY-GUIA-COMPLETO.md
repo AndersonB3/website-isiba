@@ -1,4 +1,4 @@
-# 🚀 GUIA COMPLETO DE DEPLOY - ISIBA Social
+# 🚀 GUIA COMPLETO DE DEPLOY - ISIBA
 
 ## 📋 Visão Geral
 

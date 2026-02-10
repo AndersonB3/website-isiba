@@ -42,11 +42,11 @@
     <p>Olá {{from_name}},</p>
     <p>Obrigado por seu interesse em trabalhar conosco!</p>
     <p>Por favor, responda este email anexando seu currículo em PDF para que possamos avaliar sua candidatura.</p>
-    <p><strong>Atenciosamente,</strong><br>Equipe RH - ISIBA Social</p>
+    <p><strong>Atenciosamente,</strong><br>Equipe RH - ISIBA</p>
 </blockquote>
 
 <hr>
-<p><small>✉️ Enviado através do site ISIBA Social - Trabalhe Conosco</small></p>
+<p><small>✉️ Enviado através do site ISIBA - Trabalhe Conosco</small></p>
 ```
 
 ### 3. Remover Anexo (se existir)
@@ -115,7 +115,7 @@ Responda para o email do candidato (joao@exemplo.com) solicitando o envio do PDF
 [Template de resposta incluso no email]
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-✉️ Enviado através do site ISIBA Social - Trabalhe Conosco
+✉️ Enviado através do site ISIBA - Trabalhe Conosco
 ```
 
 ---

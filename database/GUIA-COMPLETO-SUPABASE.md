@@ -28,7 +28,7 @@
 1. No dashboard, clique em **"New Project"**
 2. Preencha os dados:
    ```
-   Nome: ISIBA Social
+   Nome: ISIBA
    Database Password: [crie uma senha forte]
    Region: South America (São Paulo) - MAIS RÁPIDO
    Pricing Plan: Free

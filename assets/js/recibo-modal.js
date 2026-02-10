@@ -101,7 +101,7 @@ function criarModalRecibo() {
                             <p>
                                 Declaro que <strong>recebi</strong> e tenho <strong>ciência</strong> 
                                 do documento acima referenciado, disponibilizado através do 
-                                Portal do Colaborador da ISIBA Social.
+                                Portal do Colaborador da ISIBA.
                             </p>
                         </div>
                     </div>

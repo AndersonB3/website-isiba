@@ -1,14 +1,14 @@
 {
   "name": "isiba-painel-rh",
   "version": "1.0.0",
-  "description": "Painel Administrativo RH - ISIBA Social",
+  "description": "Painel Administrativo RH - ISIBA",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
     "dev": "node server.js"
   },
   "keywords": ["rh", "admin", "painel"],
-  "author": "ISIBA Social",
+  "author": "ISIBA",
   "license": "MIT",
   "dependencies": {
     "express": "^4.18.2",

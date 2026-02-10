@@ -359,4 +359,4 @@ Para dúvidas ou problemas:
 
 **Última Atualização:** 09/02/2026
 **Versão:** 1.0
-**Desenvolvido para:** ISIBA Social - RH
+**Desenvolvido para:** ISIBA - RH

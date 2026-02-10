@@ -50,7 +50,7 @@ Novo Currículo - {{from_name}}
 
 <hr>
 <p><em>Currículo anexado: {{pdf_name}}</em></p>
-<p><small>Enviado através do site ISIBA Social</small></p>
+<p><small>Enviado através do site ISIBA</small></p>
 ```
 
 4. Copie o **Template ID** (ex: `template_xyz789`)
