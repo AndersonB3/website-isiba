@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trocar Senha - Admin ISIBA</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/admin-rh.css">
+    <script src="assets/js/supabase-config.js"></script>
+</head>
+<body>
+    <div class="login-screen">
+        <div class="login-container">
+            <div class="login-card">
+                <div class="login-header">
+                    <img src="assets/img/logomarca superior.png" alt="ISIBA Logo" class="login-logo">
+                    <h1>Alterar Senha</h1>
+                    <p>Configure uma senha segura para seu acesso</p>
+                </div>
+
+                <form id="trocarSenhaForm" class="login-form">
+                    <div id="statusMessage" class="login-status"></div>
+
+                    <div class="form-group">
+                        <label class="form-label">
+                            <i class="fas fa-user"></i>
+                            Usuário
+                        </label>
+                        <input 
+                            type="text" 
+                            id="usuario" 
+                            class="form-input" 
+                            placeholder="Digite seu usuário"
+                            required
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">
+                            <i class="fas fa-lock"></i>
+                            Senha Atual
+                        </label>
+                        <div class="password-wrapper">
+                            <input 
+                                type="password" 
+                                id="senhaAtual" 
+                                class="form-input" 
+                                placeholder="Digite sua senha atual"
+                                required
+                            >
+                            <button type="button" class="password-toggle" id="toggleSenhaAtual">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">
+                            <i class="fas fa-key"></i>
+                            Nova Senha
+                        </label>
+                        <div class="password-wrapper">
+                            <input 
+                                type="password" 
+                                id="novaSenha" 
+                                class="form-input" 
+                                placeholder="Digite a nova senha"
+                                required
+                                minlength="8"
+                            >
+                            <button type="button" class="password-toggle" id="toggleNovaSenha">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                        <small style="color: #666; font-size: 0.8rem; display: block; margin-top: 4px;">
+                            <i class="fas fa-info-circle"></i> Mínimo 8 caracteres
+                        </small>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">
+                            <i class="fas fa-check-double"></i>
+                            Confirmar Nova Senha
+                        </label>
+                        <div class="password-wrapper">
+                            <input 
+                                type="password" 
+                                id="confirmarSenha" 
+                                class="form-input" 
+                                placeholder="Digite novamente a nova senha"
+                                required
+                            >
+                            <button type="button" class="password-toggle" id="toggleConfirmarSenha">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn-submit" id="btnTrocarSenha">
+                        <i class="fas fa-shield-alt"></i>
+                        Alterar Senha
+                    </button>
+                </form>
+
+                <div class="login-footer">
+                    <p>
+                        <i class="fas fa-arrow-left"></i>
+                        <a href="admin-rh.html" style="color: #0066cc; text-decoration: none;">Voltar ao Login</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ========================================
+        // FUNÇÃO DE HASH
+        // ========================================
+        async function hashString(str) {
+            const encoder = new TextEncoder();
+            const data = encoder.encode(str);
+            const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+        }
+
+        // ========================================
+        // MOSTRAR STATUS
+        // ========================================
+        function showStatus(type, message) {
+            const statusEl = document.getElementById('statusMessage');
+            statusEl.className = `login-status ${type}`;
+            statusEl.textContent = message;
+            statusEl.style.display = 'flex';
+
+            if (type === 'success') {
+                setTimeout(() => {
+                    window.location.href = 'admin-rh.html';
+                }, 2000);
+            }
+        }
+
+        // ========================================
+        // TOGGLE SENHA
+        // ========================================
+        function setupPasswordToggle(buttonId, inputId) {
+            const button = document.getElementById(buttonId);
+            const input = document.getElementById(inputId);
+            
+            if (button && input) {
+                button.addEventListener('click', () => {
+                    const type = input.getAttribute('type');
+                    input.setAttribute('type', type === 'password' ? 'text' : 'password');
+                    button.innerHTML = type === 'password' 
+                        ? '<i class="fas fa-eye-slash"></i>' 
+                        : '<i class="fas fa-eye"></i>';
+                });
+            }
+        }
+
+        // ========================================
+        // AGUARDAR SUPABASE
+        // ========================================
+        function aguardarSupabase(callback, tentativas = 0) {
+            if (window.supabaseClient) {
+                callback();
+            } else if (tentativas < 50) {
+                setTimeout(() => aguardarSupabase(callback, tentativas + 1), 100);
+            } else {
+                showStatus('error', 'Erro ao conectar com o banco de dados.');
+            }
+        }
+
+        // ========================================
+        // INICIALIZAÇÃO
+        // ========================================
+        document.addEventListener('DOMContentLoaded', () => {
+            // Setup toggles
+            setupPasswordToggle('toggleSenhaAtual', 'senhaAtual');
+            setupPasswordToggle('toggleNovaSenha', 'novaSenha');
+            setupPasswordToggle('toggleConfirmarSenha', 'confirmarSenha');
+
+            // Aguardar Supabase
+            aguardarSupabase(() => {
+                console.log('✅ Supabase inicializado');
+
+                // Form submit
+                const form = document.getElementById('trocarSenhaForm');
+                const btnSubmit = document.getElementById('btnTrocarSenha');
+
+                form.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+
+                    const usuario = document.getElementById('usuario').value.trim();
+                    const senhaAtual = document.getElementById('senhaAtual').value;
+                    const novaSenha = document.getElementById('novaSenha').value;
+                    const confirmarSenha = document.getElementById('confirmarSenha').value;
+
+                    // Validações
+                    if (!usuario || !senhaAtual || !novaSenha || !confirmarSenha) {
+                        showStatus('error', 'Preencha todos os campos!');
+                        return;
+                    }
+
+                    if (novaSenha.length < 8) {
+                        showStatus('error', 'A nova senha deve ter no mínimo 8 caracteres!');
+                        return;
+                    }
+
+                    if (novaSenha !== confirmarSenha) {
+                        showStatus('error', 'As senhas não coincidem!');
+                        return;
+                    }
+
+                    if (novaSenha === senhaAtual) {
+                        showStatus('error', 'A nova senha deve ser diferente da atual!');
+                        return;
+                    }
+
+                    // Loading
+                    btnSubmit.disabled = true;
+                    btnSubmit.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Alterando...';
+
+                    try {
+                        // 1. Verificar senha atual
+                        const senhaAtualHash = await hashString(senhaAtual);
+                        
+                        const { data: admin, error: authError } = await window.supabaseClient
+                            .from('administradores')
+                            .select('id, usuario, nome_completo')
+                            .eq('usuario', usuario)
+                            .eq('senha_hash', senhaAtualHash)
+                            .eq('ativo', true)
+                            .single();
+
+                        if (authError || !admin) {
+                            throw new Error('Usuário ou senha atual incorretos!');
+                        }
+
+                        // 2. Gerar hash da nova senha
+                        const novaSenhaHash = await hashString(novaSenha);
+
+                        // 3. Atualizar senha
+                        const { error: updateError } = await window.supabaseClient
+                            .from('administradores')
+                            .update({ 
+                                senha_hash: novaSenhaHash,
+                                atualizado_em: new Date().toISOString()
+                            })
+                            .eq('id', admin.id);
+
+                        if (updateError) throw updateError;
+
+                        // Sucesso!
+                        showStatus('success', `✅ Senha alterada com sucesso, ${admin.nome_completo}!`);
+
+                    } catch (error) {
+                        console.error('Erro:', error);
+                        showStatus('error', error.message || 'Erro ao alterar senha. Tente novamente.');
+                        btnSubmit.disabled = false;
+                        btnSubmit.innerHTML = '<i class="fas fa-shield-alt"></i> Alterar Senha';
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
