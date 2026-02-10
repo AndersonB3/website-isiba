@@ -1028,6 +1028,27 @@ button {
   font-size: var(--small-font-size);
 }
 
+.btn-portal-rh:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0, 102, 204, 0.4) !important;
+}
+
+.btn-portal-rh:active {
+  transform: translateY(0);
+}
+
+@media screen and (max-width: 768px) {
+  .footer__bottom .container > div {
+    flex-direction: column;
+    gap: 1.5rem !important;
+  }
+  
+  .btn-portal-rh {
+    position: static !important;
+    margin-top: 0.5rem;
+  }
+}
+
 /*=============== MODAL ===============*/
 .modal {
   position: fixed;
