@@ -1,0 +1,27 @@
+const crypto = require('crypto');
+const senha = 'redeaberta@$2026';
+const hash = crypto.createHash('sha256').update(senha).digest('hex');
+
+console.log('='.repeat(70));
+console.log('🔐 HASH GERADO PARA SUA NOVA SENHA');
+console.log('='.repeat(70));
+console.log('');
+console.log('Senha escolhida: redeaberta@$2026');
+console.log('Hash SHA-256   :', hash);
+console.log('');
+console.log('='.repeat(70));
+console.log('📝 EXECUTE ESTE SQL NO SUPABASE:');
+console.log('='.repeat(70));
+console.log('');
+console.log('UPDATE administradores');
+console.log(`SET senha_hash = '${hash}',`);
+console.log('    atualizado_em = now()');
+console.log("WHERE usuario = 'admin.isiba';");
+console.log('');
+console.log('='.repeat(70));
+console.log('✅ Depois faça login com:');
+console.log('='.repeat(70));
+console.log('');
+console.log('Usuário: admin.isiba');
+console.log('Senha: redeaberta@$2026');
+console.log('');
