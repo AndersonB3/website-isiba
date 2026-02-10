@@ -1139,8 +1139,8 @@ body.dashboard-active {
     border-radius: var(--radius-lg);
     box-shadow: var(--shadow-lg);
     width: 90%;
-    max-width: 550px;
-    max-height: 92vh;
+    max-width: 520px;
+    max-height: 95vh;
     overflow-y: auto;
     animation: slideUp 0.3s ease;
 }
@@ -1160,27 +1160,27 @@ body.dashboard-active {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 16px 20px;
+    padding: 12px 18px;
     border-bottom: 1px solid var(--border-color);
 }
 
 .modal-header h2 {
-    font-size: 1.3rem;
+    font-size: 1.25rem;
     font-weight: 600;
     color: var(--primary-color);
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 8px;
 }
 
 .modal-close {
     background: transparent;
     border: none;
-    font-size: 1.5rem;
+    font-size: 1.3rem;
     color: var(--text-light);
     cursor: pointer;
-    width: 40px;
-    height: 40px;
+    width: 36px;
+    height: 36px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -1194,36 +1194,37 @@ body.dashboard-active {
 }
 
 .modal-form {
-    padding: 20px;
+    padding: 16px 20px;
 }
 
 /* Reduzir espaçamentos dos campos dentro do modal */
 .modal-form .form-group {
-    gap: 6px;
-    margin-bottom: 12px;
+    gap: 4px;
+    margin-bottom: 10px;
 }
 
 .modal-form .form-label {
-    font-size: 0.9rem;
-    gap: 8px;
+    font-size: 0.875rem;
+    gap: 6px;
+    font-weight: 500;
 }
 
 .modal-form .form-input,
 .modal-form .password-wrapper input {
-    padding: 10px 14px;
-    font-size: 0.95rem;
+    padding: 8px 12px;
+    font-size: 0.9rem;
 }
 
 .modal-form .form-hint {
-    font-size: 0.8rem;
+    font-size: 0.75rem;
     margin-top: 2px;
 }
 
 .modal-actions {
     display: flex;
-    gap: 12px;
-    margin-top: 16px;
-    padding-top: 16px;
+    gap: 10px;
+    margin-top: 12px;
+    padding-top: 12px;
     border-top: 1px solid var(--border-color);
 }
 
