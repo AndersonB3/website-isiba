@@ -192,7 +192,7 @@ ORDER BY ultimo_acesso DESC NULLS LAST;
 -- Senha temporária: ResetTemp@2026
 -- Hash SHA-256 da senha acima
 UPDATE administradores 
-SET senha_hash = '8e35c2cd3bf6641bdb0e2050b76932cbb2e6034a0ddacc1d9bea82a6ba57f7cf',
+SET senha_hash = '9c0652487b2f8063e095f9aae381ff0e426b8b6ed406fa5bde98f1702bba2824',
     atualizado_em = now()
 WHERE usuario = 'admin.isiba';
 ```
@@ -267,7 +267,7 @@ CREATE TABLE administradores (
 Execute a query de reset (senha temporária):
 ```sql
 UPDATE administradores 
-SET senha_hash = '8e35c2cd3bf6641bdb0e2050b76932cbb2e6034a0ddacc1d9bea82a6ba57f7cf'
+SET senha_hash = '9c0652487b2f8063e095f9aae381ff0e426b8b6ed406fa5bde98f1702bba2824'
 WHERE usuario = 'seu.usuario';
 ```
 
