@@ -14,6 +14,7 @@
     align-items: center;
     justify-content: center;
     animation: fadeIn 0.3s ease;
+    overflow: hidden; /* Previne scroll externo */
 }
 
 @keyframes fadeIn {
@@ -44,8 +45,10 @@
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
     max-width: 600px;
     width: 90%;
-    max-height: 90vh;
-    overflow-y: auto;
+    max-height: 85vh; /* Reduzido de 90vh para 85vh */
+    display: flex;
+    flex-direction: column;
+    overflow: hidden; /* Container não tem scroll */
     animation: slideUp 0.3s ease;
 }
 
@@ -69,6 +72,7 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
+    flex-shrink: 0; /* Header não diminui */
 }
 
 .modal-recibo-header h2 {
@@ -103,6 +107,9 @@
 /* Body */
 .modal-recibo-body {
     padding: 32px 24px;
+    overflow-y: auto; /* Scroll apenas no body */
+    flex: 1; /* Ocupa espaço disponível */
+    overscroll-behavior: contain; /* Previne scroll propagation */
 }
 
 /* Info Card */
@@ -356,21 +363,21 @@
     }
 }
 
-/* Scrollbar personalizado */
-.modal-recibo-content::-webkit-scrollbar {
+/* Scrollbar personalizado - Aplicado ao body */
+.modal-recibo-body::-webkit-scrollbar {
     width: 8px;
 }
 
-.modal-recibo-content::-webkit-scrollbar-track {
+.modal-recibo-body::-webkit-scrollbar-track {
     background: #F8F9FA;
 }
 
-.modal-recibo-content::-webkit-scrollbar-thumb {
+.modal-recibo-body::-webkit-scrollbar-thumb {
     background: #DEE2E6;
     border-radius: 4px;
 }
 
-.modal-recibo-content::-webkit-scrollbar-thumb:hover {
+.modal-recibo-body::-webkit-scrollbar-thumb:hover {
     background: #CED4DA;
 }
 
