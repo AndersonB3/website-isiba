@@ -132,18 +132,31 @@ CREATE POLICY "admin_delete_contracheques" ON contracheques
 
 -- ================================================================
 -- 5. TABELA: recibos_documentos
--- Regra: Qualquer um pode ver, mas só o sistema pode inserir/alterar/deletar.
+-- Regra: Qualquer um pode ver, colaborador pode inserir/atualizar recibo.
 -- ================================================================
 
 DROP POLICY IF EXISTS "Permitir todas operacoes em recibos" ON recibos_documentos;
 DROP POLICY IF EXISTS "recibos_select" ON recibos_documentos;
+DROP POLICY IF EXISTS "colaborador_insert_recibo" ON recibos_documentos;
+DROP POLICY IF EXISTS "colaborador_update_recibo" ON recibos_documentos;
 
--- ✅ Apenas leitura pública (anon pode consultar)
+-- ✅ Leitura pública (portal e notificações)
 CREATE POLICY "recibos_select" ON recibos_documentos
     FOR SELECT
     USING (true);
 
--- ❌ INSERT, UPDATE, DELETE: apenas service_role (sem política = bloqueado)
+-- ✅ Colaborador pode registrar recibo assinado
+CREATE POLICY "colaborador_insert_recibo" ON recibos_documentos
+    FOR INSERT
+    WITH CHECK (true);
+
+-- ✅ Colaborador pode atualizar status do recibo
+CREATE POLICY "colaborador_update_recibo" ON recibos_documentos
+    FOR UPDATE
+    USING (true)
+    WITH CHECK (true);
+
+-- ❌ DELETE: apenas service_role (sem política = bloqueado)
 
 
 -- ================================================================
