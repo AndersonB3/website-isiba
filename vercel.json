@@ -1,28 +1,6 @@
 {
   "version": 2,
-  "builds": [
-    {
-      "src": "painel-rh/server.js",
-      "use": "@vercel/node"
-    },
-    {
-      "src": "*.html",
-      "use": "@vercel/static"
-    },
-    {
-      "src": "assets/**",
-      "use": "@vercel/static"
-    }
-  ],
   "routes": [
-    {
-      "src": "/painel-rh/(.*)",
-      "dest": "painel-rh/server.js"
-    },
-    {
-      "src": "/assets/(.*)",
-      "dest": "/assets/$1"
-    },
     {
       "src": "/colaborador",
       "dest": "/colaborador.html"
@@ -38,6 +16,14 @@
     {
       "src": "/portal-colaborador",
       "dest": "/portal-colaborador.html"
+    },
+    {
+      "src": "/primeiro-acesso",
+      "dest": "/primeiro-acesso.html"
+    },
+    {
+      "src": "/painel-rh",
+      "dest": "/painel-rh/admin-rh.html"
     },
     {
       "src": "/",
