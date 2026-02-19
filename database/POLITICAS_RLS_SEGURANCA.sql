@@ -27,13 +27,14 @@ ALTER TABLE contracheques ENABLE ROW LEVEL SECURITY;
 -- Apenas o próprio sistema pode autenticar (via função de hash).
 -- ================================================================
 
--- Remover políticas antigas
+-- Remover políticas antigas (incluindo a permissiva "ALL = true" que anula a segurança)
 DROP POLICY IF EXISTS "admin_select" ON administradores;
 DROP POLICY IF EXISTS "admin_insert" ON administradores;
 DROP POLICY IF EXISTS "admin_update" ON administradores;
 DROP POLICY IF EXISTS "admin_delete" ON administradores;
 DROP POLICY IF EXISTS "Administradores podem ver seus próprios dados" ON administradores;
 DROP POLICY IF EXISTS "Allow public read for auth" ON administradores;
+DROP POLICY IF EXISTS "Permitir todas operações em administradores" ON administradores;
 
 -- ✅ Permitir leitura APENAS para autenticação (usuario + senha_hash)
 -- Isso permite que o login funcione sem expor todos os dados
@@ -60,13 +61,14 @@ CREATE POLICY "auth_update_last_access" ON administradores
 -- O painel admin usa autenticação própria para gerenciar.
 -- ================================================================
 
--- Remover políticas antigas
+-- Remover políticas antigas (incluindo a permissiva "ALL = true" que anula a segurança)
 DROP POLICY IF EXISTS "colaboradores_select" ON colaboradores;
 DROP POLICY IF EXISTS "colaboradores_insert" ON colaboradores;
 DROP POLICY IF EXISTS "colaboradores_update" ON colaboradores;
 DROP POLICY IF EXISTS "colaboradores_delete" ON colaboradores;
 DROP POLICY IF EXISTS "Allow public read" ON colaboradores;
 DROP POLICY IF EXISTS "Colaboradores podem ver seus dados" ON colaboradores;
+DROP POLICY IF EXISTS "Permitir todas operações em colaboradores" ON colaboradores;
 
 -- ✅ Permitir leitura para login do portal do colaborador
 CREATE POLICY "colaborador_login" ON colaboradores
@@ -89,12 +91,13 @@ CREATE POLICY "colaborador_update_own" ON colaboradores
 -- Ninguém pode inserir/deletar sem autenticação admin.
 -- ================================================================
 
--- Remover políticas antigas
+-- Remover políticas antigas (incluindo a permissiva "ALL = true" que anula a segurança)
 DROP POLICY IF EXISTS "contracheques_select" ON contracheques;
 DROP POLICY IF EXISTS "contracheques_insert" ON contracheques;
 DROP POLICY IF EXISTS "contracheques_update" ON contracheques;
 DROP POLICY IF EXISTS "contracheques_delete" ON contracheques;
 DROP POLICY IF EXISTS "Allow public read" ON contracheques;
+DROP POLICY IF EXISTS "Permitir todas operações em contracheques" ON contracheques;
 
 -- ✅ Colaborador pode ver apenas seus próprios contracheques
 -- A filtragem por colaborador_id acontece no código JS
@@ -113,15 +116,33 @@ CREATE POLICY "colaborador_assinar_recibo" ON contracheques
 
 
 -- ================================================================
--- 5. STORAGE: bucket "contracheques"
+-- 5. TABELA: recibos_documentos
+-- Regra: Qualquer um pode ver, mas só o sistema pode inserir/alterar/deletar.
+-- ================================================================
+
+DROP POLICY IF EXISTS "Permitir todas operacoes em recibos" ON recibos_documentos;
+DROP POLICY IF EXISTS "recibos_select" ON recibos_documentos;
+
+-- ✅ Apenas leitura pública (anon pode consultar)
+CREATE POLICY "recibos_select" ON recibos_documentos
+    FOR SELECT
+    USING (true);
+
+-- ❌ INSERT, UPDATE, DELETE: apenas service_role (sem política = bloqueado)
+
+
+-- ================================================================
+-- 6. STORAGE: bucket "contracheques"
 -- Regra: Apenas usuários autenticados podem acessar arquivos.
 -- O Supabase Storage usa políticas via CREATE POLICY no schema storage.objects
 -- ================================================================
 
--- Remover políticas antigas se existirem
+-- Remover políticas antigas se existirem (todos os possíveis nomes)
 DROP POLICY IF EXISTS "Colaboradores acessam seus proprios PDFs" ON storage.objects;
 DROP POLICY IF EXISTS "storage_contracheques_select" ON storage.objects;
 DROP POLICY IF EXISTS "storage_contracheques_insert" ON storage.objects;
+DROP POLICY IF EXISTS "Give users access to own folder 1oj01fe_0" ON storage.objects;
+DROP POLICY IF EXISTS "Allow public read contracheques" ON storage.objects;
 
 -- ✅ Permitir leitura de arquivos do bucket "contracheques"
 -- (URLs assinadas já garantem segurança extra no lado do JS)
