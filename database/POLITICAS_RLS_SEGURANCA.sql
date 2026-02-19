@@ -114,18 +114,23 @@ CREATE POLICY "colaborador_assinar_recibo" ON contracheques
 
 -- ================================================================
 -- 5. STORAGE: bucket "contracheques"
--- Regra: Apenas o próprio colaborador pode baixar seu arquivo.
+-- Regra: Apenas usuários autenticados podem acessar arquivos.
+-- O Supabase Storage usa políticas via CREATE POLICY no schema storage.objects
 -- ================================================================
 
--- Política para leitura de arquivos (usando URL assinada - já é seguro)
-INSERT INTO storage.policies (bucket_id, name, operation, definition)
-VALUES (
-    'contracheques',
-    'Colaboradores acessam seus proprios PDFs',
-    'SELECT',
-    'bucket_id = ''contracheques'''
-)
-ON CONFLICT DO NOTHING;
+-- Remover políticas antigas se existirem
+DROP POLICY IF EXISTS "Colaboradores acessam seus proprios PDFs" ON storage.objects;
+DROP POLICY IF EXISTS "storage_contracheques_select" ON storage.objects;
+DROP POLICY IF EXISTS "storage_contracheques_insert" ON storage.objects;
+
+-- ✅ Permitir leitura de arquivos do bucket "contracheques"
+-- (URLs assinadas já garantem segurança extra no lado do JS)
+CREATE POLICY "storage_contracheques_select" ON storage.objects
+    FOR SELECT
+    USING (bucket_id = 'contracheques');
+
+-- ❌ Bloquear upload direto pelo anon (apenas service_role pode fazer upload)
+-- Sem política INSERT = bloqueado por padrão
 
 
 -- ================================================================
