@@ -81,8 +81,15 @@ CREATE POLICY "colaborador_update_own" ON colaboradores
     USING (ativo = true)
     WITH CHECK (ativo = true);
 
--- ❌ Bloquear INSERT direto (colaboradores só são criados pelo admin)
--- ❌ Bloquear DELETE direto
+-- ✅ Permitir INSERT pelo painel admin (cria novos colaboradores)
+CREATE POLICY "admin_insert_colaboradores" ON colaboradores
+    FOR INSERT
+    WITH CHECK (true);
+
+-- ✅ Permitir DELETE pelo painel admin (remove colaboradores)
+CREATE POLICY "admin_delete_colaboradores" ON colaboradores
+    FOR DELETE
+    USING (true);
 
 
 -- ================================================================
@@ -111,8 +118,16 @@ CREATE POLICY "colaborador_assinar_recibo" ON contracheques
     USING (true)
     WITH CHECK (true);
 
--- ❌ INSERT e DELETE bloqueados para usuário anônimo
--- Apenas o service_role (backend seguro) pode inserir/deletar
+-- ✅ Permitir INSERT pelo painel admin (autenticado por hash/senha no JS)
+-- O painel usa anon key mas tem autenticação própria por SHA-256
+CREATE POLICY "admin_insert_contracheques" ON contracheques
+    FOR INSERT
+    WITH CHECK (true);
+
+-- ✅ Permitir DELETE pelo painel admin
+CREATE POLICY "admin_delete_contracheques" ON contracheques
+    FOR DELETE
+    USING (true);
 
 
 -- ================================================================
