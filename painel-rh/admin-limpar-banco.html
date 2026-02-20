@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel de Limpeza — ISIBA</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container { max-width: 1100px; margin: 0 auto; }
+
+        /* ---- HEADER ---- */
+        .page-header {
+            background: white;
+            border-radius: 16px;
+            padding: 24px 30px;
+            margin-bottom: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+        }
+
+        .page-header-left {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+        }
+
+        .page-header-left img {
+            height: 50px;
+        }
+
+        .page-header-left h1 {
+            font-size: 1.5rem;
+            color: #667eea;
+            line-height: 1.2;
+        }
+
+        .page-header-left p {
+            color: #888;
+            font-size: 0.9rem;
+            margin-top: 3px;
+        }
+
+        .btn-voltar {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+        }
+
+        .btn-voltar:hover {
+            background: #5a6fd6;
+            transform: translateY(-1px);
+        }
+
+        /* ---- CONEXÃO STATUS ---- */
+        .status-conexao {
+            background: white;
+            border-radius: 12px;
+            padding: 14px 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 600;
+        }
+
+        .status-conexao.conectado { color: #2e7d32; }
+        .status-conexao.erro { color: #c62828; }
+        .status-conexao.aguardando { color: #e65100; }
+        .status-conexao i { font-size: 1.1rem; }
+
+        /* ---- AVISO ---- */
+        .warning-box {
+            background: linear-gradient(135deg, #ff6b6b, #ee0979);
+            color: white;
+            padding: 18px 22px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 15px rgba(238,9,121,0.3);
+        }
+
+        .warning-box h2 {
+            font-size: 1.1rem;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .warning-box p { font-size: 0.92rem; opacity: 0.95; line-height: 1.6; }
+
+        /* ---- GRID DE CARDS ---- */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 14px;
+            padding: 22px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 35px rgba(0,0,0,0.2);
+        }
+
+        .card-icon {
+            font-size: 2rem;
+            line-height: 1;
+        }
+
+        .card h3 {
+            color: #333;
+            font-size: 1.05rem;
+            margin: 0;
+        }
+
+        .card p {
+            color: #666;
+            font-size: 0.88rem;
+            line-height: 1.6;
+            flex: 1;
+        }
+
+        .card p code {
+            background: #f0f0f0;
+            padding: 1px 5px;
+            border-radius: 4px;
+            font-size: 0.82rem;
+            color: #444;
+        }
+
+        .btn {
+            padding: 11px 18px;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            letter-spacing: 0.3px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn:disabled { opacity: 0.55; cursor: not-allowed; transform: none !important; }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #f5576c, #ee0979);
+            color: white;
+        }
+
+        .btn-danger:not(:disabled):hover {
+            transform: translateY(-1px);
+            box-shadow: 0 5px 15px rgba(245,87,108,0.45);
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, #f7971e, #ffd200);
+            color: #333;
+        }
+
+        .btn-warning:not(:disabled):hover {
+            transform: translateY(-1px);
+            box-shadow: 0 5px 15px rgba(255,210,0,0.45);
+        }
+
+        .btn-info {
+            background: linear-gradient(135deg, #4facfe, #00f2fe);
+            color: #333;
+        }
+
+        .btn-info:not(:disabled):hover {
+            transform: translateY(-1px);
+            box-shadow: 0 5px 15px rgba(79,172,254,0.4);
+        }
+
+        /* ---- CARD RESET TOTAL: destaque especial ---- */
+        .card.card-reset {
+            border: 2px solid #f5576c;
+            background: #fff5f5;
+        }
+
+        .card.card-reset h3 { color: #c62828; }
+
+        /* ---- LOG ---- */
+        .log-panel {
+            background: white;
+            border-radius: 14px;
+            padding: 22px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+
+        .log-panel-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+
+        .log-panel h3 {
+            color: #667eea;
+            font-size: 1.05rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-limpar-log {
+            background: #f5f5f5;
+            border: none;
+            padding: 6px 14px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.82rem;
+            color: #555;
+            font-weight: 600;
+            transition: background 0.2s;
+        }
+
+        .btn-limpar-log:hover { background: #e0e0e0; }
+
+        .log-container {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 12px;
+            max-height: 380px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85rem;
+        }
+
+        .log-item {
+            padding: 7px 10px;
+            margin-bottom: 4px;
+            border-radius: 5px;
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            line-height: 1.5;
+        }
+
+        .log-item .ts { opacity: 0.65; flex-shrink: 0; }
+        .log-success  { background: #e8f5e9; color: #1b5e20; }
+        .log-error    { background: #ffebee; color: #b71c1c; }
+        .log-info     { background: #e3f2fd; color: #0d47a1; }
+        .log-warning  { background: #fff8e1; color: #e65100; }
+
+        /* ---- RESPONSIVO ---- */
+        @media (max-width: 600px) {
+            .page-header { flex-direction: column; text-align: center; }
+            .cards-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+
+    <!-- HEADER -->
+    <div class="page-header">
+        <div class="page-header-left">
+            <img src="assets/img/logomarca alternativa.png" alt="ISIBA">
+            <div>
+                <h1><i class="fa-solid fa-trash-can"></i> Painel de Limpeza</h1>
+                <p>Gerenciamento do Banco de Dados — Supabase</p>
+            </div>
+        </div>
+        <a href="admin-rh.html" class="btn-voltar">
+            <i class="fa-solid fa-arrow-left"></i> Voltar ao Painel RH
+        </a>
+    </div>
+
+    <!-- STATUS CONEXÃO -->
+    <div id="statusConexao" class="status-conexao aguardando">
+        <i class="fa-solid fa-circle-notch fa-spin"></i>
+        <span>Conectando ao Supabase...</span>
+    </div>
+
+    <!-- AVISO -->
+    <div class="warning-box">
+        <h2><i class="fa-solid fa-triangle-exclamation"></i> ATENÇÃO — Operações Irreversíveis!</h2>
+        <p>As operações abaixo são <strong>PERMANENTES</strong> e não podem ser desfeitas. Todos os dados removidos serão deletados definitivamente do banco de dados. Utilize com extrema cautela!</p>
+    </div>
+
+    <!-- CARDS -->
+    <div class="cards-grid">
+
+        <div class="card">
+            <div class="card-icon">📄</div>
+            <h3>Limpar Contracheques</h3>
+            <p>Remove todos os registros de contracheques e informes de IR da tabela <code>contracheques</code>. Os arquivos no Storage <strong>não</strong> são removidos aqui.</p>
+            <button class="btn btn-danger" onclick="limparTabela('contracheques')">
+                <i class="fa-solid fa-trash"></i> Limpar Contracheques
+            </button>
+        </div>
+
+        <div class="card">
+            <div class="card-icon">👥</div>
+            <h3>Limpar Colaboradores de Teste</h3>
+            <p>Remove apenas colaboradores cujo CPF começa com <code>000</code>. <strong>Não afeta colaboradores reais.</strong></p>
+            <button class="btn btn-warning" onclick="limparColaboradoresTeste()">
+                <i class="fa-solid fa-user-minus"></i> Limpar Testes
+            </button>
+        </div>
+
+        <div class="card">
+            <div class="card-icon">📝</div>
+            <h3>Resetar Status de Recibos</h3>
+            <p>Marca todos os contracheques como <em>recibo não gerado</em> (<code>recibo_gerado = false</code>), liberando nova geração de recibos para todos os documentos.</p>
+            <button class="btn btn-warning" onclick="resetarRecibos()">
+                <i class="fa-solid fa-rotate-left"></i> Resetar Recibos
+            </button>
+        </div>
+
+        <div class="card">
+            <div class="card-icon">✍️</div>
+            <h3>Limpar Registros de Recibos</h3>
+            <p>Remove todos os registros de recibos e assinaturas digitais da tabela <code>recibos_documentos</code>.</p>
+            <button class="btn btn-danger" onclick="limparRecibosDocumentos()">
+                <i class="fa-solid fa-file-circle-minus"></i> Limpar Registros
+            </button>
+        </div>
+
+        <div class="card">
+            <div class="card-icon">📁</div>
+            <h3>Limpar Storage</h3>
+            <p>Remove todos os arquivos PDF do bucket <code>contracheques</code> no Supabase Storage. Não afeta os registros no banco de dados.</p>
+            <button class="btn btn-danger" onclick="limparStorage()">
+                <i class="fa-solid fa-folder-minus"></i> Limpar Storage
+            </button>
+        </div>
+
+        <div class="card">
+            <div class="card-icon">🧹</div>
+            <h3>Limpeza Completa de Testes</h3>
+            <p>Remove todos os dados de teste em sequência: contracheques, recibos, colaboradores de teste (CPF <code>000...</code>) e arquivos do storage.</p>
+            <button class="btn btn-danger" onclick="limpezaCompletaTeste()">
+                <i class="fa-solid fa-broom"></i> Limpeza Completa
+            </button>
+        </div>
+
+        <div class="card">
+            <div class="card-icon">📊</div>
+            <h3>Ver Resumo por Centro de Custo</h3>
+            <p>Exibe no log quantos colaboradores e contracheques existem por centro de custo (UPA GLEBA-A, UPA LUCAS EVANGELISTA, AMEX, LAMAC).</p>
+            <button class="btn btn-info" onclick="resumoCentroCusto()">
+                <i class="fa-solid fa-building"></i> Ver Resumo
+            </button>
+        </div>
+
+        <div class="card card-reset">
+            <div class="card-icon">💀</div>
+            <h3>Reset Total</h3>
+            <p><strong>EXTREMO CUIDADO!</strong> Remove <strong>TODOS</strong> os dados de todas as tabelas e do storage. Use apenas em emergência absoluta.</p>
+            <button class="btn btn-danger" onclick="resetTotal()">
+                <i class="fa-solid fa-skull"></i> Reset Total
+            </button>
+        </div>
+
+    </div>
+
+    <!-- LOG -->
+    <div class="log-panel">
+        <div class="log-panel-header">
+            <h3><i class="fa-solid fa-terminal"></i> Log de Operações</h3>
+            <button class="btn-limpar-log" onclick="limparLog()">
+                <i class="fa-solid fa-eraser"></i> Limpar log
+            </button>
+        </div>
+        <div class="log-container" id="logContainer">
+            <div class="log-item log-info">
+                <span class="ts"></span>
+                <span>Sistema iniciando...</span>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- Scripts Supabase -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="assets/js/supabase-config.js"></script>
+
+<script>
+    // ============ CONEXÃO ============
+    let supabase;
+
+    function initSupabase() {
+        try {
+            const url  = window.SUPABASE_URL  || window.CONFIG?.supabaseUrl;
+            const key  = window.SUPABASE_ANON_KEY || window.CONFIG?.supabaseAnonKey;
+
+            if (!url || !key) throw new Error('Configuração do Supabase não encontrada (supabase-config.js)');
+
+            supabase = window.supabase.createClient(url, key);
+
+            setStatus('conectado', '<i class="fa-solid fa-circle-check"></i>', 'Conectado ao Supabase com sucesso!');
+            addLog('success', 'Conectado ao Supabase com sucesso!');
+        } catch (err) {
+            setStatus('erro', '<i class="fa-solid fa-circle-xmark"></i>', 'Erro ao conectar: ' + err.message);
+            addLog('error', 'Erro ao conectar ao Supabase: ' + err.message);
+        }
+    }
+
+    function setStatus(classe, icon, texto) {
+        const el = document.getElementById('statusConexao');
+        el.className = 'status-conexao ' + classe;
+        el.innerHTML = `${icon} <span>${texto}</span>`;
+    }
+
+    // ============ LOG ============
+    function addLog(tipo, msg) {
+        const container = document.getElementById('logContainer');
+        const item = document.createElement('div');
+        item.className = `log-item log-${tipo}`;
+        const icone = { success:'✅', error:'❌', warning:'⚠️', info:'ℹ️' }[tipo] || 'ℹ️';
+        const ts = new Date().toLocaleTimeString('pt-BR');
+        item.innerHTML = `<span class="ts">[${ts}]</span><span>${icone} ${msg}</span>`;
+        container.appendChild(item);
+        container.scrollTop = container.scrollHeight;
+    }
+
+    function limparLog() {
+        document.getElementById('logContainer').innerHTML = '';
+        addLog('info', 'Log limpo.');
+    }
+
+    // ============ GUARD ============
+    function checarConexao() {
+        if (!supabase) { addLog('error', 'Sem conexão com o Supabase. Recarregue a página.'); return false; }
+        return true;
+    }
+
+    // ============ OPERAÇÕES ============
+
+    async function limparTabela(tabela) {
+        if (!checarConexao()) return;
+        if (!confirm(`⚠️ Deletar TODOS os registros de "${tabela}"?\n\nEsta ação é IRREVERSÍVEL!`)) {
+            addLog('info', `Cancelado: limpar ${tabela}`);
+            return;
+        }
+        addLog('info', `Limpando tabela "${tabela}"...`);
+        try {
+            const { data, error } = await supabase
+                .from(tabela)
+                .delete()
+                .neq('id', '00000000-0000-0000-0000-000000000000');
+            if (error) throw error;
+            addLog('success', `Tabela "${tabela}" limpa com sucesso! (${data?.length ?? '?'} registros removidos)`);
+        } catch (err) {
+            addLog('error', `Erro ao limpar "${tabela}": ${err.message}`);
+        }
+    }
+
+    async function limparColaboradoresTeste() {
+        if (!checarConexao()) return;
+        if (!confirm('Remover colaboradores com CPF iniciado em "000"?\n\nContinuar?')) {
+            addLog('info', 'Cancelado: limpar colaboradores teste');
+            return;
+        }
+        addLog('info', 'Buscando colaboradores de teste (CPF 000...)...');
+        try {
+            const { data, error } = await supabase
+                .from('colaboradores')
+                .delete()
+                .like('cpf', '000%');
+            if (error) throw error;
+            addLog('success', `${data?.length ?? 0} colaboradores de teste removidos.`);
+        } catch (err) {
+            addLog('error', 'Erro ao remover colaboradores teste: ' + err.message);
+        }
+    }
+
+    async function resetarRecibos() {
+        if (!checarConexao()) return;
+        if (!confirm('Marcar TODOS os contracheques como "recibo não gerado"?\n\nContinuar?')) {
+            addLog('info', 'Cancelado: resetar recibos');
+            return;
+        }
+        addLog('info', 'Resetando status de recibos...');
+        try {
+            const { data, error } = await supabase
+                .from('contracheques')
+                .update({ recibo_gerado: false })
+                .eq('recibo_gerado', true);
+            if (error) throw error;
+            addLog('success', `Status de recibos resetado. (${data?.length ?? '?'} registros atualizados)`);
+        } catch (err) {
+            addLog('error', 'Erro ao resetar recibos: ' + err.message);
+        }
+    }
+
+    async function limparRecibosDocumentos() {
+        if (!checarConexao()) return;
+        if (!confirm('Deletar TODOS os registros de recibos e assinaturas digitais?\n\nEsta ação é IRREVERSÍVEL!')) {
+            addLog('info', 'Cancelado: limpar recibos_documentos');
+            return;
+        }
+        addLog('info', 'Limpando tabela "recibos_documentos"...');
+        try {
+            const { data, error } = await supabase
+                .from('recibos_documentos')
+                .delete()
+                .neq('id', '00000000-0000-0000-0000-000000000000');
+            if (error) throw error;
+            addLog('success', `"recibos_documentos" limpa. (${data?.length ?? '?'} registros removidos)`);
+            addLog('info', 'Dica: use "Resetar Status de Recibos" para desbloquear documentos.');
+        } catch (err) {
+            addLog('error', 'Erro ao limpar recibos_documentos: ' + err.message);
+        }
+    }
+
+    async function limparStorage() {
+        if (!checarConexao()) return;
+        if (!confirm('Deletar TODOS os arquivos do bucket "contracheques" no Storage?\n\nEsta ação é IRREVERSÍVEL!')) {
+            addLog('info', 'Cancelado: limpar storage');
+            return;
+        }
+        addLog('info', 'Listando arquivos no Storage...');
+        try {
+            // Listar pastas de anos (estrutura: ano/mes/arquivo.pdf)
+            const { data: anos, error: listErr } = await supabase.storage
+                .from('contracheques')
+                .list('', { limit: 100 });
+            if (listErr) throw listErr;
+
+            if (!anos || anos.length === 0) {
+                addLog('info', 'Nenhum arquivo encontrado no Storage.');
+                return;
+            }
+
+            let totalRemovidos = 0;
+            for (const ano of anos) {
+                if (!ano.id) {
+                    // É pasta
+                    const { data: meses } = await supabase.storage.from('contracheques').list(ano.name, { limit: 200 });
+                    for (const mes of (meses || [])) {
+                        if (!mes.id) {
+                            // Subpasta
+                            const { data: arquivos } = await supabase.storage.from('contracheques').list(`${ano.name}/${mes.name}`, { limit: 500 });
+                            const paths = (arquivos || []).filter(f => f.id).map(f => `${ano.name}/${mes.name}/${f.name}`);
+                            if (paths.length) {
+                                await supabase.storage.from('contracheques').remove(paths);
+                                totalRemovidos += paths.length;
+                            }
+                        } else {
+                            // Arquivo direto na pasta ano
+                            await supabase.storage.from('contracheques').remove([`${ano.name}/${mes.name}`]);
+                            totalRemovidos++;
+                        }
+                    }
+                } else {
+                    // Arquivo na raiz
+                    await supabase.storage.from('contracheques').remove([ano.name]);
+                    totalRemovidos++;
+                }
+            }
+            addLog('success', `${totalRemovidos} arquivo(s) removidos do Storage.`);
+        } catch (err) {
+            addLog('error', 'Erro ao limpar Storage: ' + err.message);
+        }
+    }
+
+    async function resumoCentroCusto() {
+        if (!checarConexao()) return;
+        addLog('info', 'Buscando resumo por Centro de Custo...');
+        try {
+            const centros = ['UPA GLEBA-A', 'UPA LUCAS EVANGELISTA', 'AMEX', 'LAMAC', null];
+            for (const centro of centros) {
+                let qColab = supabase.from('colaboradores').select('*', { count: 'exact', head: true });
+                let qContr = supabase.from('contracheques').select('*', { count: 'exact', head: true });
+
+                if (centro === null) {
+                    qColab = qColab.is('centro_custo', null);
+                    qContr = qContr.is('centro_custo', null);
+                } else {
+                    qColab = qColab.eq('centro_custo', centro);
+                    qContr = qContr.eq('centro_custo', centro);
+                }
+
+                const [{ count: nColab }, { count: nContr }] = await Promise.all([qColab, qContr]);
+                const label = centro ?? '(sem centro de custo)';
+                addLog('info', `📍 ${label} → ${nColab ?? 0} colaboradores | ${nContr ?? 0} contracheques`);
+            }
+            addLog('success', 'Resumo concluído.');
+        } catch (err) {
+            addLog('error', 'Erro ao gerar resumo: ' + err.message);
+        }
+    }
+
+    async function limpezaCompletaTeste() {
+        if (!checarConexao()) return;
+        if (!confirm(
+            '⚠️ LIMPEZA COMPLETA DE DADOS DE TESTE!\n\n' +
+            'Serão removidos:\n' +
+            '• Todos os contracheques\n' +
+            '• Todos os recibos e assinaturas\n' +
+            '• Colaboradores de teste (CPF 000...)\n' +
+            '• Todos os arquivos do Storage\n\n' +
+            'Esta ação é IRREVERSÍVEL! Continuar?'
+        )) {
+            addLog('info', 'Cancelado: limpeza completa de testes');
+            return;
+        }
+        addLog('warning', 'Iniciando limpeza completa de testes...');
+        await limparTabela('contracheques');
+        await limparRecibosDocumentos();
+        await limparColaboradoresTeste();
+        await limparStorage();
+        addLog('success', 'Limpeza completa de testes finalizada!');
+    }
+
+    async function resetTotal() {
+        if (!checarConexao()) return;
+        const confirmacao = prompt(
+            '🚨 RESET TOTAL DO BANCO DE DADOS! 🚨\n\n' +
+            'TODOS OS DADOS serão PERMANENTEMENTE DELETADOS:\n' +
+            '• Todos os colaboradores (inclusive reais)\n' +
+            '• Todos os contracheques\n' +
+            '• Todos os recibos e assinaturas\n' +
+            '• Todos os arquivos do Storage\n\n' +
+            'Digite  DELETAR TUDO  para confirmar:'
+        );
+        if (confirmacao !== 'DELETAR TUDO') {
+            addLog('info', 'Reset total cancelado.');
+            return;
+        }
+        addLog('warning', '💀 Iniciando RESET TOTAL...');
+        try {
+            await limparTabela('contracheques');
+            await limparRecibosDocumentos();
+            await limparTabela('colaboradores');
+            await limparStorage();
+            addLog('success', 'RESET TOTAL concluído. Banco de dados zerado.');
+        } catch (err) {
+            addLog('error', 'Erro durante reset total: ' + err.message);
+        }
+    }
+
+    // ============ INICIALIZAR ============
+    window.addEventListener('DOMContentLoaded', initSupabase);
+</script>
+</body>
+</html>
