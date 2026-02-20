@@ -416,16 +416,14 @@
 
 <script>
     // ============ CONEXÃO ============
-    let supabase;
+    // Usa o window.supabaseClient já criado pelo supabase-config.js
+    let db; // alias local para não conflitar com window.supabase (lib UMD)
 
     function initSupabase() {
         try {
-            const url  = window.SUPABASE_URL  || window.CONFIG?.supabaseUrl;
-            const key  = window.SUPABASE_ANON_KEY || window.CONFIG?.supabaseAnonKey;
+            if (!window.supabaseClient) throw new Error('window.supabaseClient não encontrado. Verifique supabase-config.js');
 
-            if (!url || !key) throw new Error('Configuração do Supabase não encontrada (supabase-config.js)');
-
-            supabase = window.supabase.createClient(url, key);
+            db = window.supabaseClient;
 
             setStatus('conectado', '<i class="fa-solid fa-circle-check"></i>', 'Conectado ao Supabase com sucesso!');
             addLog('success', 'Conectado ao Supabase com sucesso!');
@@ -460,7 +458,7 @@
 
     // ============ GUARD ============
     function checarConexao() {
-        if (!supabase) { addLog('error', 'Sem conexão com o Supabase. Recarregue a página.'); return false; }
+        if (!db) { addLog('error', 'Sem conexão com o Supabase. Recarregue a página.'); return false; }
         return true;
     }
 
@@ -474,7 +472,7 @@
         }
         addLog('info', `Limpando tabela "${tabela}"...`);
         try {
-            const { data, error } = await supabase
+            const { data, error } = await db
                 .from(tabela)
                 .delete()
                 .neq('id', '00000000-0000-0000-0000-000000000000');
@@ -493,7 +491,7 @@
         }
         addLog('info', 'Buscando colaboradores de teste (CPF 000...)...');
         try {
-            const { data, error } = await supabase
+            const { data, error } = await db
                 .from('colaboradores')
                 .delete()
                 .like('cpf', '000%');
@@ -512,7 +510,7 @@
         }
         addLog('info', 'Resetando status de recibos...');
         try {
-            const { data, error } = await supabase
+            const { data, error } = await db
                 .from('contracheques')
                 .update({ recibo_gerado: false })
                 .eq('recibo_gerado', true);
@@ -531,7 +529,7 @@
         }
         addLog('info', 'Limpando tabela "recibos_documentos"...');
         try {
-            const { data, error } = await supabase
+            const { data, error } = await db
                 .from('recibos_documentos')
                 .delete()
                 .neq('id', '00000000-0000-0000-0000-000000000000');
@@ -552,7 +550,7 @@
         addLog('info', 'Listando arquivos no Storage...');
         try {
             // Listar pastas de anos (estrutura: ano/mes/arquivo.pdf)
-            const { data: anos, error: listErr } = await supabase.storage
+            const { data: anos, error: listErr } = await db.storage
                 .from('contracheques')
                 .list('', { limit: 100 });
             if (listErr) throw listErr;
@@ -566,25 +564,25 @@
             for (const ano of anos) {
                 if (!ano.id) {
                     // É pasta
-                    const { data: meses } = await supabase.storage.from('contracheques').list(ano.name, { limit: 200 });
+                    const { data: meses } = await db.storage.from('contracheques').list(ano.name, { limit: 200 });
                     for (const mes of (meses || [])) {
                         if (!mes.id) {
                             // Subpasta
-                            const { data: arquivos } = await supabase.storage.from('contracheques').list(`${ano.name}/${mes.name}`, { limit: 500 });
+                            const { data: arquivos } = await db.storage.from('contracheques').list(`${ano.name}/${mes.name}`, { limit: 500 });
                             const paths = (arquivos || []).filter(f => f.id).map(f => `${ano.name}/${mes.name}/${f.name}`);
                             if (paths.length) {
-                                await supabase.storage.from('contracheques').remove(paths);
+                                await db.storage.from('contracheques').remove(paths);
                                 totalRemovidos += paths.length;
                             }
                         } else {
                             // Arquivo direto na pasta ano
-                            await supabase.storage.from('contracheques').remove([`${ano.name}/${mes.name}`]);
+                            await db.storage.from('contracheques').remove([`${ano.name}/${mes.name}`]);
                             totalRemovidos++;
                         }
                     }
                 } else {
                     // Arquivo na raiz
-                    await supabase.storage.from('contracheques').remove([ano.name]);
+                    await db.storage.from('contracheques').remove([ano.name]);
                     totalRemovidos++;
                 }
             }
@@ -600,8 +598,8 @@
         try {
             const centros = ['UPA GLEBA-A', 'UPA LUCAS EVANGELISTA', 'AMEX', 'LAMAC', null];
             for (const centro of centros) {
-                let qColab = supabase.from('colaboradores').select('*', { count: 'exact', head: true });
-                let qContr = supabase.from('contracheques').select('*', { count: 'exact', head: true });
+                let qColab = db.from('colaboradores').select('*', { count: 'exact', head: true });
+                let qContr = db.from('contracheques').select('*', { count: 'exact', head: true });
 
                 if (centro === null) {
                     qColab = qColab.is('centro_custo', null);
