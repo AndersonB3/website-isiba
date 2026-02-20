@@ -4,8 +4,8 @@
    ======================================== */
 
 // Credenciais de admin (ainda validado localmente para segurança)
-const ADMIN_USER = 'admin.rh';
-const ADMIN_PASS = 'isiba2026';
+const ADMIN_USER = '';
+const ADMIN_PASS = '';
 
 // Variável global para o cliente Supabase
 let supabase = null;
