@@ -527,17 +527,68 @@
             addLog('info', 'Cancelado: limpar recibos_documentos');
             return;
         }
-        addLog('info', 'Limpando tabela "recibos_documentos"...');
+        addLog('info', 'Verificando registros em "recibos_documentos"...');
         try {
-            const { data, error } = await db
+            // Contar registros existentes
+            const { count, error: countError } = await db
                 .from('recibos_documentos')
-                .delete()
-                .neq('id', '00000000-0000-0000-0000-000000000000');
-            if (error) throw error;
-            addLog('success', `"recibos_documentos" limpa. (${data?.length ?? '?'} registros removidos)`);
-            addLog('info', 'Dica: use "Resetar Status de Recibos" para desbloquear documentos.');
+                .select('*', { count: 'exact', head: true });
+
+            if (countError) throw countError;
+
+            if (!count || count === 0) {
+                addLog('info', 'Tabela "recibos_documentos" já está vazia.');
+                return;
+            }
+
+            addLog('info', `Encontrados ${count} registros. Deletando...`);
+
+            // Buscar todos os IDs
+            const { data: todos, error: fetchErr } = await db
+                .from('recibos_documentos')
+                .select('id');
+
+            if (fetchErr) throw fetchErr;
+
+            let removidos = 0;
+            let falhas = 0;
+
+            for (const rec of todos) {
+                const { error: delErr } = await db
+                    .from('recibos_documentos')
+                    .delete()
+                    .eq('id', rec.id);
+
+                if (delErr) {
+                    falhas++;
+                    if (falhas === 1) {
+                        // Mostrar erro apenas na primeira falha
+                        addLog('error', `Erro ao deletar: ${delErr.message}`);
+                        if (delErr.message.includes('policy') || delErr.code === '42501') {
+                            addLog('warning', '⚠️ RLS bloqueando DELETE!');
+                            addLog('warning', 'Execute o SQL "PERMITIR-DELETE-RECIBOS.sql" no Supabase SQL Editor:');
+                            addLog('info', 'Caminho: database/PERMITIR-DELETE-RECIBOS.sql');
+                            addLog('info', 'SQL: CREATE POLICY "admin_delete_recibo" ON recibos_documentos FOR DELETE USING (true);');
+                            break;
+                        }
+                    }
+                } else {
+                    removidos++;
+                }
+            }
+
+            if (falhas === 0) {
+                addLog('success', `✅ ${removidos} recibo(s) removido(s) com sucesso!`);
+                addLog('info', 'Dica: use "Resetar Status de Recibos" para desbloquear documentos.');
+            } else {
+                addLog('warning', `Removidos: ${removidos} | Falhas: ${falhas}`);
+            }
+
         } catch (err) {
-            addLog('error', 'Erro ao limpar recibos_documentos: ' + err.message);
+            addLog('error', `Erro: ${err.message}`);
+            if (err.message.includes('policy') || err.message.includes('permission')) {
+                addLog('warning', '⚠️ Execute o arquivo "database/PERMITIR-DELETE-RECIBOS.sql" no Supabase SQL Editor para liberar o DELETE.');
+            }
         }
     }
 
