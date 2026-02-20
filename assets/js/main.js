@@ -96,14 +96,14 @@ if (typeof AOS !== 'undefined') {
 }
 
 /*=============== COUNTER ANIMATION ===============*/
-const counters = document.querySelectorAll('.stat__number');
-const speed = 200; // Animation speed
+const speed = 200;
 
 const animateCounter = () => {
+    const counters = document.querySelectorAll('.stat__number');
     counters.forEach(counter => {
         const updateCount = () => {
             const target = +counter.getAttribute('data-target');
-            const count = +counter.innerText;
+            const count = +counter.innerText.replace(/\./g, '').replace(',', '.');
             const increment = target / speed;
 
             if (count < target) {
@@ -117,9 +117,61 @@ const animateCounter = () => {
     });
 };
 
-// Intersection Observer for counter animation
-const counterSection = document.querySelector('.stats');
-if (counterSection) {
+// Carregar valores do Supabase e iniciar animação
+const carregarEstatisticasDoSupabase = async () => {
+    const counterSection = document.querySelector('.stats');
+    if (!counterSection) return;
+
+    // Tentar buscar do Supabase
+    try {
+        if (window.supabaseClient) {
+            const { data, error } = await window.supabaseClient
+                .from('configuracoes_site')
+                .select('id, valor')
+                .in('id', [
+                    'stat_atendimentos',
+                    'stat_unidades',
+                    'stat_profissionais',
+                    'stat_satisfacao',
+                    'relatorio_subtitulo',
+                    'relatorio_titulo',
+                    'relatorio_descricao'
+                ]);
+
+            if (!error && data && data.length > 0) {
+                const cfg = {};
+                data.forEach(row => { cfg[row.id] = row.valor; });
+
+                // Atualizar data-target dos cards
+                const mapa = [
+                    'stat_atendimentos',
+                    'stat_unidades',
+                    'stat_profissionais',
+                    'stat_satisfacao'
+                ];
+                const nums = document.querySelectorAll('.stat__number[data-target]');
+                nums.forEach((el, i) => {
+                    if (cfg[mapa[i]] !== undefined) {
+                        el.setAttribute('data-target', cfg[mapa[i]]);
+                    }
+                });
+
+                // Atualizar textos da seção
+                const subtitle = document.querySelector('#relatorio .section__subtitle');
+                const title    = document.querySelector('#relatorio .section__title');
+                const desc     = document.querySelector('#relatorio .section__description');
+                if (subtitle && cfg['relatorio_subtitulo']) subtitle.textContent = cfg['relatorio_subtitulo'];
+                if (title    && cfg['relatorio_titulo'])    title.textContent    = cfg['relatorio_titulo'];
+                if (desc     && cfg['relatorio_descricao']) desc.textContent     = cfg['relatorio_descricao'];
+
+                console.log('✅ Estatísticas carregadas do Supabase');
+            }
+        }
+    } catch (e) {
+        console.warn('⚠️ Usando valores padrão do HTML (Supabase indisponível):', e.message);
+    }
+
+    // Intersection Observer — iniciar animação quando seção aparecer
     const counterObserver = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
@@ -127,11 +179,16 @@ if (counterSection) {
                 counterObserver.unobserve(entry.target);
             }
         });
-    }, {
-        threshold: 0.5
-    });
+    }, { threshold: 0.5 });
 
     counterObserver.observe(counterSection);
+};
+
+// Aguardar Supabase inicializar e então carregar
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', carregarEstatisticasDoSupabase);
+} else {
+    setTimeout(carregarEstatisticasDoSupabase, 300);
 }
 
 /*=============== VIDEO MODAL ===============*/
