@@ -282,10 +282,18 @@ function initCadastro() {
             const email = document.getElementById('cadEmail').value.trim();
             const senha = document.getElementById('cadSenha').value;
             const status = document.getElementById('cadStatus').value;
+            const centro_custo = document.getElementById('cadCentroCusto').value;
 
             // Validações
             if (!codigo) {
                 showCadastroStatus('error', 'Código do funcionário é obrigatório!');
+                btnCadastrar.disabled = false;
+                btnCadastrar.innerHTML = '<i class="fa-solid fa-save"></i> Cadastrar Funcionário';
+                return;
+            }
+
+            if (!centro_custo) {
+                showCadastroStatus('error', 'Selecione o Centro de Custo!');
                 btnCadastrar.disabled = false;
                 btnCadastrar.innerHTML = '<i class="fa-solid fa-save"></i> Cadastrar Funcionário';
                 return;
@@ -306,7 +314,8 @@ function initCadastro() {
                 cpf,
                 email,
                 senha,
-                status
+                status,
+                centro_custo
             });
 
             if (result.success) {
@@ -372,40 +381,65 @@ function validarCPF(cpf) {
 // ========================================
 function initListagem() {
     const searchInput = document.getElementById('searchFuncionario');
+    const filterCentro = document.getElementById('filterCentroCusto');
     
     if (searchInput) {
-        searchInput.addEventListener('input', (e) => {
-            renderFuncionarios(e.target.value);
+        searchInput.addEventListener('input', () => {
+            const filtro = searchInput.value;
+            const centro = filterCentro ? filterCentro.value : '';
+            renderFuncionarios(filtro, centro);
+        });
+    }
+
+    if (filterCentro) {
+        filterCentro.addEventListener('change', () => {
+            const filtro = searchInput ? searchInput.value : '';
+            renderFuncionarios(filtro, filterCentro.value);
         });
     }
 }
 
-async function renderFuncionarios(filtro = '') {
+async function renderFuncionarios(filtro = '', centroCusto = '') {
     const tbody = document.getElementById('tabelaFuncionarios');
-    tbody.innerHTML = '<tr><td colspan="5" class="empty-state"><i class="fas fa-spinner fa-spin"></i><p>Carregando...</p></td></tr>';
+    tbody.innerHTML = '<tr><td colspan="6" class="empty-state"><i class="fas fa-spinner fa-spin"></i><p>Carregando...</p></td></tr>';
 
     // Buscar funcionários do Supabase
-    const result = await listarColaboradores(filtro);
+    const result = await listarColaboradores(filtro, centroCusto);
 
     if (!result.success || result.data.length === 0) {
         tbody.innerHTML = `
             <tr>
                 <td colspan="6" class="empty-state">
                     <i class="fa-solid fa-users-slash"></i>
-                    <p>${filtro ? 'Nenhum funcionário encontrado' : 'Nenhum funcionário cadastrado ainda'}</p>
+                    <p>${filtro || centroCusto ? 'Nenhum funcionário encontrado' : 'Nenhum funcionário cadastrado ainda'}</p>
                 </td>
             </tr>
         `;
         return;
     }
 
+    // Cores por centro de custo
+    const coresCentro = {
+        'UPA GLEBA-A': '#1976d2',
+        'UPA LUCAS EVANGELISTA': '#388e3c',
+        'AMEX': '#f57c00',
+        'LAMAC': '#7b1fa2'
+    };
+
     // Renderizar funcionários
-    tbody.innerHTML = result.data.map(func => `
+    tbody.innerHTML = result.data.map(func => {
+        const cor = coresCentro[func.centro_custo] || '#666';
+        return `
         <tr>
             <td>${func.codigo_funcionario || '-'}</td>
             <td>${func.nome_completo}</td>
             <td>${formatarCPF(func.cpf)}</td>
-            <td>${func.email || '-'}</td>
+            <td>
+                ${func.centro_custo 
+                    ? `<span style="background:${cor}20; color:${cor}; padding:3px 10px; border-radius:12px; font-size:0.8rem; font-weight:600; border:1px solid ${cor}40;">${func.centro_custo}</span>`
+                    : '<span style="color:#999; font-size:0.85rem;">—</span>'
+                }
+            </td>
             <td>
                 <span class="badge ${func.ativo ? 'success' : 'danger'}">
                     ${func.ativo ? 'Ativo' : 'Inativo'}
@@ -420,7 +454,7 @@ async function renderFuncionarios(filtro = '') {
                 </button>
             </td>
         </tr>
-    `).join('');
+    `}).join('');
 }
 
 async function editarFuncionario(id) {

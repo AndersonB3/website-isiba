@@ -187,7 +187,8 @@ async function cadastrarColaborador(dados) {
                 cpf_hash: cpfHash,
                 senha_hash: senhaHash,
                 email: dados.email || null,
-                ativo: dados.status === 'ativo'
+                ativo: dados.status === 'ativo',
+                centro_custo: dados.centro_custo || null
             }])
             .select();
         
@@ -205,7 +206,7 @@ async function cadastrarColaborador(dados) {
 /**
  * Listar todos os colaboradores
  */
-async function listarColaboradores(filtro = '') {
+async function listarColaboradores(filtro = '', centroCusto = '') {
     try {
         let query = window.supabaseClient
             .from('colaboradores')
@@ -214,6 +215,10 @@ async function listarColaboradores(filtro = '') {
         
         if (filtro) {
             query = query.or(`nome_completo.ilike.%${filtro}%,cpf.ilike.%${filtro}%`);
+        }
+
+        if (centroCusto) {
+            query = query.eq('centro_custo', centroCusto);
         }
         
         const { data, error } = await query;
@@ -259,7 +264,8 @@ async function atualizarColaborador(id, dados) {
             nome_completo: dados.nome,
             codigo_funcionario: dados.codigo_funcionario || null,
             email: dados.email || null,
-            ativo: dados.status === 'ativo'
+            ativo: dados.status === 'ativo',
+            centro_custo: dados.centro_custo || null
         };
         
         // Se houver nova senha, atualizar hash

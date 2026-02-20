@@ -312,6 +312,23 @@
                             </div>
                         </div>
 
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="cadCentroCusto" class="form-label">
+                                    <i class="fa-solid fa-building"></i>
+                                    Centro de Custo *
+                                </label>
+                                <select id="cadCentroCusto" name="centro_custo" class="form-input" required>
+                                    <option value="">Selecione a unidade...</option>
+                                    <option value="UPA GLEBA-A">UPA GLEBA-A</option>
+                                    <option value="UPA LUCAS EVANGELISTA">UPA LUCAS EVANGELISTA</option>
+                                    <option value="AMEX">AMEX</option>
+                                    <option value="LAMAC">LAMAC</option>
+                                </select>
+                                <small class="form-hint">Unidade empresarial à qual o colaborador pertence</small>
+                            </div>
+                        </div>
+
                         <div id="cadastroStatus" class="form-status"></div>
 
                         <div class="form-actions">
@@ -330,43 +347,52 @@
 
             <!-- Seção: Listar Funcionários -->
             <section id="section-listar" class="content-section">
-                <div class="form-card">
-                    <div class="card-header">
-                        <h2><i class="fa-solid fa-users"></i> Funcionários Cadastrados</h2>
-                        <div class="search-box">
-                            <i class="fa-solid fa-search"></i>
-                            <input 
-                                type="text" 
-                                id="searchFuncionario" 
-                                placeholder="Buscar por nome ou CPF..."
-                                class="search-input"
-                            >
+                    <div class="form-card">
+                        <div class="card-header">
+                            <h2><i class="fa-solid fa-users"></i> Funcionários Cadastrados</h2>
+                            <div style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
+                                <select id="filterCentroCusto" class="form-input" style="width: auto; min-width: 200px; padding: 8px 12px;">
+                                    <option value="">Todos os centros de custo</option>
+                                    <option value="UPA GLEBA-A">UPA GLEBA-A</option>
+                                    <option value="UPA LUCAS EVANGELISTA">UPA LUCAS EVANGELISTA</option>
+                                    <option value="AMEX">AMEX</option>
+                                    <option value="LAMAC">LAMAC</option>
+                                </select>
+                                <div class="search-box">
+                                    <i class="fa-solid fa-search"></i>
+                                    <input 
+                                        type="text" 
+                                        id="searchFuncionario" 
+                                        placeholder="Buscar por nome ou CPF..."
+                                        class="search-input"
+                                    >
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="listaFuncionarios" class="table-container">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Código</th>
+                                        <th>Nome</th>
+                                        <th>CPF</th>
+                                        <th>Centro de Custo</th>
+                                        <th>Status</th>
+                                        <th>Ações</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tabelaFuncionarios">
+                                    <tr>
+                                        <td colspan="6" class="empty-state">
+                                            <i class="fa-solid fa-users-slash"></i>
+                                            <p>Nenhum funcionário cadastrado ainda</p>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
                         </div>
                     </div>
-
-                    <div id="listaFuncionarios" class="table-container">
-                        <table class="data-table">
-                            <thead>
-                                <tr>
-                                    <th>Código</th>
-                                    <th>Nome</th>
-                                    <th>CPF</th>
-                                    <th>E-mail</th>
-                                    <th>Status</th>
-                                    <th>Ações</th>
-                                </tr>
-                            </thead>
-                            <tbody id="tabelaFuncionarios">
-                                <tr>
-                                    <td colspan="6" class="empty-state">
-                                        <i class="fa-solid fa-users-slash"></i>
-                                        <p>Nenhum funcionário cadastrado ainda</p>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
             </section>
 
             <!-- Seção: Enviar Documentos -->
@@ -550,6 +576,23 @@
                                 </select>
                             </div>
 
+                            <div class="form-group">
+                                <label for="centroCustoLote" class="form-label">
+                                    <i class="fa-solid fa-building"></i>
+                                    Centro de Custo *
+                                </label>
+                                <select id="centroCustoLote" class="form-input" required>
+                                    <option value="">Selecione a unidade...</option>
+                                    <option value="UPA GLEBA-A">UPA GLEBA-A</option>
+                                    <option value="UPA LUCAS EVANGELISTA">UPA LUCAS EVANGELISTA</option>
+                                    <option value="AMEX">AMEX</option>
+                                    <option value="LAMAC">LAMAC</option>
+                                </select>
+                                <small class="form-hint">O sistema filtrará os colaboradores desta unidade</small>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
                             <div class="form-group">
                                 <label for="anoLote" class="form-label">
                                     <i class="fa-solid fa-calendar"></i>

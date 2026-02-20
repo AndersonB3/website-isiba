@@ -182,9 +182,15 @@ async function processarPDFCompilado() {
     const tipoDocumento = document.getElementById('tipoDocumentoLote')?.value;
     const ano = document.getElementById('anoLote')?.value;
     const mes = document.getElementById('mesLote')?.value;
+    const centroCusto = document.getElementById('centroCustoLote')?.value;
 
     if (!tipoDocumento || !ano || !mes) {
         showNotification('Preencha todos os campos de configuração!', 'error');
+        return;
+    }
+
+    if (!centroCusto) {
+        showNotification('Selecione o Centro de Custo antes de processar!', 'error');
         return;
     }
 
@@ -205,7 +211,7 @@ async function processarPDFCompilado() {
         limparLog();
 
         addLog('info', `Iniciando processamento de ${totalPaginas} páginas...`);
-        addLog('info', `Tipo: ${tipoDocumento} | Período: ${mes}/${ano}`);
+        addLog('info', `Tipo: ${tipoDocumento} | Período: ${mes}/${ano} | Centro: ${centroCusto}`);
         
         // DEBUG: Análise prévia - coletar nomes do PDF
         console.log('\n🔍 ========== ANÁLISE PRÉVIA DO PDF ==========');
@@ -256,7 +262,7 @@ async function processarPDFCompilado() {
                 const pdfIndividual = await extrairPaginaIndividual(i);
 
                 // Buscar colaborador no banco
-                const colaborador = await buscarColaboradorNoBanco(dadosColaborador.codigo, dadosColaborador.nome);
+                const colaborador = await buscarColaboradorNoBanco(dadosColaborador.codigo, dadosColaborador.nome, centroCusto);
 
                 if (!colaborador) {
                     addLog('warning', `Página ${i}: Colaborador não encontrado no banco - ${dadosColaborador.codigo} ${dadosColaborador.nome}`);
@@ -269,7 +275,7 @@ async function processarPDFCompilado() {
                 console.log(`   Tipo: ${tipoDocumento} | Período: ${mes}/${ano}`);
 
                 // Upload para Supabase
-                const resultado = await uploadContracheque(pdfIndividual, colaborador, tipoDocumento, ano, mes);
+                const resultado = await uploadContracheque(pdfIndividual, colaborador, tipoDocumento, ano, mes, centroCusto);
 
                 console.log(`📊 Resultado do upload (Página ${i}):`, resultado);
 
@@ -365,18 +371,18 @@ async function extrairPaginaIndividual(numeroPagina) {
 // ============================================================
 // INTEGRAÇÃO COM SUPABASE
 // ============================================================
-async function buscarColaboradorNoBanco(codigo, nome) {
+async function buscarColaboradorNoBanco(codigo, nome, centroCusto) {
     try {
         // DEBUG: Listar todos os colaboradores (apenas primeira vez)
         if (!window._colaboradoresListados) {
             const { data: todosColaboradores } = await supabaseClient
                 .from('colaboradores')
-                .select('codigo_funcionario, nome_completo')
+                .select('codigo_funcionario, nome_completo, centro_custo')
                 .order('codigo_funcionario');
             
             console.log('📋 COLABORADORES NO BANCO:');
             todosColaboradores?.forEach(c => {
-                console.log(`   Código: "${c.codigo_funcionario}" | Nome: "${c.nome_completo}"`);
+                console.log(`   Código: "${c.codigo_funcionario}" | Nome: "${c.nome_completo}" | Centro: "${c.centro_custo}"`);
             });
             window._colaboradoresListados = true;
         }
@@ -384,14 +390,19 @@ async function buscarColaboradorNoBanco(codigo, nome) {
         // Normalizar nome antes de buscar (remover espaços extras)
         const nomeNormalizado = nome.replace(/\s+/g, ' ').trim();
         
-        console.log(`🔎 Buscando: "${nomeNormalizado}"`);
+        console.log(`🔎 Buscando: "${nomeNormalizado}" | Centro: "${centroCusto}"`);
 
-        // Buscar APENAS por nome (o código_funcionario não bate com o PDF)
-        let { data, error } = await supabaseClient
+        // Buscar por nome e centro de custo
+        let query = supabaseClient
             .from('colaboradores')
             .select('*')
-            .ilike('nome_completo', `%${nomeNormalizado}%`)
-            .maybeSingle();
+            .ilike('nome_completo', `%${nomeNormalizado}%`);
+
+        if (centroCusto) {
+            query = query.eq('centro_custo', centroCusto);
+        }
+
+        let { data, error } = await query.maybeSingle();
 
         if (error && error.code !== 'PGRST116') {
             console.error('Erro ao buscar por nome:', error);
@@ -409,7 +420,7 @@ async function buscarColaboradorNoBanco(codigo, nome) {
     }
 }
 
-async function uploadContracheque(pdfBytes, colaborador, tipoDocumento, ano, mes) {
+async function uploadContracheque(pdfBytes, colaborador, tipoDocumento, ano, mes, centroCusto) {
     try {
         console.log(`🔧 uploadContracheque iniciado...`);
         console.log(`   Colaborador:`, colaborador.nome_completo);
@@ -459,6 +470,7 @@ async function uploadContracheque(pdfBytes, colaborador, tipoDocumento, ano, mes
                     nome_arquivo: nomeArquivo,
                     tamanho_arquivo: pdfBytes.length,
                     tipo_documento: tipoDocumento,
+                    centro_custo: centroCusto || null,
                     enviado_por: 'Sistema Automático',
                     enviado_em: new Date().toISOString()
                 })
@@ -483,6 +495,7 @@ async function uploadContracheque(pdfBytes, colaborador, tipoDocumento, ano, mes
                     nome_arquivo: nomeArquivo,
                     tamanho_arquivo: pdfBytes.length,
                     tipo_documento: tipoDocumento,
+                    centro_custo: centroCusto || null,
                     enviado_por: 'Sistema Automático'
                 }])
                 .select();
