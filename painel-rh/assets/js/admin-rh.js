@@ -436,7 +436,7 @@ async function renderFuncionarios(filtro = '', centroCusto = '') {
             <td>${formatarCPF(func.cpf)}</td>
             <td>
                 ${func.centro_custo 
-                    ? `<span style="background:${cor}20; color:${cor}; padding:3px 10px; border-radius:12px; font-size:0.8rem; font-weight:600; border:1px solid ${cor}40;">${func.centro_custo}</span>`
+                    ? `<span style="background:${cor}20; color:${cor}; padding:3px 10px; border-radius:12px; font-size:0.75rem; font-weight:600; border:1px solid ${cor}40; white-space:nowrap; display:inline-block;">${func.centro_custo}</span>`
                     : '<span style="color:#999; font-size:0.85rem;">—</span>'
                 }
             </td>
