@@ -476,6 +476,7 @@ async function editarFuncionario(id) {
     document.getElementById('editEmail').value = func.email || '';
     document.getElementById('editSenha').value = '';
     document.getElementById('editStatus').value = func.ativo ? 'ativo' : 'inativo';
+    document.getElementById('editCentroCusto').value = func.centro_custo || '';
     
     // Mostrar modal
     document.getElementById('modalEditarFuncionario').style.display = 'flex';
@@ -529,10 +530,19 @@ function initModalEdicao() {
         const email = document.getElementById('editEmail').value.trim();
         const senha = document.getElementById('editSenha').value.trim();
         const status = document.getElementById('editStatus').value;
+        const centroCusto = document.getElementById('editCentroCusto').value;
         
         // Validação do código
         if (!codigo) {
             alert('O código do funcionário é obrigatório!');
+            btnSalvar.disabled = false;
+            btnSalvar.innerHTML = '<i class="fa-solid fa-save"></i> Salvar Alterações';
+            return;
+        }
+
+        // Validação do centro de custo
+        if (!centroCusto) {
+            alert('Selecione o Centro de Custo!');
             btnSalvar.disabled = false;
             btnSalvar.innerHTML = '<i class="fa-solid fa-save"></i> Salvar Alterações';
             return;
@@ -543,7 +553,8 @@ function initModalEdicao() {
             nome,
             codigo_funcionario: codigo,
             email: email || null,
-            status
+            status,
+            centro_custo: centroCusto
         };
         
         // Adicionar senha apenas se foi preenchida
